@@ -1,0 +1,27 @@
+/**
+ * OrbCanvas.css
+ *
+ * The global orb canvas sits behind every section of the page.
+ *
+ * Key rules:
+ *   position: fixed  — stays in viewport while user scrolls
+ *   z-index: 0       — behind all sections (sections are z-index 1+)
+ *   pointer-events: none — never intercepts clicks or hovers
+ *
+ * The hero section's own canvas (position: absolute, z-index: 1)
+ * will appear ON TOP of this during the Hero section, then fade out
+ * via its existing scroll logic — creating a natural crossfade to
+ * this global canvas. Hero canvas removed in Phase 1 verification step.
+ */
+
+.orb-canvas-global {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+
+  /* Ensure crisp rendering on high-DPI screens */
+  image-rendering: auto;
+}
