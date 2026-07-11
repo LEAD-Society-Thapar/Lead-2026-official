@@ -6,7 +6,7 @@ import gsap from 'gsap';
 import './ArcReactor.css'; 
 
 // Import AI command palette
-import CommandPalette from '../../components/CommandPalette';
+import CommandPalette from '../../components/CommandPalette/CommandPalette';
 
 const ArcReactor = ({ sponsors = [] }) => {
   // DOM element refs
