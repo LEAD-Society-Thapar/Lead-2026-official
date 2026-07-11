@@ -1,8 +1,12 @@
+// src/sections/Sponsors/ArcReactor.jsx
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import gsap from 'gsap';
 import './ArcReactor.css'; 
+
+// Import AI command palette
+import CommandPalette from '../../components/CommandPalette';
 
 const ArcReactor = ({ sponsors = [] }) => {
   // DOM element refs
@@ -10,15 +14,18 @@ const ArcReactor = ({ sponsors = [] }) => {
   const introRef = useRef(null); 
   const uiLayerRef = useRef(null);
   
-  // Separation of Modal Refs for smooth animations
+  // Modal animation refs
   const modalOverlayRef = useRef(null);
   const modalCardRef = useRef(null);
   
-  // Component state
+  // Component state variables
   const [sponsorsUI, setSponsorsUI] = useState([]);
   const [selectedSponsor, setSelectedSponsor] = useState(null);
   
-  // WebGL instance refs
+  // Command palette visibility state
+  const [isBotVisible, setIsBotVisible] = useState(false);
+  
+  // WebGL scene refs
   const cameraRef = useRef(null);
   const controlsRef = useRef(null);
   const anchorsRef = useRef([]);
@@ -58,7 +65,7 @@ const ArcReactor = ({ sponsors = [] }) => {
 
     const clock = new THREE.Clock();
 
-    // Starfield background
+    // Create starfield background
     const starGeo = new THREE.BufferGeometry();
     const starCount = 2000;
     const starPos = new Float32Array(starCount * 3);
@@ -77,7 +84,7 @@ const ArcReactor = ({ sponsors = [] }) => {
     scene.add(masterGroup);
     reactorGroupRef.current = masterGroup;
 
-    // Particle system setup
+    // Initialize particle system
     const particleCount = 45000; 
     const geometry = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
@@ -91,7 +98,7 @@ const ArcReactor = ({ sponsors = [] }) => {
     const colorCopper = new THREE.Color(0xc17845); 
     const colorDeepGlow = new THREE.Color(0x002288); 
 
-    // Geometric volume math
+    // Calculate geometric volumes
     for (let i = 0; i < particleCount; i++) {
       let tx, ty, tz; 
       let pColor = new THREE.Color();
@@ -211,7 +218,7 @@ const ArcReactor = ({ sponsors = [] }) => {
     particleSystem.frustumCulled = false; 
     masterGroup.add(particleSystem);
 
-    // Structural wireframe borders
+    // Create structural wireframes
     const structuralGroup = new THREE.Group();
     const borderMatsArray = []; 
 
@@ -264,7 +271,7 @@ const ArcReactor = ({ sponsors = [] }) => {
     }
     particleSystem.add(structuralGroup);
 
-    // Sponsor constellation tethers
+    // Create constellation tethers
     const localAnchorObjects = [];
     const orbitRadius = 4.8; 
 
@@ -287,7 +294,7 @@ const ArcReactor = ({ sponsors = [] }) => {
     
     anchorsRef.current = localAnchorObjects;
 
-    // Cache materials for transitions
+    // Cache material transitions
     materialsRef.current = [
       { mat: material, baseOpacity: 0.85 },
       { mat: tetherMat, baseOpacity: 0.25 },
@@ -299,7 +306,7 @@ const ArcReactor = ({ sponsors = [] }) => {
     // Reset UI opacities
     if (uiLayerRef.current) gsap.set(uiLayerRef.current, { opacity: 0 });
 
-    // Text intro animation
+    // Animate intro text
     if (introRef.current) {
       gsap.to(introRef.current, { 
         y: "-150px", opacity: 0, duration: 1.5, delay: 2.5, ease: "power2.inOut",
@@ -307,7 +314,7 @@ const ArcReactor = ({ sponsors = [] }) => {
       });
     }
 
-    // Particle assembly animation
+    // Animate particle assembly
     gsap.to(material, { opacity: 0.85, duration: 2.0, delay: 3.0, ease: "power2.inOut" });
     
     particlesData.forEach((p, i) => {
@@ -324,17 +331,21 @@ const ArcReactor = ({ sponsors = [] }) => {
       });
     });
 
-    // Subsystem fade sequences
+    // Fade in subsystems
     borderMatsArray.forEach(mat => {
         gsap.to(mat, { opacity: 0.5, duration: 2.0, delay: 5.0, ease: "power2.inOut" });
     });
 
+    // Show bot on load
     gsap.to(tetherMat, { 
       opacity: 0.25, 
       duration: 2.0, 
       delay: 5.5, 
       ease: "power2.inOut", 
-      onComplete: () => introCompleteRef.current = true 
+      onComplete: () => {
+        introCompleteRef.current = true;
+        setIsBotVisible(true); 
+      }
     });
 
     gsap.to(globalUIRef.current, { opacity: 1, duration: 2.0, delay: 5.5, ease: "power2.inOut" });
@@ -343,7 +354,7 @@ const ArcReactor = ({ sponsors = [] }) => {
         gsap.to(uiLayerRef.current, { opacity: 1, duration: 2.0, delay: 5.5, ease: "power2.inOut" });
     }
 
-    // RequestAnimationFrame render loop
+    // Main render loop
     let animationFrameId;
     const tempVector = new THREE.Vector3();
 
@@ -376,7 +387,7 @@ const ArcReactor = ({ sponsors = [] }) => {
       controls.update(); 
       renderer.render(scene, camera);
 
-      // DOM UI projection
+      // Project DOM UI
       if (mountRef.current && !isFocusedRef.current) {
         const width = window.innerWidth;
         const height = window.innerHeight;
@@ -403,7 +414,7 @@ const ArcReactor = ({ sponsors = [] }) => {
     
     animate();
 
-    // Resize handler
+    // Handle window resize
     const handleResize = () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
@@ -411,7 +422,7 @@ const ArcReactor = ({ sponsors = [] }) => {
     };
     window.addEventListener('resize', handleResize);
 
-    // Unmount cleanup
+    // Cleanup on unmount
     return () => {
       window.removeEventListener('resize', handleResize);
       cancelAnimationFrame(animationFrameId);
@@ -420,9 +431,9 @@ const ArcReactor = ({ sponsors = [] }) => {
       starGeo.dispose(); starMat.dispose(); tetherGeo.dispose(); tetherMat.dispose();
       renderer.dispose();
     };
-  }, []); 
+  }, [sponsors]); 
 
-  // Handle open sponsor modal
+  // Open sponsor modal
   useEffect(() => {
     if (!reactorGroupRef.current) return;
     if (isInitialRender.current) {
@@ -434,7 +445,10 @@ const ArcReactor = ({ sponsors = [] }) => {
       isFocusedRef.current = true;
       wasModalOpenRef.current = true; 
       
-      // Animate 3D out and fade UI
+      // Hide bot on focus
+      setIsBotVisible(false);
+
+      // Animate 3D and UI
       gsap.to(globalUIRef.current, { opacity: 0, duration: 0.4 });
       if (uiLayerRef.current) gsap.to(uiLayerRef.current, { opacity: 0, duration: 0.4, ease: "power2.out" });
       
@@ -443,7 +457,7 @@ const ArcReactor = ({ sponsors = [] }) => {
           gsap.to(mat, { opacity: 0, duration: 0.8, ease: "power2.out" });
       });
 
-      // Animate Modal In
+      // Animate modal entry
       if (modalOverlayRef.current) {
           modalOverlayRef.current.style.display = "flex";
           gsap.to(modalOverlayRef.current, { opacity: 1, duration: 0.4 });
@@ -457,7 +471,7 @@ const ArcReactor = ({ sponsors = [] }) => {
     }
   }, [selectedSponsor]);
 
-  // Handle close sponsor modal
+  // Close sponsor modal
   const handleCloseModal = () => {
       if (modalCardRef.current) {
           gsap.to(modalCardRef.current, { scale: 0.9, y: 30, opacity: 0, duration: 0.3, ease: "power2.in" });
@@ -471,7 +485,7 @@ const ArcReactor = ({ sponsors = [] }) => {
               ease: "power2.in", 
               onComplete: () => { 
                   modalOverlayRef.current.style.display = "none"; 
-                  setSelectedSponsor(null); // Unmount React state ONLY after animation finishes
+                  setSelectedSponsor(null); 
                   wasModalOpenRef.current = false;
               }
           });
@@ -489,23 +503,22 @@ const ArcReactor = ({ sponsors = [] }) => {
           gsap.to(uiLayerRef.current, { opacity: 1, duration: 0.8, delay: 0.6, ease: "power2.inOut" });
       }
       
+      // Show bot on close
+      setIsBotVisible(true);
+
       setTimeout(() => { isFocusedRef.current = false; }, 800);
   };
 
-  // Component render
   return (
     <div className="reactor-container">
-      {/* WebGL canvas */}
       <div ref={mountRef} className="canvas-container" />
       
-      {/* Intro text */}
       <div ref={introRef} className="intro-container">
         <div className="intro-eyebrow">LEARN &bull; EMERGE &bull; ASPIRE &bull; DISCOVER</div>
         <div className="intro-title">OUR NETWORK</div>
         <div className="intro-subtitle">The incredible partners powering the future of LEAD.</div>
       </div>
 
-      {/* Floating sponsor logos */}
       <div ref={uiLayerRef} className="ui-layer">
         {sponsorsUI.map((sp) => (
           <div
@@ -526,7 +539,6 @@ const ArcReactor = ({ sponsors = [] }) => {
         ))}
       </div>
 
-      {/* HUD sponsor modal */}
       <div ref={modalOverlayRef} className="hud-modal-overlay">
         {selectedSponsor && (
           <div ref={modalCardRef} className="hud-modal-content">
@@ -548,20 +560,23 @@ const ArcReactor = ({ sponsors = [] }) => {
                 <h2>{selectedSponsor.name}</h2>
                 <p>{selectedSponsor.description || "A proud partner of the LEAD Society. Together, we are bridging the gap between innovation and student excellence through cutting-edge technology and mentorship."}</p>
                 
-                <div className="modal-buttons">
-                  <a href={selectedSponsor.url || "#"} target="_blank" rel="noreferrer" className="btn-hud primary">
-                    VISIT WEBSITE
-                  </a>
-                  <a href={selectedSponsor.contact || "#"} target="_blank" rel="noreferrer" className="btn-hud secondary">
-                    CONTACT US
-                  </a>
-                </div>
+              <div className="modal-buttons">
+                <a href={selectedSponsor.url || "#"} target="_blank" rel="noreferrer" className="btn-hud primary">
+                  {selectedSponsor.urlText || "VISIT WEBSITE"}
+                </a>
+                <a href={selectedSponsor.contact || "#"} target="_blank" rel="noreferrer" className="btn-hud secondary">
+                  {selectedSponsor.contactText || "CONTACT US"}
+                </a>
+              </div>
               </div>
               
             </div>
           </div>
         )}
       </div>
+
+      {/* Render command palette */}
+      <CommandPalette visible={isBotVisible} />
 
     </div>
   );

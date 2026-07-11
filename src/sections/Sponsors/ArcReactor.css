@@ -1,4 +1,6 @@
-/* Base canvas layout */
+/* src/sections/Sponsors/ArcReactor.css */
+
+/* Base container layout */
 .reactor-container {
   position: relative;
   width: 100vw;
@@ -13,7 +15,7 @@
   cursor: grab;
 }
 
-/* Intro typography */
+/* Intro typography styles */
 .intro-container {
   position: absolute;
   top: 50%;
@@ -99,7 +101,7 @@
   object-fit: contain;
 }
 
-/* HUD Modal styling */
+/* HUD modal styles */
 .hud-modal-overlay {
   position: absolute;
   inset: 0;
@@ -136,7 +138,7 @@
   position: relative;
 }
 
-/* Modal accents */
+/* Modal decorative corners */
 .hud-corner {
   position: absolute;
   width: 15px;
@@ -165,7 +167,7 @@
   transform: rotate(90deg) scale(1.2);
 }
 
-/* Modal columns */
+/* Modal column layout */
 .modal-left {
   flex: 0 0 30%;
   display: flex;
@@ -234,14 +236,14 @@
   text-align: left;
 }
 
-/* Modal typography */
+/* Modal text styles */
 .hud-modal-content h2 {
   font-family: 'Segoe UI', system-ui, sans-serif;
   font-size: 3.2rem;
   font-weight: 900;
   margin-bottom: 25px;
   letter-spacing: 2px;
-  color: #ffffff; /* Forces text color */
+  color: #ffffff; 
   text-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
   line-height: 1.1;
 }
@@ -250,11 +252,11 @@
   font-family: 'Segoe UI', system-ui, sans-serif;
   font-size: 1.05rem;
   line-height: 1.8;
-  color: #a9b5c2; /* Forces text color */
+  color: #a9b5c2; 
   margin-bottom: 40px;
 }
 
-/* Action buttons */
+/* Action button styles */
 .modal-buttons {
   display: flex;
   gap: 20px;
@@ -299,7 +301,7 @@
   box-shadow: 0 0 30px rgba(255, 42, 95, 0.8);
 }
 
-/* Mobile responsiveness */
+/* Mobile responsive adjustments */
 @media (max-width: 768px) {
   .intro-title { font-size: 3.5rem; letter-spacing: 2px; }
   .intro-eyebrow { font-size: 0.8rem; letter-spacing: 3px; }
