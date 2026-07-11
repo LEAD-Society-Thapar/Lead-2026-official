@@ -76,15 +76,29 @@ export function useOrbState() {
   const orbStateRef = useRef({ ...SCENES.HERO })
 
   useEffect(() => {
-    const getSections = () => ({
+    // Sections are queried once on mount instead of on every scroll tick.
+    // They are static landmarks that never remount, so re-running
+    // document.getElementById() 4x per scroll event was pure overhead —
+    // this is most noticeable during the Hero → Executive transition,
+    // where scroll events fire rapidly while Lenis is animating.
+    const sections = {
       hero: document.getElementById('home'),
       exec: document.getElementById('exec-board'),
       dept: document.getElementById('departments'),
       cta: document.getElementById('cta'),
-    })
+    }
 
-    const handleScroll = () => {
-      const sections = getSections()
+    // Coalesce scroll events to at most one computation per animation
+    // frame. Lenis can dispatch more than one native `scroll` event
+    // between rendered frames while it's actively animating (exactly
+    // the Hero → Executive window) — without this guard, every one of
+    // those events forces its own synchronous layout read via
+    // getBoundingClientRect(), stacking on top of the Three.js render
+    // and Framer Motion's own scroll tracking in ExecutiveSection.
+    let ticking = false
+
+    const computeState = () => {
+      ticking = false
 
       if (sections.hero) {
         const heroRect = sections.hero.getBoundingClientRect()
@@ -164,8 +178,14 @@ export function useOrbState() {
       orbStateRef.current = { ...SCENES.DEPT }
     }
 
+    const handleScroll = () => {
+      if (ticking) return
+      ticking = true
+      requestAnimationFrame(computeState)
+    }
+
     window.addEventListener('scroll', handleScroll, { passive: true })
-    handleScroll()
+    computeState()
 
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])

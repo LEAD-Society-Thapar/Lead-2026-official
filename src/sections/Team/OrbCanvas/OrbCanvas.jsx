@@ -195,7 +195,6 @@ export default function OrbCanvas({ orbStateRef, execSignalRef }) {
       }
 
       const rotationBoost = 0;
-      
 
       const rotationSpeed = allowMouse ? 0.09 : 0.04;
       const mouseInfluence = allowMouse ? 0.28 : 0.08;
@@ -207,7 +206,7 @@ export default function OrbCanvas({ orbStateRef, execSignalRef }) {
       wire1.rotation.y = t * (allowMouse ? 0.04 : 0.02);
 
       wire2.rotation.x = t * (allowMouse ? 0.03 : 0.015);
-      
+
       const pulse = 1 + Math.sin(t * 2.1) * 0.055;
       core.scale.setScalar(pulse);
 

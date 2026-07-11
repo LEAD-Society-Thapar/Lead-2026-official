@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback, memo } from "react";
 import {
   useScroll,
   useTransform,
@@ -52,7 +52,20 @@ const LinkedInIcon = () => (
 );
 
 /* ─── Single executive card ─────────────────────────────────────────────── */
-function ExecCard({ exec, absoluteIndex, isVisible, isActive, isDimmed, onSelect }) {
+// Memoized: ExecutiveSection re-renders on every scroll-progress tick during
+// the Hero → Executive transition (Framer's useScroll/useMotionValueEvent).
+// Without memo, all 12 cards (each a motion.button with its own tilt hook,
+// portrait, and layoutId) would re-render on every one of those ticks even
+// though their own props rarely change. onSelect is stabilized with
+// useCallback below so its reference doesn't defeat this memoization.
+const ExecCard = memo(function ExecCard({
+  exec,
+  absoluteIndex,
+  isVisible,
+  isActive,
+  isDimmed,
+  onSelect,
+}) {
   const [hovered, setHovered] = useState(false);
 
   // 3D tilt hook — attaches to the wrapper div, not the motion.button.
@@ -102,9 +115,17 @@ function ExecCard({ exec, absoluteIndex, isVisible, isActive, isDimmed, onSelect
           layoutId={`exec-portrait-${exec.id}`}
           initial={{ opacity: 0 }}
           animate={{ opacity: isVisible ? 1 : 0 }}
-          transition={{ duration: 0.35, delay: 0.08 + (absoluteIndex % 4) * 0.03 }}
+          transition={{
+            duration: 0.35,
+            delay: 0.08 + (absoluteIndex % 4) * 0.03,
+          }}
         >
-          <img src={exec.portrait} alt={exec.name} />
+          <img
+            src={exec.portrait}
+            alt={exec.name}
+            loading="lazy"
+            decoding="async"
+          />
         </motion.div>
 
         {/*
@@ -165,8 +186,7 @@ function ExecCard({ exec, absoluteIndex, isVisible, isActive, isDimmed, onSelect
       </motion.button>
     </div>
   );
-}
-
+});
 
 /* ─── Executive section ─────────────────────────────────────────────────── */
 export default function ExecutiveSection({ execSignalRef }) {
@@ -203,8 +223,29 @@ export default function ExecutiveSection({ execSignalRef }) {
   });
 
   useMotionValueEvent(scrollYProgress, "change", (v) => {
-    setHeadingVisible(v > 0.04);
-    setVisibleRows([v > 0.06, v > 0.18, v > 0.3, v > 0.42]);
+    // scrollYProgress fires a "change" event on essentially every rendered
+    // frame while it's moving — i.e. continuously throughout the Hero →
+    // Executive transition. Passing a fresh array/boolean to setState on
+    // every one of those ticks forces a full re-render (of this component
+    // and, pre-memoization, all 12 cards) even when the derived values are
+    // identical to what's already on screen. Returning the previous
+    // reference when nothing actually changed lets React bail out of the
+    // re-render entirely (same behavior, same thresholds, same timing —
+    // just skips redundant work).
+    const nextHeadingVisible = v > 0.04;
+    setHeadingVisible((prev) =>
+      prev === nextHeadingVisible ? prev : nextHeadingVisible,
+    );
+
+    const nextVisibleRows = [v > 0.06, v > 0.18, v > 0.3, v > 0.42];
+    setVisibleRows((prev) =>
+      prev[0] === nextVisibleRows[0] &&
+      prev[1] === nextVisibleRows[1] &&
+      prev[2] === nextVisibleRows[2] &&
+      prev[3] === nextVisibleRows[3]
+        ? prev
+        : nextVisibleRows,
+    );
   });
 
   useEffect(() => {
@@ -228,10 +269,17 @@ export default function ExecutiveSection({ execSignalRef }) {
     if (execSignalRef?.current) execSignalRef.current.hoverIndex = -1;
   };
 
-  const handleSelect = (exec, index) => {
-    setActiveExec(exec);
-    if (execSignalRef?.current) execSignalRef.current.activeIndex = index;
-  };
+  // Stabilized with useCallback so its reference stays the same across
+  // re-renders — required for the ExecCard memoization above to actually
+  // prevent re-renders (a new function reference every render would
+  // otherwise defeat React.memo's prop comparison).
+  const handleSelect = useCallback(
+    (exec, index) => {
+      setActiveExec(exec);
+      if (execSignalRef?.current) execSignalRef.current.activeIndex = index;
+    },
+    [execSignalRef],
+  );
 
   const handleClose = () => {
     setActiveExec(null);

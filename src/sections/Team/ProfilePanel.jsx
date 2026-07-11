@@ -296,67 +296,30 @@ export default function ProfilePanel({ exec, onClose }) {
     };
   }, [onClose]);
 
-  /* ── Lenis scroll lock + wheel routing ──────────────────────────────── */
+  /* ── Lenis scroll lock ─────────────────────────────────────────────────
+     lenis.stop() is Lenis's official pause API — it freezes the background
+     at its current position and preserves it for lenis.start() on close.
+
+     Previously this effect also hand-rolled wheel/touchmove interception to
+     manually drive scrollRef.scrollTop, because Lenis's own wheel/touch
+     listener is bound on window with { passive: false } and, while stopped,
+     calls preventDefault() on every wheel/touch event regardless of target —
+     including ones inside the modal — which is what made internal scrolling
+     feel heavy (no native momentum, linear per-event scrollTop assignment).
+
+     Lenis's officially documented escape hatch for nested scrollers is the
+     `data-lenis-prevent` attribute (see the epm-scroll div below): any event
+     whose path includes an element with that attribute is skipped entirely
+     by Lenis's handler — no preventDefault, no interception — so the
+     browser scrolls that element completely natively (wheel, touchpad, and
+     iOS momentum touch all just work). That removes the need for any manual
+     wheel/touchmove routing here; Lenis keeps blocking background scroll
+     everywhere else via the same isStopped check it already had. ──────── */
   useEffect(() => {
     const lenis = window.__LENIS__;
-
-    // 1. Pause Lenis — preserves internal scroll position, stops physics.
-    //    lenis.stop() is the official API (not lenis.destroy()).
-    //    Background stays visually fixed at the current scroll position.
     lenis?.stop();
 
-    // 2. Intercept wheel events.
-    //
-    //    Why we need this even though Lenis is stopped:
-    //    Lenis keeps its wheel listener bound on the document. When stopped,
-    //    it calls e.preventDefault() but doesn't process the delta — meaning
-    //    wheel events are swallowed and the modal content can't scroll.
-    //
-    //    Strategy:
-    //    - If the wheel event originates INSIDE epm-scroll → manually scroll
-    //      the container by the raw deltaY. Smooth scrolling is handled by
-    //      the CSS scroll-behavior on the container.
-    //    - If the wheel event originates OUTSIDE the modal → preventDefault
-    //      to block the page from scrolling natively (belt + suspenders with
-    //      lenis.stop()).
-    const onWheel = (e) => {
-      const scroller = scrollRef.current;
-      if (!scroller) return;
-
-      if (scroller.contains(e.target)) {
-        // Event is inside the modal content column — drive it manually.
-        // We must preventDefault because Lenis's listener will otherwise
-        // swallow it (Lenis calls preventDefault in its own wheel handler).
-        e.stopPropagation();
-        scroller.scrollTop += e.deltaY;
-        // Don't preventDefault here — let the browser's natural scroll
-        // handling act on the container (avoids jank on high-precision pads).
-      } else {
-        // Event is on the backdrop or portrait — block page scroll.
-        e.preventDefault();
-      }
-    };
-
-    // passive: false is required so we can call preventDefault() when needed.
-    window.addEventListener("wheel", onWheel, { passive: false });
-
-    // 3. Block touchmove on the backdrop/portrait (allow inside scroller).
-    const onTouchMove = (e) => {
-      const scroller = scrollRef.current;
-      if (scroller?.contains(e.target)) return; // Allow inside scroller
-      e.preventDefault(); // Block background scroll on touch devices
-    };
-    window.addEventListener("touchmove", onTouchMove, { passive: false });
-
     return () => {
-      // 4. Remove interceptors first, then restart Lenis.
-      //    Order matters — if Lenis starts before the wheel listener is
-      //    removed, there is a 1-frame window where both are active.
-      window.removeEventListener("wheel", onWheel);
-      window.removeEventListener("touchmove", onTouchMove);
-
-      // 5. Resume Lenis from exactly where it was.
-      //    lenis.start() resumes scroll from the preserved position.
       lenis?.start();
     };
   }, []);
@@ -459,8 +422,10 @@ export default function ProfilePanel({ exec, onClose }) {
             <CloseIcon />
           </motion.button>
 
-          {/* Scrollable area — ref used for wheel/keyboard event routing */}
-          <div className="epm-scroll" ref={scrollRef}>
+          {/* Scrollable area — data-lenis-prevent tells Lenis to skip this
+              container entirely (its official nested-scroll escape hatch),
+              so wheel/touch/trackpad scrolling here is 100% native. */}
+          <div className="epm-scroll" ref={scrollRef} data-lenis-prevent>
             <motion.div
               className="epm-content"
               variants={contentV}
