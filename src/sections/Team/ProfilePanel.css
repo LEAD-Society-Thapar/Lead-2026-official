@@ -1,0 +1,550 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   ProfilePanel.css — Executive Spotlight Modal
+   Concept B: Layered Depth
+   Prefix: epm- (Executive Profile Modal)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ─── Navbar offset token ────────────────────────────────────────────────── */
+
+:root {
+  --navbar-h: 72px;     /* Scrolled navbar height — page is always scrolled   */
+                        /* when exec board is in view                          */
+  --epm-radius: 28px;   /* Modal border radius                                 */
+}
+
+/* ─── Backdrop ───────────────────────────────────────────────────────────── */
+
+.epm-backdrop {
+  position: fixed;
+  top: var(--navbar-h);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 200;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Increased depth — orb stays faintly visible, page reads as deep not black */
+  background: rgba(2, 4, 12, 0.4);
+  backdrop-filter: blur(8px) saturate(0.85);
+  -webkit-backdrop-filter: blur(8px) saturate(0.85);
+
+  padding: 16px clamp(16px, 2.5vw, 40px) 16px;
+}
+
+/* ─── Modal ──────────────────────────────────────────────────────────────── */
+
+.epm-modal {
+  position: relative;
+  display: grid;
+  /* 43% portrait | 57% content */
+  grid-template-columns: 43% 57%;
+  grid-template-rows: 1fr;
+
+  /* Target: 82vw wide, 90% of available height below navbar */
+  width: min(1380px, 82vw);
+  height: calc(100vh - var(--navbar-h) - 32px);
+  max-height: 900px;
+  min-height: 500px;
+
+  border-radius: var(--epm-radius);
+  overflow: hidden;
+
+  background: linear-gradient(
+    152deg,
+    rgba(10, 15, 28, 0.98) 0%,
+    rgba(5, 8, 16, 0.99) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  box-shadow:
+    /* Inner rim — very faint cyan */
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    inset 0 0 0 1px rgba(81, 226, 255, 0.04),
+    /* Depth shadow */
+    0 48px 140px rgba(0, 0, 0, 0.72),
+    0 20px 60px rgba(0, 0, 0, 0.5);
+
+  /* will-change for smooth parallax and scale animations */
+  will-change: transform;
+}
+
+/* ─── Accent hairline — top edge ────────────────────────────────────────── */
+
+.epm-modal::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(81, 226, 255, 0.35) 25%,
+    rgba(81, 226, 255, 0.65) 50%,
+    rgba(81, 226, 255, 0.35) 75%,
+    transparent 100%
+  );
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* ─── Portrait column ────────────────────────────────────────────────────── */
+
+.epm-portrait-col {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--epm-radius) 0 0 var(--epm-radius);
+  background: #080c18;
+}
+
+/* Parallax container — overflows the portrait column slightly then clips */
+.epm-portrait-parallax {
+  width: 100%;
+  height: 100%;
+  /* Expand slightly so parallax shift doesn't show gaps at edges */
+  margin: -6px;
+  padding: 6px;
+}
+
+.epm-portrait-inner {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: var(--epm-radius) 0 0 var(--epm-radius);
+}
+
+.epm-portrait-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Face in upper third — generous crop for editorial feel */
+  object-position: center 12%;
+  display: block;
+  /* Slightly desaturated — gives the modal a cohesive dark palette */
+  filter: saturate(0.88) contrast(1.05) brightness(0.8);
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Bottom gradient — prevents sharp portrait-to-nothing at bottom */
+.epm-portrait-grad-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: linear-gradient(
+    to top,
+    rgba(5, 8, 16, 0.65) 0%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Right-edge gradient — blends portrait into the content column seamlessly */
+.epm-portrait-grad-right {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100px;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(6, 10, 20, 0.6) 100%
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Index numeral — huge, muted, bottom-left. Decorative depth cue. */
+.epm-index {
+  position: absolute;
+  bottom: 22px;
+  left: 26px;
+  z-index: 3;
+  font-family: var(--font-heading);
+  font-size: clamp(44px, 6vw, 80px);
+  font-weight: 800;
+  letter-spacing: -0.08em;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.06);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ─── Content column ─────────────────────────────────────────────────────── */
+
+.epm-content-col {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Scrollable inner area */
+.epm-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  /* Smooth scroll for keyboard navigation (Space, Arrow, PgDn) */
+  scroll-behavior: smooth;
+
+  /* Prevents scroll from bubbling to the page when the container
+     reaches its top or bottom edge. CSS-native equivalent of
+     stopPropagation for overscroll. Works in Chrome, Edge, Firefox. */
+  overscroll-behavior: contain;
+
+  /* iOS Safari momentum scrolling */
+  -webkit-overflow-scrolling: touch;
+
+  /* Custom scrollbar — minimal, cyan-tinted */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(81, 226, 255, 0.14) transparent;
+}
+
+.epm-scroll::-webkit-scrollbar       { width: 3px; }
+.epm-scroll::-webkit-scrollbar-track { background: transparent; }
+.epm-scroll::-webkit-scrollbar-thumb {
+  background: rgba(81, 226, 255, 0.16);
+  border-radius: 2px;
+}
+
+/* ─── Close button ───────────────────────────────────────────────────────── */
+
+.epm-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 30;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+
+  /* Slightly refined glass — warmer, less clinical */
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  /* No transition here — handled by Framer's whileHover */
+}
+
+/* Close hover is handled by Framer's whileHover in JSX */
+/* CSS hover kept only as a fallback for non-JS environments */
+.epm-close:hover {
+  background:   rgba(255, 255, 255, 0.11);
+  border-color: rgba(255, 255, 255, 0.24);
+  color:        rgba(255, 255, 255, 0.92);
+}
+
+.epm-close:focus-visible {
+  outline: 2px solid rgba(81, 226, 255, 0.65);
+  outline-offset: 3px;
+}
+
+/* ─── Content layout ─────────────────────────────────────────────────────── */
+
+.epm-content {
+  display: flex;
+  flex-direction: column;
+  /* Top-anchored — deliberate top padding replaces center justification */
+  justify-content: flex-start;
+  padding-top: clamp(44px, 6vh, 80px);
+  padding-bottom: clamp(32px, 4vw, 52px);
+  padding-left: clamp(32px, 4vw, 60px);
+  padding-right: clamp(48px, 5.5vw, 72px);  /* Clear close button */
+  min-height: 100%;
+  gap: 0;
+}
+
+/* ─── Role ───────────────────────────────────────────────────────────────── */
+
+.epm-role {
+  margin: 0 0 12px;
+  font-family: var(--font-heading);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(81, 226, 255, 0.78);
+  line-height: 1;
+}
+
+/* ─── Name ───────────────────────────────────────────────────────────────── */
+
+.epm-name {
+  margin: 0 0 40px;
+  font-family: var(--font-heading);
+  /* Large — this is the most important element. It should feel commanding. */
+  font-size: clamp(32px, 4vw, 58px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  color: rgba(255, 255, 255, 0.97);
+  /* Max width prevents overlong names from breaking layout */
+  max-width: 16ch;
+}
+
+/* ─── Quote / Statement ─────────────────────────────────────────────────── */
+
+.epm-quote {
+  margin: 0 0 24px;
+  padding: 0 0 0 18px;
+  border-left: 2px solid rgba(81, 226, 255, 0.26);
+}
+
+.epm-quote p {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: clamp(14px, 1.3vw, 16.5px);
+  font-weight: 400;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.75);
+  font-style: italic;
+  max-width: 52ch;
+}
+
+/* ─── About ──────────────────────────────────────────────────────────────── */
+
+.epm-about {
+  margin: 0 0 32px;
+  font-family: var(--font-body);
+  font-size: clamp(13px, 1.15vw, 14.5px);
+  line-height: 1.78;
+  color: rgba(255, 255, 255, 0.54);
+  max-width: 58ch;
+}
+
+.epm-strong {
+  color: rgba(255, 255, 255, 0.78);
+  font-weight: 600;
+  font-style: normal;
+}
+
+/* ─── Domain chips ───────────────────────────────────────────────────────── */
+
+.epm-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 32px;
+}
+
+.epm-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 100px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: rgba(255, 255, 255, 0.035);
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.42);
+  white-space: nowrap;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.epm-chip:hover {
+  border-color: rgba(81, 226, 255, 0.22);
+  color: rgba(255, 255, 255, 0.65);
+}
+
+/* ─── Social links ───────────────────────────────────────────────────────── */
+
+.epm-socials {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.epm-social-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 2px;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.5);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.045);
+
+  /* No scaling on hover — only translate + color */
+  transition:
+    color     0.18s ease-out,
+    transform 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.epm-social-row:last-child {
+  border-bottom: none;
+}
+
+.epm-social-row:hover {
+  color:     rgba(81, 226, 255, 0.88);
+  transform: translateX(3px);
+}
+
+.epm-social-left {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.epm-social-name {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.015em;
+}
+
+.epm-social-cta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  opacity: 0.65;
+  color: inherit;
+  transition: opacity 0.18s ease-out;
+}
+
+.epm-social-row:hover .epm-social-cta {
+  opacity: 1;
+}
+
+/* ─── Board meta ─────────────────────────────────────────────────────────── */
+
+.epm-meta {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.2);
+}
+
+/* ─── Responsive: tablet (900px) ────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .epm-modal {
+    grid-template-columns: 40% 60%;
+    width: min(94vw, 820px);
+    height: min(900px, calc(100dvh - var(--navbar-h) - 32px));
+    min-height: min(500px, calc(100dvh - var(--navbar-h) - 32px));
+  }
+
+  .epm-content {
+    padding: 28px 32px 28px 28px;
+  }
+
+  .epm-name {
+    font-size: clamp(28px, 4.5vw, 42px);
+  }
+}
+
+/* ─── Responsive: mobile (600px) ────────────────────────────────────────── */
+
+@media (max-width: 600px) {
+  .epm-backdrop {
+    /* Bottom sheet on mobile */
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .epm-modal {
+    /* Vertical stack */
+    grid-template-columns: 1fr;
+    grid-template-rows: 40vh 1fr;
+    width: 100%;
+    /* Fill available height below navbar */
+    height: 100%;
+    max-height: 100%;
+    min-height: 0;
+    border-radius: 22px 22px 0 0;
+    border-bottom: none;
+  }
+
+  .epm-portrait-col {
+    border-radius: 22px 22px 0 0;
+  }
+
+  /* No right-edge gradient on mobile — portrait is full-width */
+  .epm-portrait-grad-right {
+    display: none;
+  }
+
+  .epm-portrait-img {
+    object-position: center 8%;
+  }
+
+  /* Parallax disabled on mobile — no mouse */
+  .epm-portrait-parallax {
+    margin: 0;
+    padding: 0;
+  }
+
+  .epm-portrait-inner {
+    border-radius: 22px 22px 0 0;
+  }
+
+  .epm-content-col {
+    overflow: hidden;
+  }
+
+  .epm-scroll {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .epm-content {
+    justify-content: flex-start;
+    padding: 24px 22px 36px;
+    min-height: auto;
+  }
+
+  .epm-name {
+    font-size: clamp(24px, 7vw, 32px);
+    max-width: none;
+  }
+
+  .epm-quote p {
+    font-size: 14px;
+  }
+
+  .epm-index {
+    font-size: 44px;
+    bottom: 14px;
+    left: 16px;
+  }
+}
+
+/* ─── Reduced motion ─────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .epm-backdrop,
+  .epm-modal,
+  .epm-portrait-inner,
+  .epm-content,
+  .epm-close,
+  .epm-social-row,
+  .epm-chip {
+    transition: none !important;
+    animation: none !important;
+  }
+}

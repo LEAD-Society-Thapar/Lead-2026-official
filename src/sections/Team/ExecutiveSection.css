@@ -1,0 +1,674 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   ExecutiveSection.css
+   Premium hover interaction system — staged, ease-out, no bounce, no infinite
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ─── Section & layout (unchanged) ─────────────────────────────────────── */
+
+.exec-board-section {
+  position: relative;
+  min-height: 275vh;
+  z-index: 4;
+  margin-top: 0;
+}
+
+.exec-sticky-stage {
+  position: relative;
+  top: 0;
+  height: 70vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  padding: 80px clamp(24px, 4vw, 48px) clamp(24px, 4vw, 48px);
+  width: 100%;
+  z-index: 4;
+}
+
+.exec-phase-label {
+  position: absolute;
+  top: 12%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;
+  color: rgba(255, 255, 255, 0.28);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.exec-orb-anchor {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at center,
+    rgba(69, 220, 255, 0.16),
+    transparent 42%
+  );
+  filter: blur(8px);
+}
+
+.exec-formation {
+  position: relative;
+  z-index: 2;
+
+  width: min(1180px, 96vw);
+  height: 88vh;
+
+  display: grid;
+  grid-template-rows: repeat(4, 1fr);
+
+  transform: translateY(140px);
+
+  align-items: stretch;
+  justify-items: center;
+
+  padding: 20px 20px 40px;
+  row-gap: 135px;
+}
+
+/* Dim and subtly blur non-hovered cards */
+.exec-formation:has(.exec-card:hover)
+  .exec-card-tilt-wrapper:not(:has(.exec-card:hover)) {
+  filter: blur(1px);
+  opacity: 0.85;
+}
+
+.exec-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  row-gap: clamp(26px, 3vw, 42px);
+  column-gap: 34px;
+  min-height: 250px;
+  width: 100%;
+  height: 100%;
+}
+
+.exec-row-2 {
+  transform: translateX(3%);
+}
+
+.exec-row-3 {
+  transform: translateX(-3%);
+}
+
+.exec-row-4 {
+  transform: translateY(-8px);
+}
+
+/* ─── Tilt wrapper — carries the 3D perspective transform ─────────────── */
+/* This is a transparent layout wrapper. The motion.button inside it        */
+/* gets all its Framer transforms (y, scale) independently. Having the      */
+/* tilt on a parent div means the two transform chains never collide.        */
+
+.exec-card-tilt-wrapper {
+  /* CSS variable defaults — hook overwrites these on mousemove */
+  --card-rx: 0deg;
+  --card-ry: 0deg;
+  --portrait-tx: 0px;
+  --portrait-ty: 0px;
+  --body-tx: 0px;
+  --body-ty: 0px;
+  --divider-tx: 0px;
+  --socials-tx: 0px;
+  --socials-ty: 0px;
+  --light-x: 50%;
+  --light-y: 50%;
+  --light-opacity: 0;
+  --shadow-y: 0px;
+
+  /* perspective() as a transform function creates per-element 3D context
+     without affecting sibling cards in the same flex row.                  */
+  transform: perspective(1200px) rotateX(var(--card-rx)) rotateY(var(--card-ry));
+
+  /* Pass-through layout: wrapper takes exactly the size of its child       */
+  display: contents-equivalent;
+  display: inline-flex;
+  align-items: stretch;
+  justify-content: stretch;
+
+  /* Smoothly animate sibling dimming on hover */
+  transition:
+    filter 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ─── Card base ─────────────────────────────────────────────────────────── */
+
+.exec-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+
+  aspect-ratio: 0.72;
+  width: min(250px, 22vw);
+  min-width: 160px;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 26px;
+  padding: 0;
+  background: linear-gradient(
+    160deg,
+    rgba(18, 24, 35, 0.9),
+    rgba(7, 10, 16, 0.96)
+  );
+  /* Shadow offset driven by --shadow-y CSS var set by the tilt hook.
+     Mouse near top of card → var is negative → shorter shadow.
+     Mouse near bottom    → var is positive → taller shadow. */
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 calc(20px + var(--shadow-y, 0px)) 48px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  cursor: pointer;
+  text-align: left;
+  color: white;
+
+  /* transform-style: preserve-3d propagates the parent wrapper's 3D
+     context into child layers, enabling the per-layer parallax depth. */
+  transform-style: preserve-3d;
+
+  /* Card-level transitions: lift + border + shadow only.
+     Portrait zoom + social reveal are handled separately below.
+     3D rotation lives on the wrapper and is driven by RAF.             */
+  transition:
+    border-color 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Bottom gradient vignette — always present */
+.exec-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 20%,
+    rgba(2, 5, 10, 0.25) 52%,
+    rgba(2, 5, 10, 0.95) 100%
+  );
+  z-index: 1;
+  /* Slightly deepen gradient on hover for contrast against revealed socials */
+  transition: background 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ─── Hover state: border + shadow — Phase 1 (0–100ms) ─────────────────── */
+
+.exec-card:hover,
+.exec-card.is-active,
+.exec-card.is-hovered {
+  border-color: rgba(81, 226, 255, 0.42);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 28px 56px rgba(0, 0, 0, 0.5),
+    0 0 0 0px rgba(81, 226, 255, 0);
+}
+
+/* Slightly deepen vignette to contrast social row */
+.exec-card:hover::before,
+.exec-card.is-hovered::before {
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 15%,
+    rgba(2, 5, 10, 0.3) 48%,
+    rgba(2, 5, 10, 0.98) 100%
+  );
+}
+
+.exec-card.is-dimmed {
+  opacity: 0.32;
+  filter: blur(2px);
+  transition:
+    opacity 0.3s ease-out,
+    filter 0.3s ease-out;
+}
+
+/* ─── Portrait — Phase 2: slow zoom (100–260ms delay + duration) ─────────── */
+
+.exec-card-portrait {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden; /* contain the zoomed image */
+}
+
+/* Portrait parallax — moves at 60% of card tilt depth */
+.exec-card-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.92) contrast(1.04) brightness(0.85);
+
+  /* portrait zoom: starts after card lift (100ms delay), eases out */
+  transform: scale(1)
+    translate3d(var(--portrait-tx, 0px), var(--portrait-ty, 0px), 0);
+  transform-origin: center 30%; /* zoom into the face region */
+  transition:
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.08s,
+    filter 0.4s ease-out;
+}
+
+.exec-card:hover .exec-card-portrait img,
+.exec-card.is-hovered .exec-card-portrait img {
+  transform: scale(1.04)
+    translate3d(var(--portrait-tx, 0px), var(--portrait-ty, 0px), 0);
+  filter: saturate(0.96) contrast(1.05) brightness(0.88);
+}
+
+/* ─── Card body: info + divider + socials ───────────────────────────────── */
+
+/* Card body parallax — text moves at 25% depth */
+.exec-card-body {
+  position: relative;
+  z-index: 2;
+  padding: 22px 22px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  transform: translate3d(var(--body-tx, 0px), var(--body-ty, 0px), 0);
+}
+
+.exec-card-role {
+  margin: 0;
+  color: rgba(116, 233, 255, 0.86);
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.exec-card-name {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: clamp(16px, 1.6vw, 22px);
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.exec-card-meta {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ─── Divider — Phase 3: width reveal ───────────────────────────────────── */
+
+/* Divider parallax — horizontal only, 40% depth */
+.exec-card-divider {
+  width: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(81, 226, 255, 0.55),
+    rgba(81, 226, 255, 0.08)
+  );
+  margin-top: 10px;
+  margin-bottom: 0;
+  border-radius: 1px;
+  transform: translate3d(var(--divider-tx, 0px), 0px, 0);
+
+  /* Exit transition: fast and immediate */
+  transition: width 0.2s cubic-bezier(0.22, 1, 0.36, 1) 0s;
+}
+
+.exec-card:hover .exec-card-divider,
+.exec-card.is-hovered .exec-card-divider {
+  width: 100%;
+  /* Enter transition: 0.05s delay */
+  transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0.05s;
+}
+
+/* ─── Social links — Phase 4: fluid staggered slide-up ─────────────────── */
+
+/* Socials container parallax — 45% depth */
+.exec-card-socials {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  /* Reserve height so card doesn't jump. The links slide up from below */
+  overflow: hidden;
+  max-height: 0;
+
+  /* Exit transition: fast and immediate */
+  transition: max-height 0.2s cubic-bezier(0.22, 1, 0.36, 1) 0s;
+  transform: translate3d(var(--socials-tx, 0px), var(--socials-ty, 0px), 0);
+}
+
+.exec-card:hover .exec-card-socials,
+.exec-card.is-hovered .exec-card-socials {
+  max-height: 80px;
+  /* Enter transition: opens fluidly, no delay */
+  transition: max-height 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0s;
+}
+
+/* Individual social link */
+.exec-social-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.46);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  font-family: var(--font-body);
+  font-weight: 400;
+  width: fit-content;
+
+  /* Default: below + invisible */
+  opacity: 0;
+  transform: translateY(6px);
+
+  /* Exit transition: fast and immediate */
+  transition:
+    opacity 0.15s ease-out 0s,
+    transform 0.2s cubic-bezier(0.22, 1, 0.36, 1) 0s,
+    color 0.18s ease-out 0s;
+}
+
+/* Hover-in transitions defined specifically for the hover state to remove exit delays */
+.exec-card:hover .exec-social-gh,
+.exec-card.is-hovered .exec-social-gh {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 0.25s ease-out 0.08s,
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0.08s,
+    color 0.18s ease-out 0s;
+}
+
+.exec-card:hover .exec-social-li,
+.exec-card.is-hovered .exec-social-li {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 0.25s ease-out 0.12s,
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0.12s,
+    color 0.18s ease-out 0s;
+}
+
+/* Icon hover — slight rightward nudge + accent color */
+.exec-social-link:hover {
+  color: rgba(81, 226, 255, 0.9);
+  transform: translateX(3px);
+  /* Override parent transition — immediate on hover-within */
+  transition:
+    color 0.18s ease-out,
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.exec-social-icon-svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+  opacity: 0.8;
+  transition: opacity 0.18s ease-out;
+}
+
+.exec-social-link:hover .exec-social-icon-svg {
+  opacity: 1;
+}
+
+.exec-social-label {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* ─── Light highlight overlay ────────────────────────────────────── */
+/* Simulates soft light moving across frosted glass.
+   Max opacity 5%. Very wide gradient. Soft edges.
+   No glow, no shine. Resembles premium material, not gaming UI. */
+
+.exec-card-light {
+  position: absolute;
+  inset: 0;
+  z-index: 3; /* sits above portrait, below text (z-index: 2 on body is intentional) */
+  border-radius: inherit;
+  pointer-events: none;
+
+  /* The radial gradient is 60% radius — very wide and soft.
+     opacity is driven by the CSS var from the hook.            */
+  background: radial-gradient(
+    circle 60% at var(--light-x, 50%) var(--light-y, 50%),
+    rgba(255, 255, 255, 0.22) 0%,
+    rgba(255, 255, 255, 0.06) 45%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  opacity: var(--light-opacity, 0);
+
+  /* Smooth fade-in/out when entering/leaving the card.
+     The position is driven by RAF (no transition needed for x/y). */
+  transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Profile panel styles are in ProfilePanel.css (co-located with the component) */
+
+/* ─── Heading ────────────────────────────────────────────────────────────── */
+
+.exec-main-heading {
+  position: absolute;
+  top: 17.5%;
+  left: 0;
+  width: 100%;
+  text-shadow:
+    0 0 12px rgba(81, 226, 255, 0.12),
+    0 0 42px rgba(81, 226, 255, 0.08);
+  z-index: 6;
+  margin: 0;
+
+  color: rgba(255, 255, 255, 0.95);
+  font-size: clamp(36px, 5vw, 66px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  text-align: center;
+  pointer-events: none;
+}
+
+/* ─── Responsive ────────────────────────────────────────────────────────── */
+
+@media (max-width: 800px) {
+  .exec-sticky-stage {
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 80px 0 32px;
+  }
+
+  .exec-formation {
+    width: min(100%, 560px);
+    gap: 12px;
+  }
+
+  .exec-row {
+    flex-wrap: wrap;
+    gap: 12px;
+    transform: none;
+  }
+
+  .exec-card {
+    width: min(44vw, 220px);
+    min-width: min(44vw, 220px);
+    height: 260px;
+  }
+
+  .exec-card-name {
+    font-size: 14px;
+    line-height: 0.9;
+  }
+
+  .exec-card-role {
+    font-size: 8.4px;
+    letter-spacing: 0.09em;
+  }
+
+  .exec-card-meta {
+    font-size: 8px;
+  }
+}
+
+/* ─── Reduced-motion override ───────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .exec-card,
+  .exec-card-portrait img,
+  .exec-card-divider,
+  .exec-card-socials,
+  .exec-social-link,
+  .profile-close {
+    transition: none !important;
+  }
+
+  /* Disable 3D tilt and light — the hook checks REDUCED_MOTION before
+     attaching any listeners, so these CSS resets are belt+suspenders. */
+  .exec-card-tilt-wrapper {
+    transform: none !important;
+  }
+  .exec-card-portrait img,
+  .exec-card-body,
+  .exec-card-divider,
+  .exec-card-socials {
+    transform: none !important;
+  }
+  .exec-card-light {
+    display: none !important;
+  }
+
+  /* Still reveal socials for accessibility */
+  .exec-card:hover .exec-card-divider,
+  .exec-card:hover .exec-card-socials,
+  .exec-card:hover .exec-social-link {
+    width: 100%;
+    max-height: 80px;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ─── Responsive layout overrides ──────────────────────────────────────── */
+/* Desktop rules above remain the source of truth at 1200px and wider. */
+
+@media (max-width: 1199px) and (min-width: 901px) {
+  .exec-formation {
+    width: min(100%, 1060px);
+  }
+
+  .exec-row {
+    column-gap: clamp(16px, 2vw, 28px);
+  }
+
+  .exec-card {
+    width: min(220px, 20vw);
+    min-width: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .exec-board-section {
+    min-height: auto;
+    padding-block: clamp(72px, 12vw, 112px);
+  }
+
+  .exec-sticky-stage {
+    height: auto;
+    min-height: 100vh;
+    flex-direction: column;
+    align-items: center;
+    padding: clamp(56px, 10vw, 80px) clamp(16px, 4vw, 32px);
+  }
+
+  .exec-phase-label,
+  .exec-main-heading {
+    position: static;
+    transform: none;
+  }
+
+  .exec-phase-label {
+    margin: 0 0 14px;
+  }
+
+  .exec-main-heading {
+    width: auto;
+    margin: 0 0 clamp(32px, 7vw, 56px);
+    font-size: clamp(34px, 8vw, 56px);
+  }
+
+  .exec-formation {
+    width: 100%;
+    max-width: 680px;
+    height: auto;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(6, auto);
+    gap: clamp(18px, 3.5vw, 32px);
+    padding: 0;
+    transform: none;
+  }
+
+  /* Rows become transparent to the grid so all 12 cards form six 2-card rows. */
+  .exec-row {
+    display: contents;
+  }
+
+  .exec-card-tilt-wrapper {
+    display: flex;
+    width: 100%;
+  }
+
+  .exec-card {
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    aspect-ratio: 0.72;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .exec-formation:has(.exec-card:hover)
+    .exec-card-tilt-wrapper:not(:has(.exec-card:hover)) {
+    filter: none;
+    opacity: 1;
+  }
+
+  .exec-card-tilt-wrapper {
+    transform: none;
+  }
+
+  /*
+    Bug fix — socials sometimes visible on a card while scrolling on touch
+    devices.
+
+    Root cause: touch browsers apply the native CSS :hover pseudo-class on
+    tap/touchstart and don't reliably clear it until a tap elsewhere — a
+    well-documented "sticky hover" quirk, most visible when a scroll gesture
+    begins with a touch down on a card (commonly the last card under the
+    finger, e.g. the right card in a row). This is NOT React/Framer state:
+    Framer Motion's hover gesture (motion-dom's hover()) already explicitly
+    ignores pointerType "touch" for onHoverStart/onHoverEnd, so `.is-hovered`
+    never gets set on touch — only the bare `:hover` selectors below were
+    unguarded for this device class, the same class of issue the sibling-dim
+    rule above was already patched for.
+
+    Fix: on devices that have no true hover capability, force the
+    :hover-driven reveal states back to their resting (hidden) values so a
+    stuck native :hover can never make the social links visible.
+  */
+  .exec-card:hover .exec-card-socials,
+  .exec-card.is-hovered .exec-card-socials {
+    max-height: 0;
+  }
+
+  .exec-card:hover .exec-social-gh,
+  .exec-card:hover .exec-social-li,
+  .exec-card.is-hovered .exec-social-gh,
+  .exec-card.is-hovered .exec-social-li {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
