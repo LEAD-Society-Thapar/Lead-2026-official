@@ -72,7 +72,8 @@
 }
 
 /* Dim and subtly blur non-hovered cards */
-.exec-formation:has(.exec-card:hover) .exec-card-tilt-wrapper:not(:has(.exec-card:hover)) {
+.exec-formation:has(.exec-card:hover)
+  .exec-card-tilt-wrapper:not(:has(.exec-card:hover)) {
   filter: blur(1px);
   opacity: 0.85;
 }
@@ -109,28 +110,32 @@
   /* CSS variable defaults — hook overwrites these on mousemove */
   --card-rx: 0deg;
   --card-ry: 0deg;
-  --portrait-tx: 0px; --portrait-ty: 0px;
-  --body-tx: 0px;     --body-ty: 0px;
+  --portrait-tx: 0px;
+  --portrait-ty: 0px;
+  --body-tx: 0px;
+  --body-ty: 0px;
   --divider-tx: 0px;
-  --socials-tx: 0px;  --socials-ty: 0px;
-  --light-x: 50%;     --light-y: 50%; --light-opacity: 0;
+  --socials-tx: 0px;
+  --socials-ty: 0px;
+  --light-x: 50%;
+  --light-y: 50%;
+  --light-opacity: 0;
   --shadow-y: 0px;
 
   /* perspective() as a transform function creates per-element 3D context
      without affecting sibling cards in the same flex row.                  */
-  transform:
-    perspective(1200px)
-    rotateX(var(--card-rx))
-    rotateY(var(--card-ry));
+  transform: perspective(1200px) rotateX(var(--card-rx)) rotateY(var(--card-ry));
 
   /* Pass-through layout: wrapper takes exactly the size of its child       */
-  display: contents-equivalent: inline-flex;
+  display: contents-equivalent;
   display: inline-flex;
   align-items: stretch;
   justify-content: stretch;
 
   /* Smoothly animate sibling dimming on hover */
-  transition: filter 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  transition:
+    filter 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* ─── Card base ─────────────────────────────────────────────────────────── */
@@ -173,7 +178,7 @@
      3D rotation lives on the wrapper and is driven by RAF.             */
   transition:
     border-color 0.32s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow   0.38s cubic-bezier(0.22, 1, 0.36, 1);
+    box-shadow 0.38s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Bottom gradient vignette — always present */
@@ -240,19 +245,17 @@
   filter: saturate(0.92) contrast(1.04) brightness(0.85);
 
   /* portrait zoom: starts after card lift (100ms delay), eases out */
-  transform:
-    scale(1)
+  transform: scale(1)
     translate3d(var(--portrait-tx, 0px), var(--portrait-ty, 0px), 0);
   transform-origin: center 30%; /* zoom into the face region */
   transition:
     transform 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.08s,
-    filter     0.4s ease-out;
+    filter 0.4s ease-out;
 }
 
 .exec-card:hover .exec-card-portrait img,
 .exec-card.is-hovered .exec-card-portrait img {
-  transform:
-    scale(1.04)
+  transform: scale(1.04)
     translate3d(var(--portrait-tx, 0px), var(--portrait-ty, 0px), 0);
   filter: saturate(0.96) contrast(1.05) brightness(0.88);
 }
@@ -332,7 +335,7 @@
   /* Reserve height so card doesn't jump. The links slide up from below */
   overflow: hidden;
   max-height: 0;
-  
+
   /* Exit transition: fast and immediate */
   transition: max-height 0.2s cubic-bezier(0.22, 1, 0.36, 1) 0s;
   transform: translate3d(var(--socials-tx, 0px), var(--socials-ty, 0px), 0);
@@ -437,7 +440,7 @@
     circle 60% at var(--light-x, 50%) var(--light-y, 50%),
     rgba(255, 255, 255, 0.22) 0%,
     rgba(255, 255, 255, 0.06) 45%,
-    rgba(255, 255, 255, 0)    100%
+    rgba(255, 255, 255, 0) 100%
   );
   opacity: var(--light-opacity, 0);
 
@@ -495,18 +498,18 @@
     height: 260px;
   }
 
-  /* On touch devices the social row is always visible (no hover) */
-  .exec-card-divider {
-    width: 100%;
+  .exec-card-name {
+    font-size: 14px;
+    line-height: 0.9;
   }
 
-  .exec-card-socials {
-    max-height: 80px;
+  .exec-card-role {
+    font-size: 8.4px;
+    letter-spacing: 0.09em;
   }
 
-  .exec-social-link {
-    opacity: 1;
-    transform: none;
+  .exec-card-meta {
+    font-size: 8px;
   }
 }
 
@@ -545,5 +548,127 @@
     max-height: 80px;
     opacity: 1;
     transform: none;
+  }
+}
+
+/* ─── Responsive layout overrides ──────────────────────────────────────── */
+/* Desktop rules above remain the source of truth at 1200px and wider. */
+
+@media (max-width: 1199px) and (min-width: 901px) {
+  .exec-formation {
+    width: min(100%, 1060px);
+  }
+
+  .exec-row {
+    column-gap: clamp(16px, 2vw, 28px);
+  }
+
+  .exec-card {
+    width: min(220px, 20vw);
+    min-width: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .exec-board-section {
+    min-height: auto;
+    padding-block: clamp(72px, 12vw, 112px);
+  }
+
+  .exec-sticky-stage {
+    height: auto;
+    min-height: 100vh;
+    flex-direction: column;
+    align-items: center;
+    padding: clamp(56px, 10vw, 80px) clamp(16px, 4vw, 32px);
+  }
+
+  .exec-phase-label,
+  .exec-main-heading {
+    position: static;
+    transform: none;
+  }
+
+  .exec-phase-label {
+    margin: 0 0 14px;
+  }
+
+  .exec-main-heading {
+    width: auto;
+    margin: 0 0 clamp(32px, 7vw, 56px);
+    font-size: clamp(34px, 8vw, 56px);
+  }
+
+  .exec-formation {
+    width: 100%;
+    max-width: 680px;
+    height: auto;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(6, auto);
+    gap: clamp(18px, 3.5vw, 32px);
+    padding: 0;
+    transform: none;
+  }
+
+  /* Rows become transparent to the grid so all 12 cards form six 2-card rows. */
+  .exec-row {
+    display: contents;
+  }
+
+  .exec-card-tilt-wrapper {
+    display: flex;
+    width: 100%;
+  }
+
+  .exec-card {
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    aspect-ratio: 0.72;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .exec-formation:has(.exec-card:hover)
+    .exec-card-tilt-wrapper:not(:has(.exec-card:hover)) {
+    filter: none;
+    opacity: 1;
+  }
+
+  .exec-card-tilt-wrapper {
+    transform: none;
+  }
+
+  /*
+    Bug fix — socials sometimes visible on a card while scrolling on touch
+    devices.
+
+    Root cause: touch browsers apply the native CSS :hover pseudo-class on
+    tap/touchstart and don't reliably clear it until a tap elsewhere — a
+    well-documented "sticky hover" quirk, most visible when a scroll gesture
+    begins with a touch down on a card (commonly the last card under the
+    finger, e.g. the right card in a row). This is NOT React/Framer state:
+    Framer Motion's hover gesture (motion-dom's hover()) already explicitly
+    ignores pointerType "touch" for onHoverStart/onHoverEnd, so `.is-hovered`
+    never gets set on touch — only the bare `:hover` selectors below were
+    unguarded for this device class, the same class of issue the sibling-dim
+    rule above was already patched for.
+
+    Fix: on devices that have no true hover capability, force the
+    :hover-driven reveal states back to their resting (hidden) values so a
+    stuck native :hover can never make the social links visible.
+  */
+  .exec-card:hover .exec-card-socials,
+  .exec-card.is-hovered .exec-card-socials {
+    max-height: 0;
+  }
+
+  .exec-card:hover .exec-social-gh,
+  .exec-card:hover .exec-social-li,
+  .exec-card.is-hovered .exec-social-gh,
+  .exec-card.is-hovered .exec-social-li {
+    opacity: 0;
+    transform: translateY(6px);
   }
 }

@@ -24,7 +24,7 @@
 import { useEffect, useRef } from "react";
 import "./TeamHero.css";
 
-function Hero() {
+function TeamHero() {
   const heroRef      = useRef(null);
   const heroTextRef  = useRef(null);
   const layerRefs    = useRef([]);
@@ -138,4 +138,4 @@ function Hero() {
   );
 }
 
-export default Hero;
+export default TeamHero;
