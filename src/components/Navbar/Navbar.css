@@ -1,0 +1,168 @@
+/* ==========================================================================
+   1. LAYOUT & CONTAINER 
+   ========================================================================== */
+
+.navbar-container {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   2. MAIN FLOATING CAPSULE (High Contrast 3D Outer Track)
+   ========================================================================== */
+.floating-navbar {
+  display: flex;
+  align-items: center;
+  background-color: #0d0d0e; /* Matte midnight charcoal */
+  padding: 8px 14px;
+  border-radius: 28px;
+  
+  /* Semi-translucent glass rim ensures visibility against pitch black */
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  
+  /* Heavy multi-layered 3D drop shadows to physically lift the bar */
+  box-shadow: 
+    0px 24px 48px rgba(0, 0, 0, 0.85),
+    0px 8px 20px rgba(0, 0, 0, 0.6),
+    inset 0px 1px 2px rgba(255, 255, 255, 0.05);
+}
+
+/* Navigation Sections Layout */
+.nav-logo-section {
+  display: flex;
+  align-items: center;
+  padding-right: 4px;
+}
+
+.nav-links-section {
+  display: flex;
+  align-items: center;
+}
+
+/* ==========================================================================
+   3. BASE INTERACTION STATES (INACTIVE)
+   ========================================================================== */
+
+/* Logo Link Base Styling */
+/* Find and replace your existing .nav-logo-link with this */
+.nav-logo-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 22px;
+  border-radius: 20px;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+  
+  /* CRITICAL FIXED BUTTON RESETS */
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.nav-logo {
+  height: 18px; 
+  object-fit: contain;
+  display: block;
+  filter: brightness(0.65);
+  transition: all 0.3s ease;
+}
+
+/* Standard Nav Link Item Base Styling */
+.nav-item {
+  background: none;
+  border: none;
+  color: #88888a; /* Legible matte gray */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 12px 22px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1.5px solid transparent;
+  border-radius: 20px;
+  outline: none;
+}
+
+/* Clean Hover State */
+.nav-item:hover {
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   4. SEPARATORS & VISUAL DIVIDERS
+   ========================================================================== */
+
+/* Thin vertical hairline dividers between inactive options */
+.nav-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: -1px;
+  top: 30%;
+  height: 40%;
+  width: 1px;
+  background-color: rgba(255, 255, 255, 0.12);
+  transition: opacity 0.3s ease;
+}
+
+/* Hides dividers next to active or highlighted elements */
+.nav-item.active::after,
+.nav-item:has(+ .active)::after,
+.active-logo::after {
+  opacity: 0;
+}
+
+/* ==========================================================================
+   5. SKEUOMORPHIC MULTI-BORDER 3D ACTIVE STATE (WITH CYAN FLARE)
+   ========================================================================== */
+.nav-item.active, 
+.active-logo {
+  color: #ffffff;
+  
+  /* Liquid metallic obsidian base gradient */
+  background: linear-gradient(180deg, #232326 0%, #161619 100%);
+  
+  /* THE LAYERED MULTI-BORDER
+     Utilizes dual background layers to mimic that exact chiseled metal ring 
+     while embedding the cyan iridescent specular prism hit on the right edge */
+  border: 1.5px solid transparent;
+  background-image: linear-gradient(#232326, #161619), 
+                    linear-gradient(145deg, #65656a 0%, #3e3e42 40%, #2c2c2e 65%, #00f2fe 80%, #4facfe 92%, #ffffff 100%);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  
+  /* MULTI-SHADOW SYSTEM
+     - Top bright edge inner stroke for a 3D reflection highlight
+     - Bottom deep dark inset shadow for tactile curved bevel roundness
+     - Soft drop shadow to lift the active pill cleanly out of the track channel
+     - Micro ambient cyan under-glow for premium contrast */
+  box-shadow: 
+    inset 0px 1px 1px rgba(255, 255, 255, 0.2),
+    inset 0px -2px 4px rgba(0, 0, 0, 0.4),
+    0px 8px 16px rgba(0, 0, 0, 0.6),
+    0px 2px 4px rgba(0, 0, 0, 0.4),
+    0px 0px 14px rgba(0, 242, 254, 0.2); 
+  
+  /* Micro movement into the tracked slot */
+  transform: translateY(0.5px);
+}
+
+/* High crispness on text shadows */
+.nav-item.active {
+  text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.8), 0px 0px 8px rgba(0, 242, 254, 0.2);
+}
+
+.active-logo .nav-logo {
+  filter: brightness(1.2) drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.5)) drop-shadow(0px 0px 4px rgba(0, 242, 254, 0.4));
+}
