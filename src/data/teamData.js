@@ -115,7 +115,7 @@ export const executives = [
   {
     id: 12,
     firstName: "Shreya",
-    name: "Shreya Singla",
+    name: "Shreya",
     role: "Creativity Head",
     portrait: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=600&q=80",
     statement: "Constraints are the mother of creativity. I thrive in the space between impossible and done.",
