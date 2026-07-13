@@ -11,6 +11,8 @@ import codingBlocksLogo from '../assets/sponsors/online-coding-blocks.png';
 import proUltimateLogo from '../assets/sponsors/pro-ultimate-gyms.png';
 import refectionsLogo from '../assets/sponsors/refections.png';
 import tezosLogo from '../assets/sponsors/tezos.png';
+import passionLogo from '../assets/sponsors/passion-invesco.png'
+import mojaveLogo from '../assets/sponsors/mojave.png'
 
 // Export sponsors data
 export const SPONSORS_DATA = [
@@ -120,4 +122,22 @@ export const SPONSORS_DATA = [
     url: 'https://tezos.com/',
     contact: 'mailto:communications@tezos.foundation'
   },
+  { 
+    id: '13', 
+    name: 'Passion Invesco', 
+    logo: passionLogo,
+    description: 'A dynamic investment and advisory firm dedicated to strategic wealth management, offering comprehensive financial solutions and planning to help clients achieve their long-term goals.',
+    url: 'https://passioninvesco.com/',
+    contact: 'https://passioninvesco.com/contact-us'
+  },
+  { 
+    id: '14', 
+    name: 'Mojave', 
+    logo: mojaveLogo,
+    description: 'An artisanal kitchen and bar offering a cozy, eclectic dining atmosphere. It features a highly curated menu of globally-inspired flavors and expertly crafted cocktails.',
+    url: 'https://www.instagram.com/mojave.india/?hl=en',
+    urlText: 'VISIT INSTAGRAM',
+    contact: 'https://www.google.com/maps/place/MOJAVE+-+Artisanal+Kitchen+%26+Bar/@30.346781,76.3765045,17z/data=!3m1!4b1!4m6!3m5!1s0x391029555092c5ab:0xc233269f3ba91e96!8m2!3d30.346781!4d76.3765045!16s%2Fg%2F11txm1wjlj?hl=en-GB&entry=ttu&g_ep=EgoyMDI2MDcwOC4wIKXMDSoASAFQAw%3D%3D',
+    contactText: 'VIEW LOCATION'
+  }
 ];
