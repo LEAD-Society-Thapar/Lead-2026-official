@@ -207,10 +207,10 @@ export default function ExecutiveSection({ execSignalRef }) {
   );
 
   const rowGroups = [
-    executives.slice(0, 4),
-    executives.slice(4, 7),
-    executives.slice(7, 10),
-    executives.slice(10, 12),
+    executives.slice(0, 3),
+    executives.slice(3, 6),
+    executives.slice(6, 9),
+    executives.slice(9, 12),
   ];
 
   const [visibleRows, setVisibleRows] = useState([false, false, false, false]);
