@@ -18,6 +18,13 @@ const REDUCED_MOTION =
   typeof window !== "undefined" &&
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+function linkedInHref(value) {
+  if (!value) return "#";
+  return value.startsWith("http")
+    ? value
+    : `https://www.linkedin.com/in/${value}`;
+}
+
 /* ─── Minimalist SVG icons ─────────────────────────────────────────────── */
 const GitHubIcon = () => (
   <svg
@@ -170,7 +177,7 @@ const ExecCard = memo(function ExecCard({
             )}
             {exec.linkedin && (
               <a
-                href={`https://linkedin.com/in/${exec.linkedin}`}
+                href={linkedInHref(exec.linkedin)}
                 className="exec-social-link exec-social-li"
                 target="_blank"
                 rel="noopener noreferrer"

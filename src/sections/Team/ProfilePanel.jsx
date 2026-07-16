@@ -39,6 +39,13 @@ import {
 } from "framer-motion";
 import "./ProfilePanel.css";
 
+function linkedInHref(value) {
+  if (!value) return "#";
+  return value.startsWith("http")
+    ? value
+    : `https://www.linkedin.com/in/${value}`;
+}
+
 /* ─── SVG Icons ──────────────────────────────────────────────────────────── */
 
 const GitHubIcon = () => (
@@ -496,7 +503,7 @@ export default function ProfilePanel({ exec, onClose }) {
                 )}
                 {exec.linkedin && (
                   <a
-                    href={`https://linkedin.com/in/${exec.linkedin}`}
+                    href={linkedInHref(exec.linkedin)}
                     className="epm-social-row"
                     target="_blank"
                     rel="noopener noreferrer"
