@@ -18,6 +18,13 @@ const REDUCED_MOTION =
   typeof window !== "undefined" &&
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+function linkedInHref(value) {
+  if (!value) return "#";
+  return value.startsWith("http")
+    ? value
+    : `https://www.linkedin.com/in/${value}`;
+}
+
 /* ─── Minimalist SVG icons ─────────────────────────────────────────────── */
 const GitHubIcon = () => (
   <svg
@@ -170,7 +177,7 @@ const ExecCard = memo(function ExecCard({
             )}
             {exec.linkedin && (
               <a
-                href={`https://linkedin.com/in/${exec.linkedin}`}
+                href={linkedInHref(exec.linkedin)}
                 className="exec-social-link exec-social-li"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -207,10 +214,10 @@ export default function ExecutiveSection({ execSignalRef }) {
   );
 
   const rowGroups = [
-    executives.slice(0, 4),
-    executives.slice(4, 7),
-    executives.slice(7, 10),
-    executives.slice(10, 12),
+    executives.slice(0, 3),
+    executives.slice(3, 6),
+    executives.slice(6, 9),
+    executives.slice(9, 12),
   ];
 
   const [visibleRows, setVisibleRows] = useState([false, false, false, false]);

@@ -99,8 +99,8 @@ export const executives = [
     role: "Event Head",
     portrait: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&q=80",
     statement: "Events are time-boxed magic. I engineer the conditions for moments people never forget.",
-    github: "saanvi-aggarwal",
-    linkedin: "saanvi-aggarwal",
+    github: null,
+    linkedin: "https://www.linkedin.com/in/saanvi-aggarwal-94306b2bb?utm_source=share_via&utm_content=profile&utm_medium=member_android",
   },
   {
     id: 11,
