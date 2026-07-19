@@ -1,7 +1,8 @@
-import { useRef } from 'react';
+import React, { useRef } from 'react';
 import { Mail } from 'lucide-react';
 import { FaInstagram, FaLinkedinIn, FaGithub } from 'react-icons/fa6';
 import useMouseParallax from '../hooks/useMouseParallax';
+import './LeftPanel.css';
 
 function InfoCard({ icon: Icon, title, lines, delayClass }) {
   const cardRef = useRef(null);
@@ -20,6 +21,7 @@ function InfoCard({ icon: Icon, title, lines, delayClass }) {
       className={`info-card ${delayClass} ${isHovered ? 'hovered' : ''}`}
       style={style}
     >
+      <div className="card-glow-bg"></div>
       <div className="card-reflection" />
       <div className="card-icon-container">
         <Icon className="card-icon" />
@@ -27,12 +29,9 @@ function InfoCard({ icon: Icon, title, lines, delayClass }) {
       <div className="card-content">
         {title === "Email Us" ? (
           <>
-            <a
-              href={`mailto:${lines[0]}`}
-              className="card-text email-link"
-            >
+            <span className="card-text email-link">
               {lines[0]}
-            </a>
+            </span>
             <p className="card-text">
               {lines[1]}
             </p>

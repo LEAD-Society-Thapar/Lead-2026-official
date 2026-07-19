@@ -1,6 +1,7 @@
-import { useRef } from 'react';
+import React, { useRef } from 'react';
 import { Users, Lightbulb } from 'lucide-react';
 import useMouseParallax from '../hooks/useMouseParallax';
+import './FeatureCards.css';
 
 function FeatureCard({ icon: Icon, title, description, delayClass }) {
   const cardRef = useRef(null);
