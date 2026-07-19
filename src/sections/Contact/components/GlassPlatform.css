@@ -1,0 +1,114 @@
+.platform-viewport {
+  position: relative;
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  perspective: 4000px;
+  z-index: 5;
+}
+
+/* Glass Platform Container */
+.glass-platform {
+  position: relative;
+  width: 100%;
+  height: auto;
+  min-height: 650px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  padding: 24px 30px;
+
+  /* 3D Rotations */
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Smooth levitating float animation integrated with mouse tilt */
+  animation: levitate 8s infinite ease-in-out;
+}
+
+.glass-platform.hovered {
+  /* Reduce transit latency on hover */
+  transition: transform 0.1s ease-out;
+}
+
+/* Levitating keyframes */
+@keyframes levitate {
+  0%, 100% {
+    transform: rotateX(var(--rot-x)) rotateY(var(--rot-y)) translateY(0px);
+  }
+  50% {
+    transform: rotateX(var(--rot-x)) rotateY(var(--rot-y)) translateY(-8px);
+  }
+}
+
+/* Content wrapper */
+.platform-content {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr) 260px;
+  column-gap: 32px;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  justify-items: stretch;
+  transform: translateZ(20px); /* Extrusion depth */
+}
+
+.platform-content > * {
+  height: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.platform-content > :nth-child(2) {
+  margin-left: 10px;
+}
+
+.platform-content > :nth-child(3) {
+  width: 260px;
+}
+
+/* Soft shadows and ambient glow underneath the platform */
+.platform-shadow-glow {
+  position: absolute;
+  bottom: -15px;
+  left: 5%;
+  width: 90%;
+  height: 50px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(123, 44, 191, 0.28) 0%, rgba(123, 44, 191, 0) 70%);
+  filter: blur(20px);
+  z-index: -1;
+  pointer-events: none;
+  transform: rotateX(var(--rot-x)) rotateY(var(--rot-y));
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: shadow-pulse 8s infinite ease-in-out;
+  display: none;
+}
+
+@keyframes shadow-pulse {
+  0%, 100% {
+    transform: rotateX(var(--rot-x)) rotateY(var(--rot-y)) scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: rotateX(var(--rot-x)) rotateY(var(--rot-y)) scale(0.92);
+    opacity: 1;
+    filter: blur(25px);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .platform-content {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .glass-platform {
+    padding: 30px 20px;
+  }
+}

@@ -1,0 +1,163 @@
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  width: 260px;
+  margin-top: 0;
+}
+
+.feature-cards-stack {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 14px;
+  perspective: 1000px;
+}
+
+/* 3D Feature Card */
+.feature-card {
+  position: relative;
+  background: rgba(3, 3, 3, 0.82);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-radius: 18px;
+  padding: 14px 16px;
+  cursor: pointer;
+  overflow: hidden;
+  width: 100%;
+
+  /* 1px Border */
+  border: 1px solid rgba(91, 192, 217, 0.35);
+
+  /* Shadows for depth */
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    inset 0 0 18px rgba(91, 192, 217, 0.05),
+    0 14px 40px rgba(0, 0, 0, 0.75),
+    0 0 12px rgba(91, 192, 217, 0.12);
+
+  /* 3D Transform */
+  transform-style: preserve-3d;
+  transform: rotateX(var(--fcard-rot-x, 0deg)) rotateY(var(--fcard-rot-y, 0deg));
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s ease;
+  /* No float animation — cards are static; only the GlassPlatform levitates */
+}
+
+.feature-card.hovered {
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.15),
+    0 10px 22px rgba(0, 0, 0, 0.4),
+    0 0 30px rgba(91, 192, 217, 0.65);
+  transform: rotateX(var(--fcard-rot-x, 0deg)) rotateY(var(--fcard-rot-y, 0deg)) translateZ(6px) translateY(-1px);
+  transition: transform 0.1s ease-out;
+  border-color: rgba(141, 227, 245, 0.9);
+}
+
+/* Light reflection tracking */
+.fcard-reflection {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 18px;
+  background: radial-gradient(
+    circle at var(--fcard-reflect-x, 50%) var(--fcard-reflect-y, 50%),
+    rgba(91, 192, 217, 0.10),
+    transparent 50%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 3D Glowing Icon Container */
+.fcard-icon-container {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(91, 192, 217, 0.20), rgba(91, 192, 217, 0.05));
+  border: 1px solid rgba(91, 192, 217, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  box-shadow:
+    0 0 20px rgba(91, 192, 217, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transform: translateZ(10px);
+  z-index: 2;
+}
+
+.fcard-icon {
+  width: 22px;
+  height: 22px;
+  color: var(--accent-lavender);
+  filter: drop-shadow(0 0 8px rgba(91, 192, 217, 0.65));
+}
+
+/* Title and Description */
+.fcard-title {
+  font-family: var(--font-title);
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  transform: translateZ(8px);
+  z-index: 2;
+}
+
+.fcard-desc {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
+  transform: translateZ(5px);
+  z-index: 2;
+}
+
+/* Interactive under-glow spot */
+.fcard-glow-bg {
+  position: absolute;
+  bottom: -40px;
+  right: -40px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(91, 192, 217, 0.22) 0%, transparent 70%);
+  filter: blur(10px);
+  z-index: 0;
+  transition: var(--transition-smooth);
+}
+
+.feature-card:hover .fcard-glow-bg {
+  transform: scale(1.6);
+  background: radial-gradient(circle, rgba(91, 192, 217, 0.38) 0%, transparent 70%);
+}
+
+@media (max-width: 1024px) {
+  .right-panel {
+    width: 100%;
+  }
+
+  .feature-cards-stack {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .feature-card {
+    flex: 1;
+    min-width: 240px;
+    opacity: 0.75;
+  }
+
+  .feature-card.hovered {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 600px) {
+  .feature-cards-stack {
+    flex-direction: column;
+  }
+}

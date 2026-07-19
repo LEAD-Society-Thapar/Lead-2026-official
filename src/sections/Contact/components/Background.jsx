@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
+import './Background.css';
 
 export default function Background() {
   const canvasRef = useRef(null);
@@ -14,7 +15,7 @@ export default function Background() {
 
     const particles = [];
     const particleCount = 75; // Subtle and elegant, not crowded
-    const dustCount = 15; // Larger blurry cosmic dust
+    const dustCount = 20; // Larger blurry cosmic dust
 
     class Particle {
       constructor(isDust = false) {
@@ -61,15 +62,15 @@ export default function Background() {
             this.x, this.y, 0,
             this.x, this.y, this.size
           );
-          gradient.addColorStop(0, `rgba(157, 78, 221, ${this.opacity * 0.04})`);
-          gradient.addColorStop(0.5, `rgba(123, 44, 191, ${this.opacity * 0.01})`);
+          gradient.addColorStop(0, `rgba(28, 95, 115, ${this.opacity * 0.08})`);
+          gradient.addColorStop(0.5, `rgba(40, 125, 150, ${this.opacity * 0.03})`);
           gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
           ctx.fillStyle = gradient;
           ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
           ctx.fill();
         } else {
           // Sharp stars
-          ctx.fillStyle = `rgba(224, 170, 255, ${this.opacity})`;
+          ctx.fillStyle = `rgba(130, 220, 255, ${this.opacity})`;
           ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
           ctx.fill();
         }
@@ -85,7 +86,7 @@ export default function Background() {
     }
 
     const animate = () => {
-      ctx.fillStyle = 'rgba(5, 3, 13, 0.2)'; // trail effect for depth
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.2)'; // trail effect for depth
       ctx.fillRect(0, 0, width, height);
 
       particles.forEach((p) => {
@@ -138,13 +139,13 @@ export default function Background() {
         >
           <defs>
             <linearGradient id="wave-grad-1" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="rgba(123, 44, 191, 0.08)" />
-              <stop offset="50%" stopColor="rgba(157, 78, 221, 0.03)" />
+              <stop offset="0%" stopColor="rgba(28, 95, 115, 0.10)" />
+              <stop offset="50%" stopColor="rgba(28, 95, 115, 0.04)" />
               <stop offset="100%" stopColor="rgba(0, 0, 0, 0)" />
             </linearGradient>
             <linearGradient id="wave-grad-2" x1="0%" y1="100%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="rgba(224, 170, 255, 0.06)" />
-              <stop offset="100%" stopColor="rgba(123, 44, 191, 0)" />
+              <stop offset="0%" stopColor="rgba(130, 220, 255, 0.06)" />
+              <stop offset="100%" stopColor="rgba(28, 95, 115, 0)" />
             </linearGradient>
           </defs>
           

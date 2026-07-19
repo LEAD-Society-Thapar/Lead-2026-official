@@ -1,7 +1,8 @@
-import { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import emailjs from '@emailjs/browser';
 import { ArrowRight, CheckCircle } from 'lucide-react';
 import useMouseParallax from '../hooks/useMouseParallax';
+import './ContactForm.css';
 
 // Reusable 3D Glass Input Field
 function GlassInputField({ label, type = 'text', name, value, onChange, placeholder, required }) {

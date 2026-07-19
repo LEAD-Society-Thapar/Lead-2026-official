@@ -1,5 +1,6 @@
-import { useRef } from 'react';
+import React, { useRef } from 'react';
 import useMouseParallax from '../hooks/useMouseParallax';
+import './GlassPlatform.css';
 
 export default function GlassPlatform({ children }) {
   const platformRef = useRef(null);
