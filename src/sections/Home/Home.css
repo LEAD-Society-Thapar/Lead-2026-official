@@ -1,0 +1,113 @@
+.hero {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 60px 0 30px;
+    background: #0d0d0d;
+    overflow: hidden;
+    position: relative;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.hero-top {
+    z-index: 2;
+    margin-top: 20px;
+    padding: 0 20px;
+}
+
+/* Expanded container to use 100% viewport width */
+.hero-middle {
+    width: 100vw;
+    height: 70vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+.hero-bottom {
+    z-index: 2;
+    margin-bottom: 100px;  /* more space between subtitle and About on desktop */
+    padding: 0 20px;
+}
+
+/* ---------------- TAGLINE ---------------- */
+.hero-tagline {
+    font-size: clamp(40px, 8vw, 100px);
+    font-weight: 600;
+    letter-spacing: clamp(3px, 1vw, 8px);
+    color: white;
+    text-transform: uppercase;
+    user-select: none;
+}
+
+/* ---------------- SUBTITLE ---------------- */
+.hero-subtitle {
+    font-size: clamp(18px, 3vw, 40px);
+    font-weight: 300;
+    color: #a5a5a5;
+    line-height: 1.5;
+    max-width: 700px;
+    margin: 0 auto;
+    transform: translateY(-30px);
+}
+
+/* ---------------- TABLET (768px) ---------------- */
+@media (max-width: 768px) {
+    .hero {
+        padding: 55px 0 30px;
+        min-height: 100svh;
+    }
+
+    .hero-middle {
+        height: 60vh;
+    }
+
+    .hero-bottom {
+        margin-bottom: 60px; /* more space before About on tablet */
+    }
+}
+
+/* ---------------- PHONE (480px — includes iPhone XR 414px) ---------------- */
+@media (max-width: 480px) {
+    .hero {
+        justify-content: flex-start;
+        padding-top: 66px;  /* clears taller navbar + breathing room */
+        padding-bottom: 0;
+        min-height: auto;
+        height: auto;
+    }
+
+    .hero-middle {
+        /* Precise height to prevent blank space above and below the logo */
+        height: 240px;
+        flex-shrink: 0;
+    }
+
+    .hero-bottom {
+        margin-bottom: 0;
+        margin-top: 8px;
+    }
+
+    .hero-subtitle {
+        font-size: clamp(14px, 4.5vw, 20px);
+        transform: none;
+        max-width: 90vw;
+    }
+}
+
+/* ---------------- SMALL PHONE (360px) ---------------- */
+@media (max-width: 360px) {
+    .hero-middle {
+        height: 200px; /* Even tighter for small displays */
+    }
+
+    .hero-subtitle {
+        font-size: 13px;
+    }
+}
