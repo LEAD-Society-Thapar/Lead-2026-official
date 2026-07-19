@@ -1,69 +1,67 @@
 /* ==========================================================================
-   1. LAYOUT & CONTAINER 
+   1. NAVBAR CONTAINER (fixed top bar)
    ========================================================================== */
 
 .navbar-container {
   position: fixed;
-  top: 24px;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 16px;
+  left: 0;
+  width: 100%;
   z-index: 1000;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
   padding: 0 20px;
   box-sizing: border-box;
 }
 
 /* ==========================================================================
-   2. MAIN FLOATING CAPSULE (High Contrast 3D Outer Track)
+   2. FLOATING NAVBAR PILL
    ========================================================================== */
+
 .floating-navbar {
   display: flex;
   align-items: center;
-  background-color: #0d0d0e; /* Matte midnight charcoal */
-  padding: 8px 14px;
-  border-radius: 28px;
-  
-  /* Semi-translucent glass rim ensures visibility against pitch black */
+  justify-content: space-between;
+  width: min(90%, 1060px);
+  background-color: #0d0d0e;
+  padding: 10px 28px;
+  border-radius: 22px;
   border: 1px solid rgba(255, 255, 255, 0.15);
-  
-  /* Heavy multi-layered 3D drop shadows to physically lift the bar */
-  box-shadow: 
+  box-shadow:
     0px 24px 48px rgba(0, 0, 0, 0.85),
     0px 8px 20px rgba(0, 0, 0, 0.6),
     inset 0px 1px 2px rgba(255, 255, 255, 0.05);
-}
-
-/* Navigation Sections Layout */
-.nav-logo-section {
-  display: flex;
-  align-items: center;
-  padding-right: 4px;
-}
-
-.nav-links-section {
-  display: flex;
-  align-items: center;
+  gap: 12px;
 }
 
 /* ==========================================================================
-   3. BASE INTERACTION STATES (INACTIVE)
+   3. LOGO
    ========================================================================== */
 
-/* Logo Link Base Styling */
-/* Find and replace your existing .nav-logo-link with this */
+.nav-logo-section {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* RIGHT SIDE: Let's Connect — mirrors the logo section on the left */
+.nav-contact-section {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  /* No divider line — clean gap is created by nav-links-section flex spacing */
+  padding-left: 4px;
+  margin-left: 4px;
+}
+
 .nav-logo-link {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 12px 22px;
-  border-radius: 20px;
+  padding: 8px 12px;
+  border-radius: 12px;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  text-decoration: none;
-  
-  /* CRITICAL FIXED BUTTON RESETS */
   background: none;
   border: none;
   outline: none;
@@ -71,44 +69,56 @@
 }
 
 .nav-logo {
-  height: 18px; 
+  height: 20px;
   object-fit: contain;
   display: block;
   filter: brightness(0.65);
   transition: all 0.3s ease;
 }
 
-/* Standard Nav Link Item Base Styling */
+.active-logo .nav-logo {
+  filter: brightness(1.2)
+    drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.5))
+    drop-shadow(0px 0px 4px rgba(0, 242, 254, 0.4));
+}
+
+/* ==========================================================================
+   4. DESKTOP NAV LINKS
+   ========================================================================== */
+
+.nav-links-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  flex: 1;
+}
+
 .nav-item {
   background: none;
-  border: none;
-  color: #88888a; /* Legible matte gray */
+  border: 1.5px solid transparent;
+  color: #88888a;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 14px;
+  font-size: clamp(13px, 1.25vw, 17px);
   font-weight: 500;
-  padding: 12px 22px;
+  padding: 10px clamp(11px, 1.2vw, 20px);
   cursor: pointer;
   position: relative;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  border: 1.5px solid transparent;
-  border-radius: 20px;
+  border-radius: 13px;
   outline: none;
+  white-space: nowrap;
 }
 
-/* Clean Hover State */
 .nav-item:hover {
   color: #ffffff;
 }
 
-/* ==========================================================================
-   4. SEPARATORS & VISUAL DIVIDERS
-   ========================================================================== */
-
-/* Thin vertical hairline dividers between inactive options */
+/* Dividers between links */
 .nav-item:not(:last-child)::after {
-  content: '';
+  content: "";
   position: absolute;
-  right: -1px;
+  right: -2px;
   top: 30%;
   height: 40%;
   width: 1px;
@@ -116,53 +126,213 @@
   transition: opacity 0.3s ease;
 }
 
-/* Hides dividers next to active or highlighted elements */
 .nav-item.active::after,
-.nav-item:has(+ .active)::after,
-.active-logo::after {
+.nav-item:has(+ .active)::after {
   opacity: 0;
 }
 
-/* ==========================================================================
-   5. SKEUOMORPHIC MULTI-BORDER 3D ACTIVE STATE (WITH CYAN FLARE)
-   ========================================================================== */
-.nav-item.active, 
-.active-logo {
+.nav-item:last-child::after {
+  display: none !important;
+}
+
+/* Active state: cyan skeuomorphic border */
+.nav-item.active {
   color: #ffffff;
-  
-  /* Liquid metallic obsidian base gradient */
-  background: linear-gradient(180deg, #232326 0%, #161619 100%);
-  
-  /* THE LAYERED MULTI-BORDER
-     Utilizes dual background layers to mimic that exact chiseled metal ring 
-     while embedding the cyan iridescent specular prism hit on the right edge */
-  border: 1.5px solid transparent;
-  background-image: linear-gradient(#232326, #161619), 
-                    linear-gradient(145deg, #65656a 0%, #3e3e42 40%, #2c2c2e 65%, #00f2fe 80%, #4facfe 92%, #ffffff 100%);
+  background-image:
+    linear-gradient(#232326, #161619),
+    linear-gradient(145deg, #65656a 0%, #3e3e42 40%, #2c2c2e 65%, #00f2fe 80%, #4facfe 92%, #ffffff 100%);
   background-origin: border-box;
   background-clip: padding-box, border-box;
-  
-  /* MULTI-SHADOW SYSTEM
-     - Top bright edge inner stroke for a 3D reflection highlight
-     - Bottom deep dark inset shadow for tactile curved bevel roundness
-     - Soft drop shadow to lift the active pill cleanly out of the track channel
-     - Micro ambient cyan under-glow for premium contrast */
-  box-shadow: 
+  box-shadow:
     inset 0px 1px 1px rgba(255, 255, 255, 0.2),
     inset 0px -2px 4px rgba(0, 0, 0, 0.4),
     0px 8px 16px rgba(0, 0, 0, 0.6),
-    0px 2px 4px rgba(0, 0, 0, 0.4),
-    0px 0px 14px rgba(0, 242, 254, 0.2); 
-  
-  /* Micro movement into the tracked slot */
+    0px 0px 14px rgba(0, 242, 254, 0.2);
   transform: translateY(0.5px);
+  text-shadow: 0px 0px 8px rgba(0, 242, 254, 0.2);
 }
 
-/* High crispness on text shadows */
-.nav-item.active {
-  text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.8), 0px 0px 8px rgba(0, 242, 254, 0.2);
+/* ==========================================================================
+   5. HAMBURGER BUTTON (hidden on desktop)
+   ========================================================================== */
+
+.hamburger-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  outline: none;
+  transition: background 0.2s ease;
 }
 
-.active-logo .nav-logo {
-  filter: brightness(1.2) drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.5)) drop-shadow(0px 0px 4px rgba(0, 242, 254, 0.4));
+.hamburger-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.hamburger-btn span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: #aaaaaa;
+  border-radius: 2px;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: center;
+}
+
+/* Animate into X when open */
+.hamburger-btn.open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+  background: #ffffff;
+}
+.hamburger-btn.open span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+.hamburger-btn.open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+  background: #ffffff;
+}
+
+/* ==========================================================================
+   6. MOBILE DROPDOWN MENU
+   ========================================================================== */
+
+.mobile-menu {
+  position: fixed;
+  top: 72px; /* below navbar */
+  left: 50%;
+  transform: translateX(-50%) translateY(-12px);
+  width: min(88%, 360px);
+  background: #0d0d0e;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
+  z-index: 999;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mobile-menu--open {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateX(-50%) translateY(0);
+}
+
+.mobile-menu-inner {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  gap: 4px;
+}
+
+.mobile-nav-item {
+  background: none;
+  border: none;
+  color: #888888;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 15px 20px;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 12px;
+  transition: all 0.25s ease;
+  outline: none;
+}
+
+.mobile-nav-item:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.mobile-nav-item.active {
+  color: #ffffff;
+  background: rgba(0, 242, 254, 0.07);
+  border-left: 2px solid #00f2fe;
+  padding-left: 16px;
+  text-shadow: 0px 0px 8px rgba(0, 242, 254, 0.3);
+}
+
+/* Backdrop (dim the page behind the menu) */
+.mobile-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 998;
+  background: transparent;
+}
+
+/* ==========================================================================
+   7. RESPONSIVE BREAKPOINTS
+   ========================================================================== */
+
+/* Tablet: shrink links slightly */
+@media (max-width: 900px) {
+  .floating-navbar {
+    width: 93%;
+  }
+}
+
+/* Mobile threshold: hide desktop links, show hamburger */
+@media (max-width: 680px) {
+  .navbar-container {
+    top: 12px;
+    padding: 0 14px;
+  }
+
+  .floating-navbar {
+    width: 96%;
+    padding: 8px 16px;
+    border-radius: 18px;
+  }
+
+  .nav-links-section {
+    display: none;
+  }
+
+  /* Also hide the right-side contact button on mobile */
+  .nav-contact-section {
+    display: none;
+  }
+
+  .hamburger-btn {
+    display: flex;
+  }
+
+  .nav-logo {
+    height: 18px;
+  }
+
+  .nav-logo-link {
+    padding: 8px 12px;
+  }
+}
+
+@media (max-width: 400px) {
+  .floating-navbar {
+    width: 98%;
+    padding: 6px 10px;
+    border-radius: 14px;
+  }
+
+  .nav-logo {
+    height: 14px;
+  }
+
+  .mobile-menu {
+    width: 95%;
+    top: 66px;
+  }
 }

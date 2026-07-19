@@ -1,0 +1,857 @@
+.domain-section-wrapper {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  overflow: hidden;
+  padding: 120px 0 60px 0;
+  box-sizing: border-box;
+  background: #0d0d0d;
+}
+
+.domain-header-block {
+  padding-left: 8%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+/* ==========================================================================
+   MASTER ALIGNMENT & BACKGROUND ROD
+   ========================================================================== */
+.slider-master-container {
+  position: relative;
+  width: 100%;
+  z-index: 1;
+}
+
+.thick-metallic-rod {
+  position: absolute;
+  top: 103px;
+  left: 0;
+  width: 100%;
+  height: 14px;
+  background: linear-gradient(180deg,
+      rgba(255, 255, 255, 0.4) 0%,
+      rgba(255, 255, 255, 0.9) 25%,
+      rgba(255, 255, 255, 1) 50%,
+      rgba(180, 180, 185, 1) 75%,
+      rgba(100, 100, 105, 0.9) 100%);
+  box-shadow:
+    0px 10px 20px rgba(0, 0, 0, 0.9),
+    0px 2px 5px rgba(0, 0, 0, 0.5);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.domain-slider-track {
+  position: relative;
+  width: 100%;
+  display: flex;
+  gap: 40px;
+  overflow-x: auto;
+  padding: 80px 0;
+  z-index: 2;
+  touch-action: pan-x pan-y;
+  /* Enable both horizontal swiping on the track and vertical page scrolling */
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  /* Momentum scrolling for iOS safari/chrome */
+}
+
+.domain-slider-track::-webkit-scrollbar {
+  display: none;
+}
+
+.domain-slider-spacer {
+  flex: 0 0 calc(8% - 20px);
+}
+
+/* ==========================================================================
+   CARDS, SWING PHYSICS, & 3D OVERLAP
+   ========================================================================== */
+.hanging-card {
+  flex: 0 0 350px;
+  /* Clean, fixed width on desktop */
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  perspective: 1200px;
+  /* Provides depth for the swing */
+}
+
+/* The wrapper handles the physics so the front-rod remains perfectly still */
+.card-swing-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transform-origin: 50% 30px;
+  transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 2;
+}
+
+.hanging-card:hover .card-swing-wrapper {
+  transform: rotateX(8deg) rotateZ(-1.5deg) translateY(-2px);
+}
+
+.card-body {
+  width: 100%;
+  flex-grow: 1;
+  min-height: clamp(360px, 55vh, 560px);
+  /* Dynamically adjust height relative to viewport height, keeping it within safe boundaries */
+  background: linear-gradient(180deg, #141416 0%, #0a0a0b 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 28px;
+  padding: 70px 32px 35px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-sizing: border-box;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease, -webkit-box-shadow 0.4s ease;
+  -webkit-transition: border-color 0.4s ease, -webkit-box-shadow 0.4s ease, box-shadow 0.4s ease;
+  box-shadow:
+    0px 20px 50px rgba(0, 0, 50, 0.9),
+    0px 0px 20px 2px rgba(28, 95, 115, 0.6),
+    inset 0px 0px 10px rgba(28, 95, 115, 0.3);
+  -webkit-box-shadow:
+    0px 20px 50px rgba(0, 0, 50, 0.9),
+    0px 0px 20px 2px rgba(28, 95, 115, 0.6),
+    inset 0px 0px 10px rgba(28, 95, 115, 0.3);
+
+  /* This forces the hole to be completely transparent/sharp */
+  -webkit-mask-image: radial-gradient(circle at 50% 30px, transparent 15px, black 15px);
+  mask-image: radial-gradient(circle at 50% 30px, transparent 15px, black 15px);
+}
+
+.hanging-card:hover .card-body {
+  border-color: rgba(28, 95, 115, 0.5);
+  box-shadow:
+    0px 30px 60px rgba(0, 0, 60, 0.95),
+    0px 0px 35px 4px rgba(28, 95, 115, 0.8),
+    inset 0px 0px 15px rgba(28, 95, 115, 0.5);
+  -webkit-box-shadow:
+    0px 30px 60px rgba(0, 0, 60, 0.95),
+    0px 0px 35px 4px rgba(28, 95, 115, 0.8),
+    inset 0px 0px 15px rgba(28, 95, 115, 0.5);
+}
+
+.card-rod-hole-ring {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    inset 0px 4px 8px rgba(0, 0, 0, 0.8),
+    0px 2px 4px rgba(255, 255, 255, 0.05);
+  background: transparent;
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* THE MAGIC: 3D Phantom Rod overlapping the right side of the card */
+.fake-front-rod {
+  position: absolute;
+  top: 23px;
+  /* Exactly aligned with master rod (30px center - 7px radius) */
+  left: 50%;
+  /* Starts dead center inside the hole */
+  width: 50%;
+  /* Extends exactly to the right edge */
+  height: 14px;
+  background: linear-gradient(180deg,
+      rgba(255, 255, 255, 0.4) 0%,
+      rgba(255, 255, 255, 0.9) 25%,
+      rgba(255, 255, 255, 1) 50%,
+      rgba(180, 180, 185, 1) 75%,
+      rgba(100, 100, 105, 0.9) 100%);
+  box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.85);
+  /* Drop shadow ONTO the card */
+  /* Clips the shadow from bleeding into the hole on the left, or gaps on the right */
+  clip-path: inset(-20px 0 -50px 0);
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   INTERNAL CARD TYPOGRAPHY
+   ========================================================================== */
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-meta-tag {
+  color: #8f8f8f;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.card-number {
+  font-family: monospace;
+  color: rgba(255, 255, 255, 0.12);
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.card-title {
+  color: #ffffff;
+  font-size: 32px;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.card-desc {
+  color: #a6a6a6;
+  font-size: 16px;
+  line-height: 1.7;
+  font-weight: 300;
+  margin: 0;
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+@media(max-width: 1200px) {
+  .hanging-card {
+    flex: 0 0 320px;
+    /* Fluid size transition */
+  }
+
+  .card-body {
+    min-height: clamp(360px, 55vh, 520px);
+  }
+}
+
+@media(max-width: 850px) {
+  .hanging-card {
+    flex: 0 0 290px;
+  }
+
+  .card-body {
+    padding: 66px 26px 30px 26px;
+    min-height: clamp(340px, 55vh, 480px);
+    /* Fits standard screen heights much better */
+  }
+
+  .card-title {
+    font-size: 26px;
+  }
+
+  .card-desc {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+}
+
+@media(max-width: 600px) {
+  .domain-section-wrapper {
+    padding: 80px 0 40px 0;
+  }
+
+  .domain-header-block {
+    padding-left: 25px;
+  }
+
+  .hanging-card {
+    flex: 0 0 260px;
+  }
+
+  .card-body {
+    padding: 60px 20px 25px 20px;
+    min-height: clamp(320px, 55vh, 440px);
+    gap: 15px;
+  }
+
+  .card-title {
+    font-size: 22px;
+  }
+
+  .card-desc {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .domain-slider-spacer {
+    flex: 0 0 15px;
+  }
+}
+
+@media(max-width: 400px) {
+  .hanging-card {
+    flex: 0 0 230px;
+  }
+
+  .card-body {
+    padding: 55px 15px 20px 15px;
+    min-height: clamp(300px, 55vh, 400px);
+    gap: 12px;
+  }
+
+  .card-title {
+    font-size: 18px;
+  }
+
+  .card-desc {
+    font-size: 11.5px;
+    line-height: 1.4;
+  }
+
+  .card-click-to-open {
+    font-size: 9.5px;
+  }
+}
+
+/* ==========================================================================
+   3D BOOK INTERACTIVE MODAL & ANIMATIONS
+   ========================================================================== */
+
+.hanging-card {
+  cursor: pointer;
+}
+
+.card-click-to-open {
+  margin-top: auto;
+  /* Push it to the bottom of the card body */
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 700;
+  transition: color 0.3s ease;
+  pointer-events: none;
+}
+
+.hanging-card:hover .card-click-to-open {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* Edge Fading Overlays (similar to rod fade in user pic) */
+.slider-edge-fade {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 15%;
+  /* Width of the fading gradient */
+  z-index: 15;
+  /* Sits on top of the cards and fake rods (z-index 10) to fade them out */
+  pointer-events: none;
+  /* Allows user interactions to pass through to the slider */
+}
+
+.slider-edge-fade.left-fade {
+  left: 0;
+  background: linear-gradient(90deg, #0d0d0d 0%, rgba(13, 13, 13, 0) 100%);
+}
+
+.slider-edge-fade.right-fade {
+  right: 0;
+  background: linear-gradient(-90deg, #0d0d0d 0%, rgba(13, 13, 13, 0) 100%);
+}
+
+/* Modal Overlay */
+.book-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(4, 4, 6, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  animation: bookFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes bookFadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Book Container */
+.book-container {
+  position: relative;
+  width: 440px;
+  /* Width of a single page when closed */
+  height: clamp(480px, 75vh, 650px);
+  /* Adapt height to screen height within safe bounds */
+  perspective: 2500px;
+  transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.book-container.opened {
+  width: 880px;
+  /* Width of both pages when opened */
+}
+
+/* Book Wrapper */
+.book-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+  /* Slide back by 25% of total opened width (220px) to keep it centered when closed */
+  transform: rotateX(12deg) rotateY(0deg) translateX(-220px);
+}
+
+.book-container.opened .book-wrapper {
+  transform: rotateX(12deg) rotateY(0deg) translateX(0px);
+}
+
+/* Base style for covers and pages */
+.book-page,
+.book-cover-front,
+.book-back-cover {
+  position: absolute;
+  height: 100%;
+  box-sizing: border-box;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Back Cover - provides the solid book structure behind the pages */
+.book-back-cover {
+  width: 100%;
+  height: 100%;
+  left: 0;
+  background: linear-gradient(135deg, #18181b 0%, #09090b 100%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
+  border-radius: 12px 24px 24px 12px;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.book-container.opened .book-back-cover {
+  opacity: 1;
+}
+
+/* Left Page (Members) */
+.book-left-page {
+  width: 50%;
+  left: 0;
+  z-index: 3;
+  background: linear-gradient(90deg, #111112 0%, #151518 95%, #1c1c20 100%);
+  border-right: 1px solid rgba(0, 0, 0, 0.5);
+  border-radius: 20px 4px 4px 20px;
+  padding: 50px 40px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: inset 10px 0 20px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease 0s;
+}
+
+/* Right Page (Projects) */
+.book-right-page {
+  width: 50%;
+  left: 50%;
+  z-index: 3;
+  background: linear-gradient(270deg, #111112 0%, #151518 95%, #1c1c20 100%);
+  border-left: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 4px 20px 20px 4px;
+  padding: 50px 40px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: inset -10px 0 20px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease 0s;
+}
+
+.book-container.opened .book-left-page,
+.book-container.opened .book-right-page {
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0.4s ease 0.3s;
+  /* Delay opacity until cover is partially open */
+}
+
+/* Front Cover (flips to the left) */
+.book-cover-front {
+  width: 50%;
+  left: 50%;
+  z-index: 10;
+  transform-origin: left center;
+  transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.8s ease;
+  transform-style: preserve-3d;
+  background: linear-gradient(145deg, #18181b 0%, #0a0a0c 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px 24px 24px 4px;
+  box-shadow: -10px 15px 35px rgba(0, 0, 0, 0.7);
+  padding: 55px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.book-container.opened .book-cover-front {
+  transform: rotateY(-180deg);
+  box-shadow: 10px 15px 35px rgba(0, 0, 0, 0.7);
+  pointer-events: none;
+  /* Let user click on the left page beneath it */
+}
+
+/* Book spine crease effect in open state */
+.book-container.opened::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 100%;
+  background: linear-gradient(90deg,
+      rgba(0, 0, 0, 0.6) 0%,
+      rgba(0, 0, 0, 0) 30%,
+      rgba(255, 255, 255, 0.05) 50%,
+      rgba(0, 0, 0, 0) 70%,
+      rgba(0, 0, 0, 0.6) 100%);
+  z-index: 4;
+  pointer-events: none;
+  border-radius: 4px;
+}
+
+/* Spine edge on the flip-cover when closed */
+.book-cover-front::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.15) 0%, transparent 100%);
+}
+
+/* Cover Content Styling */
+.book-cover-top {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.book-cover-number {
+  font-family: monospace;
+  font-size: 24px;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.15);
+}
+
+.book-cover-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.book-cover-title {
+  color: #ffffff;
+  font-size: 38px;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.book-cover-divider {
+  width: 60px;
+  height: 3px;
+  background: #ffffff;
+  margin: 20px 0;
+  border-radius: 2px;
+}
+
+.book-cover-tagline {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+}
+
+.book-cover-bottom {
+  text-align: center;
+}
+
+.book-cover-prompt {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.25);
+  letter-spacing: 1px;
+  animation: pulsePrompt 2s infinite ease-in-out;
+}
+
+@keyframes pulsePrompt {
+
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* Page Internals */
+.book-page-subtitle {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin: 0 0 30px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 10px;
+}
+
+.scrollable-page-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding-right: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+.scrollable-page-content::-webkit-scrollbar {
+  width: 5px;
+}
+
+.scrollable-page-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+/* Members styles */
+.book-member-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
+  margin-bottom: 12px;
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+}
+
+.book-member-row:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.book-member-name {
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.book-member-social {
+  color: rgba(255, 255, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.book-member-social:hover {
+  color: #0077b5;
+  /* LinkedIn signature color */
+  transform: scale(1.15);
+}
+
+/* Projects styles */
+.book-project-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+}
+
+.book-project-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.book-project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.book-project-title {
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.book-project-link {
+  color: rgba(255, 255, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.book-project-link:hover {
+  color: #ffffff;
+  transform: scale(1.15);
+}
+
+.book-project-desc {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  line-height: 1.6;
+  font-weight: 300;
+  margin: 0;
+}
+
+.book-project-creator {
+  margin-top: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Close Button */
+.book-close-btn {
+  position: absolute;
+  top: -45px;
+  right: 0px;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.book-close-btn:hover {
+  color: #ffffff;
+  transform: rotate(90deg);
+}
+
+/* ==========================================================================
+   RESPONSIVE BOOK LAYOUT
+   ========================================================================== */
+
+@media(max-width: 950px) {
+  .book-container {
+    width: 380px;
+    height: clamp(420px, 70vh, 540px);
+  }
+
+  .book-container.opened {
+    width: 760px;
+  }
+
+  .book-wrapper {
+    transform: rotateX(10deg) rotateY(0deg) translateX(-190px);
+  }
+
+  .book-cover-title {
+    font-size: 30px;
+  }
+
+  .book-left-page,
+  .book-right-page,
+  .book-cover-front {
+    padding: 40px 30px;
+  }
+}
+
+@media(max-width: 780px) {
+
+  /* On mobile/tablet, transition 3D book into a stacked page layout */
+  .book-container,
+  .book-container.opened {
+    width: 90%;
+    max-width: 440px;
+    height: 80vh;
+    perspective: none;
+  }
+
+  .book-wrapper {
+    width: 100%;
+    height: 100%;
+    transform: none !important;
+    transform-style: flat;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    background: #0d0d0f;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
+  }
+
+  .book-back-cover,
+  .book-cover-front {
+    display: none !important;
+  }
+
+  .book-container.opened::after {
+    display: none;
+  }
+
+  .book-left-page,
+  .book-right-page {
+    position: static;
+    width: 100%;
+    height: auto;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 30px 25px;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  .book-left-page {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .book-close-btn {
+    top: 15px;
+    right: 15px;
+    z-index: 100;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    padding: 6px;
+    color: #ffffff;
+  }
+
+  .scrollable-page-content {
+    overflow-y: visible;
+    padding-right: 0;
+  }
+}
