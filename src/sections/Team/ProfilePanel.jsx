@@ -39,6 +39,11 @@ import {
 } from "framer-motion";
 import "./ProfilePanel.css";
 
+/**
+ * linkedInHref — normalise exec.linkedin into a valid URL.
+ * Handles both a bare handle ("yuvraj-malik") and a full URL
+ * ("https://www.linkedin.com/in/...") stored in the data layer.
+ */
 function linkedInHref(value) {
   if (!value) return "#";
   return value.startsWith("http")
@@ -382,6 +387,7 @@ export default function ProfilePanel({ exec, onClose }) {
                 alt={`Portrait of ${exec.name}`}
                 className="epm-portrait-img"
                 draggable="false"
+                style={exec.portraitPosition ? { objectPosition: exec.portraitPosition } : undefined}
               />
             </motion.div>
           </motion.div>

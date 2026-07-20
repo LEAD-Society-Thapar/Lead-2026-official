@@ -18,6 +18,20 @@ const REDUCED_MOTION =
   typeof window !== "undefined" &&
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+/**
+ * linkedInHref — normalise whatever is stored in exec.linkedin into a
+ * fully-qualified URL that will always open the correct LinkedIn page.
+ *
+ * The data layer is inconsistent:
+ *   • Most entries store just a handle:  "yuvraj-malik"
+ *   • Some entries store a full URL:     "https://www.linkedin.com/in/..."
+ *
+ * Strategy:
+ *   1. If the value already starts with "http" → use it as-is.
+ *   2. Otherwise → prefix with the LinkedIn profile base URL.
+ *
+ * This means the data layer can store either format and the UI always works.
+ */
 function linkedInHref(value) {
   if (!value) return "#";
   return value.startsWith("http")
@@ -132,6 +146,9 @@ const ExecCard = memo(function ExecCard({
             alt={exec.name}
             loading="lazy"
             decoding="async"
+            style={(exec.cardPortraitPosition || exec.portraitPosition)
+              ? { objectPosition: exec.cardPortraitPosition ?? exec.portraitPosition }
+              : undefined}
           />
         </motion.div>
 

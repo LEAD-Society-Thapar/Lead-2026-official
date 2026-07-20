@@ -1,5 +1,17 @@
-// executives.js — Data-driven executive roster
-// Replace portrait paths with your actual image assets
+// teamData.js — Executive roster
+//
+// Images in src/assets/ must be imported so Vite fingerprints and bundles them.
+// The 4 missing portraits (Aanvy, Rajat, Pratham, Atulya) still use Unsplash
+// as placeholders — replace the import + portrait field when images are ready.
+
+import yuvrajImg  from '../assets/team/Yuvraj.webp';
+import manyaImg   from '../assets/team/Manya.webp';
+import ishitaImg  from '../assets/team/Ishita.webp';
+import saanviImg  from '../assets/team/Saanvi.webp';
+import akshatImg  from '../assets/team/Akshat.jpg';
+import abhinavImg from '../assets/team/Abhinav.webp';
+import jasmineImg from '../assets/team/Jasmine.webp';
+import shreyaImg  from '../assets/team/Shreya.webp';
 
 export const executives = [
   {
@@ -7,7 +19,9 @@ export const executives = [
     firstName: "Yuvraj",
     name: "Yuvraj Malik",
     role: "Technical Secretary",
-    portrait: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80",
+    portrait: yuvrajImg,
+    portraitPosition: "center 45%",      // panel only
+    cardPortraitPosition: "center 35%",  // card thumbnail — unchanged
     statement: "Technology should feel invisible and inevitable. I build systems that just work.",
     github: "yuvraj-malik",
     linkedin: "yuvraj-malik",
@@ -17,7 +31,9 @@ export const executives = [
     firstName: "Manya",
     name: "Manya Kedia",
     role: "Joint Secretary",
-    portrait: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=600&q=80",
+    portrait: manyaImg,
+    portraitPosition: "center 15%",      // panel only
+    cardPortraitPosition: "center 0%",   // card thumbnail — unchanged
     statement: "Coordination is an art form. I make sure every moving part knows its role and hits its mark.",
     github: "manya-kedia",
     linkedin: "manya-kedia",
@@ -27,7 +43,8 @@ export const executives = [
     firstName: "Ishita",
     name: "Ishita Sachdeva",
     role: "General Secretary",
-    portrait: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600&q=80",
+    portrait: ishitaImg,
+    portraitPosition: "center 5%",
     statement: "Building bridges between vision and execution — every initiative is a chance to move the needle.",
     github: "ishita-sachdeva",
     linkedin: "ishita-sachdeva",
@@ -37,6 +54,7 @@ export const executives = [
     firstName: "Aanvy",
     name: "Aanvy Singh",
     role: "Finance Secretary",
+    // ponytail: placeholder until Aanvy.webp is provided — swap import above when ready
     portrait: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=600&q=80",
     statement: "Numbers tell stories. I translate financial data into strategic decisions that matter.",
     github: "aanvy-singh",
@@ -47,6 +65,7 @@ export const executives = [
     firstName: "Rajat",
     name: "Rajat Verma",
     role: "Tech Head",
+    // ponytail: placeholder until Rajat.webp is provided
     portrait: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=600&q=80",
     statement: "Every pixel has a purpose. Every line of code is a promise to the user.",
     github: "rajat-verma",
@@ -57,6 +76,7 @@ export const executives = [
     firstName: "Pratham",
     name: "Pratham Arora",
     role: "Designing Head",
+    // ponytail: placeholder until Pratham.webp is provided
     portrait: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&q=80",
     statement: "Design is not decoration — it's the language through which ideas become real.",
     github: "pratham-arora",
@@ -67,7 +87,7 @@ export const executives = [
     firstName: "Akshat",
     name: "Akshat Gupta",
     role: "Marketing Head",
-    portrait: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=600&q=80",
+    portrait: akshatImg,
     statement: "Marketing is empathy at scale. Understand one person deeply enough, and you reach millions.",
     github: "akshat-gupta",
     linkedin: "akshat-gupta",
@@ -77,7 +97,8 @@ export const executives = [
     firstName: "Abhinav",
     name: "Abhinav Gupta",
     role: "Content Head",
-    portrait: "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=600&q=80",
+    portrait: abhinavImg,
+    portraitPosition: "center 0%",
     statement: "Words are the architecture of ideas. I build narratives that resonate long after the scroll.",
     github: "abhinav-gupta",
     linkedin: "abhinav-gupta",
@@ -87,6 +108,7 @@ export const executives = [
     firstName: "Atulya",
     name: "Atulya Kumar Singh",
     role: "Social Media & PR Head",
+    // ponytail: placeholder until Atulya.webp is provided
     portrait: "https://images.unsplash.com/photo-1463453091185-61582044d556?w=600&q=80",
     statement: "Attention is the new currency. I spend it wisely — and never stop earning more.",
     github: "atulya-singh",
@@ -97,7 +119,7 @@ export const executives = [
     firstName: "Saanvi",
     name: "Saanvi Aggarwal",
     role: "Event Head",
-    portrait: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&q=80",
+    portrait: saanviImg,
     statement: "Events are time-boxed magic. I engineer the conditions for moments people never forget.",
     github: null,
     linkedin: "https://www.linkedin.com/in/saanvi-aggarwal-94306b2bb?utm_source=share_via&utm_content=profile&utm_medium=member_android",
@@ -107,7 +129,7 @@ export const executives = [
     firstName: "Jasmine",
     name: "Jasmine Kaur",
     role: "Logistics Head",
-    portrait: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=600&q=80",
+    portrait: jasmineImg,
     statement: "Flawless execution isn't luck — it's a system I've built and rebuilt until nothing breaks.",
     github: "jasmine-kaur",
     linkedin: "jasmine-kaur",
@@ -117,11 +139,10 @@ export const executives = [
     firstName: "Shreya",
     name: "Shreya",
     role: "Creativity Head",
-    portrait: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=600&q=80",
+    portrait: shreyaImg,
+    portraitPosition: "center 35%",
     statement: "Constraints are the mother of creativity. I thrive in the space between impossible and done.",
     github: "shreya-singla",
     linkedin: "shreya-singla",
   },
 ];
-
-
