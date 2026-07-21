@@ -470,9 +470,8 @@
   .epm-modal {
     /* Vertical stack */
     grid-template-columns: 1fr;
-    grid-template-rows: 40vh 1fr;
+    grid-template-rows: 1fr;   /* content fills full height — no portrait row */
     width: 100%;
-    /* Fill available height below navbar */
     height: 100%;
     max-height: 100%;
     min-height: 0;
@@ -480,8 +479,9 @@
     border-bottom: none;
   }
 
+  /* Hide portrait entirely on mobile */
   .epm-portrait-col {
-    border-radius: 22px 22px 0 0;
+    display: none;
   }
 
   /* No right-edge gradient on mobile — portrait is full-width */
@@ -514,7 +514,7 @@
 
   .epm-content {
     justify-content: flex-start;
-    padding: 24px 22px 36px;
+    padding: 56px 22px 36px;
     min-height: auto;
   }
 
