@@ -1,6 +1,6 @@
 // teamData.js — Executive roster
 //
-// Images in src/assets/ must be imported so Vite fingerprints and bundles them.
+// Images in src/assets/team/ must be imported so Vite fingerprints and bundles them.
 // The 4 missing portraits (Aanvy, Rajat, Pratham, Atulya) still use Unsplash
 // as placeholders — replace the import + portrait field when images are ready.
 
@@ -12,6 +12,8 @@ import akshatImg  from '../assets/team/Akshat.jpg';
 import abhinavImg from '../assets/team/Abhinav.webp';
 import jasmineImg from '../assets/team/Jasmine.webp';
 import shreyaImg  from '../assets/team/Shreya.webp';
+import aanvyImg   from '../assets/team/Aanvy.webp';
+import rajatImg   from '../assets/team/Rajat.webp';
 
 export const executives = [
   {
@@ -32,7 +34,7 @@ export const executives = [
     name: "Manya Kedia",
     role: "Joint Secretary",
     portrait: manyaImg,
-    portraitPosition: "center 15%",      // panel only
+    portraitPosition: "center 45%",      // panel only
     cardPortraitPosition: "center 0%",   // card thumbnail — unchanged
     statement: "Coordination is an art form. I make sure every moving part knows its role and hits its mark.",
     github: "manya-kedia",
@@ -54,8 +56,8 @@ export const executives = [
     firstName: "Aanvy",
     name: "Aanvy Singh",
     role: "Finance Secretary",
-    // ponytail: placeholder until Aanvy.webp is provided — swap import above when ready
-    portrait: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=600&q=80",
+    portrait: aanvyImg,
+    portraitPosition: "center 75%",
     statement: "Numbers tell stories. I translate financial data into strategic decisions that matter.",
     github: "aanvy-singh",
     linkedin: "aanvy-singh",
@@ -65,8 +67,9 @@ export const executives = [
     firstName: "Rajat",
     name: "Rajat Verma",
     role: "Tech Head",
-    // ponytail: placeholder until Rajat.webp is provided
-    portrait: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=600&q=80",
+    portrait: rajatImg,
+    cardPortraitScale: 1.75,
+    cardPortraitY: "-35px",
     statement: "Every pixel has a purpose. Every line of code is a promise to the user.",
     github: "rajat-verma",
     linkedin: "rajat-verma",
@@ -130,6 +133,8 @@ export const executives = [
     name: "Jasmine Kaur",
     role: "Logistics Head",
     portrait: jasmineImg,
+    portraitPosition: "center 30%",
+    portraitScale: 0.9,
     statement: "Flawless execution isn't luck — it's a system I've built and rebuilt until nothing breaks.",
     github: "jasmine-kaur",
     linkedin: "jasmine-kaur",
@@ -140,7 +145,7 @@ export const executives = [
     name: "Shreya",
     role: "Creativity Head",
     portrait: shreyaImg,
-    portraitPosition: "center 35%",
+    portraitPosition: "center 80%",
     statement: "Constraints are the mother of creativity. I thrive in the space between impossible and done.",
     github: "shreya-singla",
     linkedin: "shreya-singla",
