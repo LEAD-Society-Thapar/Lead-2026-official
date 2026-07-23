@@ -146,9 +146,13 @@ const ExecCard = memo(function ExecCard({
             alt={exec.name}
             loading="lazy"
             decoding="async"
-            style={(exec.cardPortraitPosition || exec.portraitPosition)
-              ? { objectPosition: exec.cardPortraitPosition ?? exec.portraitPosition }
-              : undefined}
+            style={{
+              ...(exec.cardPortraitPosition || exec.portraitPosition
+                ? { objectPosition: exec.cardPortraitPosition ?? exec.portraitPosition }
+                : {}),
+              ...(exec.cardPortraitScale ? { '--card-scale': exec.cardPortraitScale } : {}),
+              ...(exec.cardPortraitY ? { '--card-ty': exec.cardPortraitY } : {}),
+            }}
           />
         </motion.div>
 

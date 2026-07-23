@@ -387,7 +387,19 @@ export default function ProfilePanel({ exec, onClose }) {
                 alt={`Portrait of ${exec.name}`}
                 className="epm-portrait-img"
                 draggable="false"
-                style={exec.portraitPosition ? { objectPosition: exec.portraitPosition } : undefined}
+                style={{
+                  ...(exec.portraitPosition ? { objectPosition: exec.portraitPosition } : {}),
+                  ...((exec.portraitScale || exec.portraitY)
+                    ? {
+                        transform: [
+                          exec.portraitScale ? `scale(${exec.portraitScale})` : '',
+                          exec.portraitY ? `translateY(${exec.portraitY})` : '',
+                        ]
+                          .filter(Boolean)
+                          .join(' '),
+                      }
+                    : {}),
+                }}
               />
             </motion.div>
           </motion.div>
