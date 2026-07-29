@@ -1,16 +1,47 @@
-# React + Vite
+# LEAD 2026 Official Site
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is a Vite + React single-page application configured for Netlify deployment.
 
-Currently, two official plugins are available:
+## Local Development
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm install
+npm run dev
+```
 
-## React Compiler
+## Production Build
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+npm run build
+```
 
-## Expanding the ESLint configuration
+Build output is generated in `dist/`.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Netlify Deployment
+
+This repo includes:
+
+- `netlify.toml` with build command and publish directory
+- `public/_redirects` for SPA routing fallback (`/* -> /index.html 200`)
+
+Netlify settings are:
+
+- Build command: `npm run build`
+- Publish directory: `dist`
+
+## Connect Custom Domain (`leadtiet.in`)
+
+In Netlify:
+
+1. Open your site dashboard.
+2. Go to Domain management.
+3. Add custom domain: `leadtiet.in`.
+4. Add domain alias: `www.leadtiet.in`.
+
+If DNS is managed outside Netlify, set records at your DNS provider:
+
+- `A` record for `@` -> `75.2.60.5`
+- `A` record for `@` -> `99.83.190.102`
+- `CNAME` for `www` -> `<your-netlify-subdomain>.netlify.app`
+
+After DNS propagation, Netlify will provision SSL automatically.
