@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import emailjs from '@emailjs/browser';
-import { ArrowRight, CheckCircle } from 'lucide-react';
+import { ArrowRight, CheckCircle, AlertCircle } from 'lucide-react';
 import useMouseParallax from '../hooks/useMouseParallax';
 import './ContactForm.css';
 
@@ -85,6 +85,7 @@ export default function ContactForm() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const buttonRef = useRef(null);
   const { rotate: btnRot, reflect: btnReflect } = useMouseParallax(buttonRef, { maxRotation: 4 });
@@ -103,15 +104,21 @@ export default function ContactForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+    const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+
+    // Without EmailJS credentials the send fails with an opaque error, so say
+    // so plainly and point at the mail link instead of silently retrying.
+    if (!serviceId || !templateId || !publicKey) {
+      setErrorMsg("Messaging isn't configured yet — please email us directly at lead_sc@thapar.edu.");
+      return;
+    }
+
+    setErrorMsg('');
     setIsSubmitting(true);
-    emailjs.sendForm(
-      import.meta.env.VITE_EMAILJS_SERVICE_ID,
-      import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
-      form.current,
-      {
-        publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
-      }
-    )
+    emailjs.sendForm(serviceId, templateId, form.current, { publicKey })
       .then(() => {
         setIsSubmitting(false);
         setIsSuccess(true);
@@ -129,7 +136,7 @@ export default function ContactForm() {
       .catch((error) => {
         console.error("EmailJS Error:", error);
         setIsSubmitting(false);
-        alert("Failed to send message. Please try again.");
+        setErrorMsg("That didn't go through. Please try again, or email us at lead_sc@thapar.edu.");
       });
   };
 
@@ -209,6 +216,13 @@ export default function ContactForm() {
               )}
             </span>
           </button>
+
+          {errorMsg && (
+            <p className="form-error" role="alert">
+              <AlertCircle className="form-error-icon" />
+              {errorMsg}
+            </p>
+          )}
         </form>
       )}
     </div>

@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Mail } from 'lucide-react';
+import { Mail, MapPin } from 'lucide-react';
 import { FaInstagram, FaLinkedinIn, FaGithub } from 'react-icons/fa6';
 import useMouseParallax from '../hooks/useMouseParallax';
 import './LeftPanel.css';
@@ -110,11 +110,24 @@ export default function LeftPanel() {
           <InfoCard
             icon={Mail}
             title="Email Us"
-            lines={['lead_sc@thapar.edu','Click to send us an email']}
+            lines={['lead_sc@thapar.edu','We reply within 2–3 working days']}
             delayClass="float-medium"
           />
         </a>
-        <SocialsCard 
+        <a
+          href="https://maps.google.com/?q=Thapar+Institute+of+Engineering+and+Technology+Patiala"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="card-link"
+        >
+          <InfoCard
+            icon={MapPin}
+            title="Find Us"
+            lines={['Thapar Institute, Patiala', 'Punjab — 147004']}
+            delayClass="float-medium"
+          />
+        </a>
+        <SocialsCard
           socialLinks={socialLinks}
           delayClass="float-slow"
         />

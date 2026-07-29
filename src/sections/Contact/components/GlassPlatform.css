@@ -12,7 +12,9 @@
   position: relative;
   width: 100%;
   height: auto;
-  min-height: 650px;
+  /* Height follows the content — a fixed 650px left ~270px of dead space
+     below the columns and forced the page to scroll for nothing. */
+  min-height: 0;
   background: transparent;
   border: none;
   box-shadow: none;
@@ -52,7 +54,9 @@
   column-gap: 32px;
   height: 100%;
   width: 100%;
-  align-items: center;
+  /* Stretch so the three columns share top/bottom edges instead of each
+     floating at its own centre. */
+  align-items: stretch;
   justify-items: stretch;
   transform: translateZ(20px); /* Extrusion depth */
 }
