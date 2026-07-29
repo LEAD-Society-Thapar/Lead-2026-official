@@ -22,37 +22,12 @@ const CloseIcon = () => (
   </svg>
 );
 
-// Fallback helper functions for domains with empty arrays
 const getDomainMembers = (domain) => {
-  if (domain.members && domain.members.length > 0) {
-    return domain.members;
-  }
-  return [
-    { name: "John Doe", linkedin: "https://linkedin.com" },
-    { name: "Jane Smith", linkedin: "https://linkedin.com" },
-    { name: "Alex Johnson", linkedin: "https://linkedin.com" },
-    { name: "Emily Davis", linkedin: "https://linkedin.com" },
-  ];
+  return domain.members || [];
 };
 
 const getDomainProjects = (domain) => {
-  if (domain.projects && domain.projects.length > 0) {
-    return domain.projects;
-  }
-  return [
-    {
-      title: "Project Alpha",
-      creator: "John Doe",
-      github: "https://github.com",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam convallis tellus id dui elementum.",
-    },
-    {
-      title: "Project Beta",
-      creator: "Jane Smith",
-      github: "https://github.com",
-      description: "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
-    },
-  ];
+  return domain.projects || [];
 };
 
 export default function Domains() {
@@ -63,26 +38,7 @@ export default function Domains() {
   const [selectedDomain, setSelectedDomain] = useState(null);
   const [bookOpened, setBookOpened] = useState(false);
 
-  useEffect(() => {
-    const track = trackRef.current;
-    if (!track) return;
 
-    const handleWheel = (e) => {
-      // Only hijack scroll when the gesture is primarily horizontal,
-      // OR when the user is hovering over the track and scrolling horizontally.
-      // This lets vertical page scroll pass through normally.
-      const isHorizontalScroll = Math.abs(e.deltaX) > Math.abs(e.deltaY);
-
-      if (isHorizontalScroll) {
-        e.preventDefault();
-        track.scrollLeft += e.deltaX;
-      }
-      // Vertical scroll: do NOT preventDefault — let the page scroll naturally
-    };
-
-    track.addEventListener("wheel", handleWheel, { passive: false });
-    return () => track.removeEventListener("wheel", handleWheel);
-  }, []);
 
   useEffect(() => {
     const track = trackRef.current;
@@ -91,9 +47,8 @@ export default function Domains() {
     const scrollSpeed = 0.6;
     const drift = () => {
       if (!isInteracting.current && !selectedDomain) {
-        if (track.scrollLeft >= track.scrollWidth - track.clientWidth - 1) {
-          track.scrollLeft = 0;
-        } else {
+        const maxScroll = track.scrollWidth - track.clientWidth - 1;
+        if (track.scrollLeft < maxScroll) {
           track.scrollLeft += scrollSpeed;
         }
       }
@@ -186,6 +141,7 @@ export default function Domains() {
                 <div className="card-body">
                   <div className="card-top">
                     <span className="card-number">{domain.id}</span>
+                    <span className="card-meta-tag">{domain.category}</span>
                   </div>
                   <h3 className="card-title">{domain.title}</h3>
                   <p className="card-desc">{domain.desc}</p>
@@ -216,37 +172,51 @@ export default function Domains() {
               <div className="book-page book-left-page">
                 <h4 className="book-page-subtitle">MEMBERS</h4>
                 <div className="book-page-content scrollable-page-content">
-                  {getDomainMembers(selectedDomain).map((member, index) => (
-                    <div key={index} className="book-member-row">
-                      <span className="book-member-name">{member.name}</span>
-                      <a href={member.linkedin} target="_blank" rel="noopener noreferrer" className="book-member-social" title="LinkedIn Profile">
-                        <LinkedInIcon />
-                      </a>
+                  {getDomainMembers(selectedDomain).length > 0 ? (
+                    getDomainMembers(selectedDomain).map((member, index) => (
+                      <div key={index} className="book-member-row">
+                        <span className="book-member-name">{member.name}</span>
+                        <a href={member.linkedin} target="_blank" rel="noopener noreferrer" className="book-member-social" title="LinkedIn Profile">
+                          <LinkedInIcon />
+                        </a>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="book-empty-projects">
+                      <p>Member roster for this domain is currently being updated.</p>
                     </div>
-                  ))}
+                  )}
                 </div>
               </div>
 
-              {/* Right Page (Projects) */}
+              {/* Right Page (Projects / Operations) */}
               <div className="book-page book-right-page">
-                <h4 className="book-page-subtitle">FEATURED PROJECTS</h4>
+                <h4 className="book-page-subtitle">
+                  {getDomainProjects(selectedDomain).length > 0 ? "FEATURED PROJECTS" : "DEPARTMENT OVERVIEW"}
+                </h4>
                 <div className="book-page-content scrollable-page-content">
-                  {getDomainProjects(selectedDomain).map((project, index) => (
-                    <div key={index} className="book-project-card">
-                      <div className="book-project-header">
-                        <h5 className="book-project-title">{project.title}</h5>
-                        <a href={project.github} target="_blank" rel="noopener noreferrer" className="book-project-link" title="GitHub Repository">
-                          <GithubIcon />
-                        </a>
-                      </div>
-                      <p className="book-project-desc">{project.description}</p>
-                      {project.creator && (
-                        <div className="book-project-creator">
-                          <span>By: {project.creator}</span>
+                  {getDomainProjects(selectedDomain).length > 0 ? (
+                    getDomainProjects(selectedDomain).map((project, index) => (
+                      <div key={index} className="book-project-card">
+                        <div className="book-project-header">
+                          <h5 className="book-project-title">{project.title}</h5>
+                          <a href={project.github} target="_blank" rel="noopener noreferrer" className="book-project-link" title="GitHub Repository">
+                            <GithubIcon />
+                          </a>
                         </div>
-                      )}
+                        <p className="book-project-desc">{project.description}</p>
+                        {project.creator && (
+                          <div className="book-project-creator">
+                            <span>By: {project.creator}</span>
+                          </div>
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="book-empty-projects">
+                      <p>This department focuses on non-technical operational initiatives, brand identity, public outreach, and strategic execution rather than software projects.</p>
                     </div>
-                  ))}
+                  )}
                 </div>
               </div>
 

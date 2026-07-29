@@ -1,104 +1,125 @@
 export const DOMAIN_DATA = [
   {
     id: "01",
-    title: "Technical",
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.",
+    title: "Full Stack Development",
+    category: "TECHNICAL",
+    desc: "LEAD's Full Stack Development domain teaches students to engineer scalable, secure web applications. By mastering front-end and back-end integration, members build high-performing digital solutions, unlocking diverse opportunities in software engineering and digital transformation.",
     members: [
-      {
-        name: "Lorem Ipsum",
-        linkedin: "https://linkedin.com",
-      },
-      {
-        name: "Dolor Sit",
-        linkedin: "https://linkedin.com",
-      },
-      {
-        name: "Amet Consectetur",
-        linkedin: "https://linkedin.com",
-      },
-      {
-        name: "Adipiscing Elit",
-        linkedin: "https://linkedin.com",
-      },
+      { name: "Vansh Rally", linkedin: "https://www.linkedin.com/in/vansh-rally-972690301/" },
+      { name: "Sparsh Agarwal", linkedin: "https://www.linkedin.com/in/sparsh-agarwal28/" },
+      { name: "Ridhima Nanda", linkedin: "https://www.linkedin.com/in/ridhima-nanda-4b749634a/" },
+      { name: "Naman Singla", linkedin: "https://www.linkedin.com/in/naman-singla-146b3b2ba" },
+      { name: "Ansh Jain", linkedin: "https://www.linkedin.com/in/anshj" },
+      { name: "Hemank Gupta", linkedin: "https://www.linkedin.com/in/hemank-gupta-43387627a?utm_source=share_via&utm_content=profile&utm_medium=member_android" },
+      { name: "Krishiv Khatri", linkedin: "https://www.linkedin.com/in/krishiv-khatri-472234403" },
+      { name: "Nikhil", linkedin: "https://www.linkedin.com/in/nikhil-choudhary-2769ab381?utm_source=share_via&utm_content=profile&utm_medium=member_ios" },
     ],
     projects: [
       {
-        title: "Project Alpha",
-        creator: "Lorem Ipsum",
-        github: "https://github.com",
-        description:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer feugiat nisi vitae sem volutpat.",
-      },
-      {
-        title: "Project Beta",
-        creator: "Dolor Sit",
-        github: "https://github.com",
-        description:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur luctus nibh nec mauris gravida.",
-      },
-      {
-        title: "Project Gamma",
-        creator: "Amet Consectetur",
-        github: "https://github.com",
-        description:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec feugiat magna sed risus suscipit.",
+        title: "Code Vault",
+        creator: "Yuvraj Malik (Technical Secretary)",
+        github: "https://github.com/Yuvraj-Malik/Code-Vault-Final",
+        description: "Code Vault is a fast-paced coding game where teams reconstruct scrambled code snippets and provide terminal outputs. Featuring a real-time updating leaderboard, it is ideal for hackathons and campus events.",
       },
     ],
   },
-
   {
     id: "02",
-    title: "Design",
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.",
-    members: [],
-    projects: [],
+    title: "AI ML",
+    category: "TECHNICAL",
+    desc: "LEAD's AI/ML domain explores computational intelligence through hands-on development and research projects. Students build deep learning, generative AI, and automation solutions, bridging theory with real-world applications to create impactful intelligent systems.",
+    members: [
+      { name: "Aryan Goyal", linkedin: "https://www.linkedin.com/in/aryan-goyal17/" },
+      { name: "ARNAV GUPTA", linkedin: "https://www.linkedin.com/in/arnav-gupta-47032b390?utm_source=share_via&utm_content=profile&utm_medium=member_android" },
+      { name: "Krishna Garg", linkedin: "https://www.linkedin.com/in/krishna-garg-a8b44937a?utm_source=share_via&utm_content=profile&utm_medium=member_android" },
+      { name: "Vaibhav Manchanda", linkedin: "https://www.linkedin.com/in/vaibhav-manchanda-569330248?utm_source=share_via&utm_content=profile&utm_medium=member_android" },
+      { name: "Nitisha Garg", linkedin: "https://www.linkedin.com/in/nitisha-g-24b475289?utm_source=share_via&utm_content=profile&utm_medium=member_android" },
+      { name: "Arshiya Lamba", linkedin: "https://www.linkedin.com/in/arshiya-lamba-bb643437a?utm_source=share_via&utm_content=profile&utm_medium=member_ios" },
+      { name: "Mudit Jain", linkedin: "https://www.linkedin.com/in/mudit-jain-8aba05375" },
+    ],
+    projects: [
+      {
+        title: "Employee Attrition Analysis",
+        creator: "Aryan Goyal",
+        github: "https://github.com/AryanGoyal17/Employee-Attrition-Analysis",
+        description: "A basic Exploratory Data Analysis (EDA) project built exclusively with Python, Pandas, Matplotlib and Seaborn. It analyzes the IBM HR dataset to uncover key factors driving employee turnover—such as overtime and commute distance—focusing entirely on core programmatic data cleaning and visualization techniques.",
+      },
+    ],
   },
-
   {
     id: "03",
-    title: "Corporate",
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.",
-    members: [],
-    projects: [],
+    title: "IOT",
+    category: "TECHNICAL",
+    desc: "LEAD's IoT domain empowers students to engineer connected devices and intelligent ecosystems. Through hands-on learning and real-world projects, members master embedded systems, sensors, and cloud integration, cultivating technical expertise to shape tomorrow's interconnected world.",
+    members: [
+      { name: "Tanish Aggarwal", linkedin: "https://www.linkedin.com/in/tanish-kumar-aggarwal-42331736b?utm_source=share_via&utm_content=profile&utm_medium=member_ios" },
+    ],
+    projects: [
+      {
+        title: "Bomb Defuse",
+        creator: "Yuvraj Malik (Technical Secretary)",
+        github: "https://github.com/Yuvraj-Malik/Bomb-Defuse",
+        description: "A fun and intense Arduino-based Bomb Diffusing Game 🎮. Observe the LEDs, remember the blinking pattern, and cut (press) the correct wire before time runs out!",
+      },
+    ],
   },
-
   {
     id: "04",
-    title: "Creatives",
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.",
-    members: [],
-    projects: [],
+    title: "Ethical Hacking",
+    category: "TECHNICAL",
+    desc: "Focused on ethical hacking and defense, LEAD's cybersecurity domain simulates cyberattacks using Kali Linux to uncover vulnerabilities. Students learn to think like attackers, patch systems, and secure digital environments against threats.",
+    members: [
+      { name: "Abhyuday Saksena", linkedin: "https://www.linkedin.com/in/abhyuday-saksena/" },
+    ],
+    projects: [{},],
   },
-
   {
     id: "05",
-    title: "Public Relations",
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.",
-    members: [],
+    title: "Media and PR",
+    category: "NON TECHNICAL",
+    desc: "LEAD's Media and PR department connects the society with the college community by shaping its brand identity, managing social media, and running outreach campaigns. Through creative storytelling, they boost student engagement, drive event turnout, and keep LEAD prominent.",
+    members: [
+      { name: "Varchasvi Gupta", linkedin: "https://www.linkedin.com/in/varchasvi-gupta-90716737b?utm_source=share_via&utm_content=profile&utm_medium=member_android" },
+      { name: "Taran Brar", linkedin: "https://www.linkedin.com/in/taranpreet-singh-49541937a?utm_source=share_via&utm_content=profile&utm_medium=member_ios" },
+    ],
     projects: [],
   },
-
   {
     id: "06",
-    title: "Events",
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.",
-    members: [],
+    title: "Content",
+    category: "NON TECHNICAL",
+    desc: "LEAD's Content domain crafts compelling narratives that shape the society's voice. From persuasive copywriting and scriptwriting to engaging blogs, members master strategic storytelling to effectively communicate LEAD's vision and captivate audiences across all platforms.",
+    members: [
+      { name: "Divyanshi", linkedin: "https://www.linkedin.com/in/divyanshi-sharma-7010a1373?utm_source=share_via&utm_content=profile&utm_medium=member_ios" },
+    ],
     projects: [],
   },
-
   {
     id: "07",
-    title: "Editorial",
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.",
-    members: [],
+    title: "Design",
+    category: "NON TECHNICAL",
+    desc: "LEAD's Design domain visually brings the society's ideas to life. Using tools like Photoshop and Illustrator, members create striking graphics, UI/UX layouts, and branding assets, combining creativity with technical skill to establish a vibrant, memorable visual identity.",
+    members: [
+      { name: "Gouranga Raj Bharali", linkedin: "https://www.linkedin.com/in/gouranga-raj-bharali-02085636a" },
+      { name: "Kangana", linkedin: "https://www.linkedin.com/in/kangana-singhal-a5822b376/" },
+      { name: "Ganika", linkedin: "https://www.linkedin.com/in/ganika-dudeja-7aa76437a?utm_source=share_via&utm_content=profile&utm_medium=member_android" },
+      { name: "Samridhi", linkedin: "https://www.linkedin.com/in/samridhi-baa79337a" },
+      { name: "Sristi Singh", linkedin: "https://www.linkedin.com/in/sristi-singh-bba43137a" },
+      { name: "Bhumi", linkedin: "https://www.linkedin.com/in/bhumi-6287943a5" },
+    ],
     projects: [],
   },
-
   {
     id: "08",
-    title: "Research",
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.",
-    members: [],
+    title: "Marketing",
+    category: "NON TECHNICAL",
+    desc: "LEAD's Marketing Department secures sponsorships, builds partnerships, and manages external relations. Working behind the scenes to connect with brands, alumni, and industry professionals, they provide the resources and foundational support that make successful events possible.",
+    members: [
+      { name: "Bhavika Sood", linkedin: "https://www.linkedin.com/in/bhavika-sood-83750336b?utm_source=share_via&utm_content=profile&utm_medium=member_android" },
+      { name: "Tarni Gupta", linkedin: "https://www.linkedin.com/in/tarni-gupta?utm_source=share_via&utm_content=profile&utm_medium=member_android" },
+      { name: "Alisha", linkedin: "https://www.linkedin.com/in/alisha-nijhawan-349889412?utm_source=share_via&utm_content=profile&utm_medium=member_ios" },
+      { name: "Mayank", linkedin: "https://www.linkedin.com/in/mayank-dudi-137958378?utm_source=share_via&utm_content=profile&utm_medium=member_android" },
+    ],
     projects: [],
   },
 ];

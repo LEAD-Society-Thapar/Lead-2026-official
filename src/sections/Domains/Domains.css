@@ -76,8 +76,8 @@
    CARDS, SWING PHYSICS, & 3D OVERLAP
    ========================================================================== */
 .hanging-card {
-  flex: 0 0 350px;
-  /* Clean, fixed width on desktop */
+  flex: 0 0 380px;
+  /* Premium width on laptop displays */
   display: flex;
   flex-direction: column;
   position: relative;
@@ -104,12 +104,12 @@
 .card-body {
   width: 100%;
   flex-grow: 1;
-  min-height: clamp(360px, 55vh, 560px);
+  min-height: clamp(400px, 58vh, 580px);
   /* Dynamically adjust height relative to viewport height, keeping it within safe boundaries */
   background: linear-gradient(180deg, #141416 0%, #0a0a0b 100%);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 28px;
-  padding: 70px 32px 35px 32px;
+  padding: 72px 34px 38px 34px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -193,33 +193,43 @@
 }
 
 .card-meta-tag {
-  color: #8f8f8f;
+  font-family: 'Outfit', 'Inter', sans-serif;
+  color: rgba(255, 255, 255, 0.85);
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.07);
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .card-number {
-  font-family: monospace;
-  color: rgba(255, 255, 255, 0.12);
-  font-size: 20px;
-  font-weight: bold;
+  font-family: 'Outfit', 'Inter', sans-serif;
+  color: rgba(255, 255, 255, 0.22);
+  font-size: 24px;
+  font-weight: 800;
 }
 
 .card-title {
+  font-family: 'Outfit', 'Inter', sans-serif;
   color: #ffffff;
   font-size: 32px;
-  font-weight: 600;
+  font-weight: 700;
   margin: 0;
-  letter-spacing: 0.5px;
+  line-height: 1.25;
+  letter-spacing: -0.3px;
 }
 
 .card-desc {
-  color: #a6a6a6;
-  font-size: 16px;
-  line-height: 1.7;
-  font-weight: 300;
+  font-family: 'Inter', sans-serif;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 16.5px;
+  line-height: 1.65;
+  font-weight: 400;
   margin: 0;
 }
 
@@ -390,7 +400,7 @@
 /* Book Container */
 .book-container {
   position: relative;
-  width: 440px;
+  width: 480px;
   /* Width of a single page when closed */
   height: clamp(480px, 75vh, 650px);
   /* Adapt height to screen height within safe bounds */
@@ -402,7 +412,7 @@
 }
 
 .book-container.opened {
-  width: 880px;
+  width: 960px;
   /* Width of both pages when opened */
 }
 
@@ -413,8 +423,8 @@
   height: 100%;
   transform-style: preserve-3d;
   transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-  /* Slide back by 25% of total opened width (220px) to keep it centered when closed */
-  transform: rotateX(12deg) rotateY(0deg) translateX(-220px);
+  /* Slide back by 25% of total opened width (240px) to keep it centered when closed */
+  transform: rotateX(12deg) rotateY(0deg) translateX(-240px);
 }
 
 .book-container.opened .book-wrapper {
@@ -504,7 +514,7 @@
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 4px 24px 24px 4px;
   box-shadow: -10px 15px 35px rgba(0, 0, 0, 0.7);
-  padding: 55px 40px;
+  padding: 50px 24px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -555,7 +565,7 @@
 }
 
 .book-cover-number {
-  font-family: monospace;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 24px;
   font-weight: bold;
   color: rgba(255, 255, 255, 0.15);
@@ -566,14 +576,22 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0 5px;
 }
 
 .book-cover-title {
+  font-family: 'Outfit', 'Inter', sans-serif;
   color: #ffffff;
-  font-size: 38px;
+  font-size: clamp(22px, 2.4vw, 28px);
   font-weight: 700;
   margin: 0;
-  letter-spacing: 1px;
+  line-height: 1.25;
+  letter-spacing: -0.2px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
 }
 
 .book-cover-divider {
@@ -854,4 +872,20 @@
     overflow-y: visible;
     padding-right: 0;
   }
+}
+
+.book-empty-projects {
+  padding: 28px 24px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  text-align: center;
+}
+
+.book-empty-projects p {
+  color: rgba(255, 255, 255, 0.6);
+  font-family: 'Inter', sans-serif;
+  font-size: 14.5px;
+  line-height: 1.6;
+  margin: 0;
 }
