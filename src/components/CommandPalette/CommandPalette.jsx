@@ -1,5 +1,6 @@
 // Import required dependencies
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Search, X, Home, Calendar, Users, HelpCircle, ArrowRight, Star, Image, Mail } from 'lucide-react';
 import './CommandPalette.css';
 
@@ -44,7 +45,7 @@ Use this exact information to construct answers about LEAD:
   1. MATRIX 4.0: 3-day flagship fest split into Tech, Non-Tech, and Semi-Tech tracks.
   2. SEAFERNO: High-energy 1-day semi-tech event serving as a precursor hype machine for Matrix.
   3. LEADCODE: Intense overnight hacking arena held exclusively for internal LEAD members.
-  ***CRITICAL RULE***: If a user asks about events, list them briefly and ALWAYS append this exact markdown text at the end of your response so they can view the page: [Explore Our Initiatives](#events)
+  ***CRITICAL RULE***: If a user asks about events, list them briefly and ALWAYS append this exact markdown text at the end of your response so they can view the page: [Explore Our Initiatives](/events)
 - Core Projects: "Code Vault", a custom-built full-stack MERN framework engineered to scale for real-time submission tracking.
 - Departments: Technical, Design, Content, PR & Marketing, and Media.
 - Roster/Executive Board: Manya Kedia is the Joint Secretary. Yuvraj Malik is the Technical Secretary.
@@ -63,26 +64,29 @@ export default function CommandPalette({ visible }) {
   const [showTooltip, setShowTooltip] = useState(true);
   const inputRef = useRef(null);
   const aiPanelRef = useRef(null);
+  const navigate = useNavigate();
 
-  // Focus input on open
+  // Focus input on open, clear on close
   useEffect(() => {
-    if (open) setTimeout(() => inputRef.current?.focus(), 50);
+    if (open) {
+      setTimeout(() => inputRef.current?.focus(), 50);
+    } else {
+      setQuery("");
+      setAiResponse("");
+    }
   }, [open]);
 
   // Handle AI link clicks
   useEffect(() => {
     const handleAiLinkClick = (e) => {
       const target = e.target.closest('a');
-      if (target && target.getAttribute('href')?.startsWith('#')) {
+      const href = target?.getAttribute('href');
+      
+      // If it's an internal route (like /events, /team)
+      if (href && href.startsWith('/')) {
         e.preventDefault();
         setOpen(false);
-        const elementId = target.getAttribute('href');
-        const element = document.querySelector(elementId);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
-        } else {
-          console.log(`Routing execution context shifted to: ${elementId}`);
-        }
+        navigate(href);
       }
     };
     
@@ -94,14 +98,9 @@ export default function CommandPalette({ visible }) {
   }, [aiResponse]);
 
   // Handle section routing
-  const handleRouting = (elementId) => {
+  const handleRouting = (path) => {
     setOpen(false);
-    const target = document.querySelector(elementId);
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      console.log(`Routing execution context shifted to: ${elementId}`);
-    }
+    navigate(path);
   };
 
   // Handle external links
@@ -260,32 +259,32 @@ export default function CommandPalette({ visible }) {
             {!query && (
               <div className="cp-menu-list">
                 <div className="cp-group-header">Navigation Modules</div>
-                <div className="cp-menu-row" onClick={() => handleRouting('#hero')}>
+                <div className="cp-menu-row" onClick={() => handleRouting('/')}>
                   <Home size={14} color="#00d2ff" />
                   <span className="cp-row-label">Go to Home</span>
                   <span className="cp-row-desc">Overview</span>
                 </div>
-                <div className="cp-menu-row" onClick={() => handleRouting('#events')}>
+                <div className="cp-menu-row" onClick={() => handleRouting('/events')}>
                   <Calendar size={14} color="#00d2ff" />
                   <span className="cp-row-label">Go to Events</span>
                   <span className="cp-row-desc">Our Initiatives</span>
                 </div>
-                <div className="cp-menu-row" onClick={() => handleRouting('#team')}>
+                <div className="cp-menu-row" onClick={() => handleRouting('/team')}>
                   <Users size={14} color="#00d2ff" />
                   <span className="cp-row-label">Go to Team</span>
                   <span className="cp-row-desc">Our Leadership</span>
                 </div>
-                <div className="cp-menu-row" onClick={() => handleRouting('#sponsors')}>
+                <div className="cp-menu-row" onClick={() => handleRouting('/sponsors')}>
                   <Star size={14} color="#00d2ff" />
                   <span className="cp-row-label">Go to Sponsors</span>
                   <span className="cp-row-desc">Our Network</span>
                 </div>
-                <div className="cp-menu-row" onClick={() => handleRouting('#gallery')}>
+                <div className="cp-menu-row" onClick={() => handleRouting('/gallery')}>
                   <Image size={14} color="#00d2ff" />
                   <span className="cp-row-label">Go to Gallery</span>
                   <span className="cp-row-desc">Archive</span>
                 </div>
-                <div className="cp-menu-row" onClick={() => handleRouting('#contact')}>
+                <div className="cp-menu-row" onClick={() => handleRouting('/contact')}>
                   <Mail size={14} color="#00d2ff" />
                   <span className="cp-row-label">Go to Contact Us</span>
                   <span className="cp-row-desc">Let's Connect</span>

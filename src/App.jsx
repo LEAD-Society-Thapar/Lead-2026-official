@@ -15,6 +15,8 @@ import './sections/GalleryPage/styles/global.css'
 
 // ===== Standalone shell =====
 import SiteNav from './components/SiteNav/SiteNav'
+import CommandPalette from './components/CommandPalette/CommandPalette'
+import { CommandPaletteProvider, useCommandPalette } from './context/CommandPaletteContext'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -24,20 +26,28 @@ function ScrollToTop() {
   return null
 }
 
+function GlobalCommandPalette() {
+  const { isVisible } = useCommandPalette();
+  return <CommandPalette visible={isVisible} />;
+}
+
 function App() {
   return (
-    <BrowserRouter>
-      <ScrollToTop />
-      <SiteNav />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/events" element={<Events />} />
-        <Route path="/team" element={<Team />} />
-        <Route path="/sponsors" element={<ArcReactor sponsors={SPONSORS_DATA} />} />
-        <Route path="/gallery" element={<GalleryTunnel />} />
-        <Route path="/contact" element={<Contact />} />
-      </Routes>
-    </BrowserRouter>
+    <CommandPaletteProvider>
+      <BrowserRouter>
+        <ScrollToTop />
+        <SiteNav />
+        <GlobalCommandPalette />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/events" element={<Events />} />
+          <Route path="/team" element={<Team />} />
+          <Route path="/sponsors" element={<ArcReactor sponsors={SPONSORS_DATA} />} />
+          <Route path="/gallery" element={<GalleryTunnel />} />
+          <Route path="/contact" element={<Contact />} />
+        </Routes>
+      </BrowserRouter>
+    </CommandPaletteProvider>
   )
 }
 
