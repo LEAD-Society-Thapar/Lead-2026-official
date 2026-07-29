@@ -15,7 +15,7 @@ export default function Background() {
 
     const particles = [];
     const particleCount = 75; // Subtle and elegant, not crowded
-    const dustCount = 20; // Larger blurry cosmic dust
+    const dustCount = 0; // Removed glowing dust to match dark theme
 
     class Particle {
       constructor(isDust = false) {
@@ -114,54 +114,11 @@ export default function Background() {
 
   return (
     <div className="cosmic-background">
-      {/* Canvas stars & dust */}
+      {/* Canvas stars */}
       <canvas ref={canvasRef} className="particles-canvas" />
-
-      {/* Volumetric glow and horizon */}
-      <div className="glow-horizon" />
-      <div className="glow-orb glow-orb-left" />
-      <div className="glow-orb glow-orb-right" />
-      <div className="glow-orb glow-orb-center" />
 
       {/* Noise Texture */}
       <div className="noise-overlay" />
-
-      {/* Giant transparent LEAD text behind hero */}
-      <div className="giant-lead-text">LEAD</div>
-
-      {/* Abstract Wave Mesh at the bottom */}
-      <div className="wave-mesh-container">
-        <svg
-          className="wave-mesh"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 1440 250"
-          preserveAspectRatio="none"
-        >
-          <defs>
-            <linearGradient id="wave-grad-1" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="rgba(28, 95, 115, 0.10)" />
-              <stop offset="50%" stopColor="rgba(28, 95, 115, 0.04)" />
-              <stop offset="100%" stopColor="rgba(0, 0, 0, 0)" />
-            </linearGradient>
-            <linearGradient id="wave-grad-2" x1="0%" y1="100%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="rgba(130, 220, 255, 0.06)" />
-              <stop offset="100%" stopColor="rgba(28, 95, 115, 0)" />
-            </linearGradient>
-          </defs>
-          
-          {/* Animated overlapping mesh waves */}
-          <path
-            className="wave-path wave-path-1"
-            d="M0,160 C320,240 640,80 960,180 C1280,280 1400,120 1440,160 L1440,250 L0,250 Z"
-            fill="url(#wave-grad-1)"
-          />
-          <path
-            className="wave-path wave-path-2"
-            d="M0,190 C240,120 480,220 720,150 C960,80 1200,210 1440,170 L1440,250 L0,250 Z"
-            fill="url(#wave-grad-2)"
-          />
-        </svg>
-      </div>
     </div>
   );
 }

@@ -6,8 +6,8 @@
    ============================================================ */
 
 .contactx {
-  --cx-ink: #06080f;
-  --cx-ink-2: #0a0d18;
+  --cx-ink: #000000;
+  --cx-ink-2: #000000;
   --cx-paper: #edeff5;
   --cx-muted: #838da3;
   --cx-faint: rgba(255, 255, 255, 0.10);
@@ -52,18 +52,10 @@
   z-index: 0;
 }
 .contactx-glow--cool {
-  width: 560px;
-  height: 560px;
-  top: -200px;
-  left: -160px;
-  background: rgba(63, 108, 243, 0.16);
+  display: none;
 }
 .contactx-glow--warm {
-  width: 460px;
-  height: 460px;
-  right: -160px;
-  bottom: -200px;
-  background: rgba(0, 234, 255, 0.09);
+  display: none;
 }
 
 /* ---- Layout: asymmetric editorial split -------------------- */
