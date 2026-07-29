@@ -7,20 +7,15 @@ function About() {
       <div className="about-container">
 
         <p className="about-tag">
-          ABOUT US
+          01 / ABOUT US
         </p>
 
         <h2 className="about-title">
-          Empowering Students Through Innovation
+          Learn. Emerge. Aspire. Discover.
         </h2>
 
         <p className="about-text">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-          Pellentesque habitant morbi tristique senectus et netus et malesuada
-          fames ac turpis egestas. Integer vitae justo ut elit placerat
-          fermentum. Suspendisse potenti. Curabitur gravida, ipsum ac
-          condimentum pretium, erat nibh facilisis lorem, vitae malesuada
-          lectus risus vitae purus.
+          LEAD, a preeminent society at TIET, Patiala, is dedicated to cultivating engineers who harness technology for societal betterment. Beyond our robust technical programs, we champion a holistic development approach, providing extensive opportunities for students to delve into vital domains such as design, marketing, content creation, and video editing. This integrated methodology ensures comprehensive skill enhancement and personal growth, truly embodying our core philosophy: Learn, Emerge, Aspire, and Discover.
         </p>
 
       </div>
