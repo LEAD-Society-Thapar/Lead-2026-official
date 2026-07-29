@@ -192,11 +192,11 @@ export default function Domains() {
               {/* Right Page (Projects / Operations) */}
               <div className="book-page book-right-page">
                 <h4 className="book-page-subtitle">
-                  {getDomainProjects(selectedDomain).length > 0 ? "FEATURED PROJECTS" : "DEPARTMENT OVERVIEW"}
+                  {getDomainProjects(selectedDomain).filter(p => p && p.title).length > 0 ? "FEATURED PROJECTS" : "PROJECT STATUS"}
                 </h4>
                 <div className="book-page-content scrollable-page-content">
-                  {getDomainProjects(selectedDomain).length > 0 ? (
-                    getDomainProjects(selectedDomain).map((project, index) => (
+                  {getDomainProjects(selectedDomain).filter(p => p && p.title).length > 0 ? (
+                    getDomainProjects(selectedDomain).filter(p => p && p.title).map((project, index) => (
                       <div key={index} className="book-project-card">
                         <div className="book-project-header">
                           <h5 className="book-project-title">{project.title}</h5>
@@ -212,9 +212,15 @@ export default function Domains() {
                         )}
                       </div>
                     ))
+                  ) : selectedDomain.category === "TECHNICAL" ? (
+                    <div className="book-empty-projects">
+                      <h5>PROJECTS UNDER DEVELOPMENT</h5>
+                      <p>Our Ethical Hacking & Cybersecurity research projects, penetration testing scripts, and vulnerability sandboxes are currently undergoing internal security audits. New open-source tools will be published here soon.</p>
+                    </div>
                   ) : (
                     <div className="book-empty-projects">
-                      <p>This department focuses on non-technical operational initiatives, brand identity, public outreach, and strategic execution rather than software projects.</p>
+                      <h5>DEPARTMENT OVERVIEW</h5>
+                      <p>This department focuses on non-technical operational initiatives, brand identity, public outreach, and strategic execution rather than software repositories.</p>
                     </div>
                   )}
                 </div>
