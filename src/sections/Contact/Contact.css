@@ -94,7 +94,8 @@ body:has(.contact-section-root) {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 40px 24px;
+  /* Top padding clears the fixed site navbar (18px offset + 56px tall). */
+  padding: 124px 24px 64px;
   /* NO background-color here — the fixed cosmic background handles it.
      Adding a background here would paint over the canvas particles. */
   color: var(--text-primary);
@@ -121,7 +122,7 @@ body:has(.contact-section-root) {
 
 @media (max-width: 768px) {
   .contact-section-root {
-    padding: 30px 16px;
+    padding: 104px 16px 48px;
   }
 }
 

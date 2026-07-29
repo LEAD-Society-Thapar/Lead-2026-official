@@ -1,0 +1,77 @@
+:root {
+  --bg: #0e0e0e;
+  --ink: #f5f3ee;
+  --font-display: 'Anton', 'Arial Narrow', Impact, sans-serif;
+  --font-body: 'Space Grotesk', 'Segoe UI', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+/* ----------------------------- tunnel section ---------------------------- */
+
+.tunnel {
+  position: relative;
+  height: 100vh;
+  height: 100lvh;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.tunnel-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+}
+
+.tunnel-copy {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  perspective: 640px;
+  perspective-origin: 50% 0%;
+}
+
+.tunnel-copy-inner {
+  transform: rotateX(42deg);
+  transform-origin: 50% 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 1vh;
+}
+
+.tunnel-copy-inner span {
+  font-family: var(--font-display);
+  color: var(--ink);
+  font-size: clamp(60px, 13.5vw, 220px);
+  line-height: 0.84;
+  letter-spacing: 0.015em;
+  white-space: nowrap;
+}

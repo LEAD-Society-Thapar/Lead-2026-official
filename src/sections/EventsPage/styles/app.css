@@ -1,0 +1,403 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+/* Local condensed display face — used by both the DOM HUD and the canvas
+   card textures, and (via troika) by the 3D letters. */
+@font-face {
+  font-family: 'Anton';
+  src: url('/fonts/Anton-Regular.ttf') format('truetype');
+  font-weight: 400 900;
+  font-display: swap;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+#root::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  background: #ffffff;
+  color: #f6f4ef;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+body::-webkit-scrollbar {
+  display: none;
+}
+
+/* One-page site wrapper: EVENTS is one full-viewport segment between two
+   ordinary sections. Scroll only scrubs EVENTS while the cursor is over the
+   capsule (see useScrollTimeline); otherwise the page scrolls past it. */
+.site {
+  position: relative;
+  width: 100%;
+}
+
+.spacer {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  color: #0a0a0a;
+}
+
+.spacer--bottom {
+  background: #0a0a0a;
+  color: #f6f4ef;
+}
+
+.spacer__inner {
+  text-align: center;
+  padding: 0 24px;
+}
+
+.spacer__eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: #7a0f0f;
+  margin: 0 0 14px;
+}
+
+.spacer__title {
+  font-family: 'Anton', sans-serif;
+  font-weight: 400;
+  font-size: clamp(44px, 9vw, 120px);
+  letter-spacing: 0.02em;
+  line-height: 0.95;
+  margin: 0;
+}
+
+.spacer__hint {
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  opacity: 0.55;
+  margin: 18px 0 0;
+}
+
+/* EVENTS segment — one viewport tall, holds the interactive stage.
+   padding-top pushes the stage clear of the fixed site navbar so the
+   capsule/grid never sit underneath it. (box-sizing:border-box keeps the
+   section exactly one viewport tall, so nothing scrolls.) */
+.events {
+  position: relative;
+  height: 100vh;
+  padding-top: 96px;
+}
+
+.stage {
+  position: relative;
+  width: 100vw;
+  height: calc(100vh - 96px);
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.stage__canvas {
+  position: absolute !important;
+  inset: 0;
+  display: block;
+}
+
+/* ---- pill opening (red grid wall + expanding capsule hole) -------------- */
+.pill-opening {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.pill-opening svg {
+  display: block;
+}
+
+/* ---- HUD (vertical scroll layout) ---------------------------------------- */
+.hud {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.hud__bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px clamp(20px, 4vw, 54px);
+  mix-blend-mode: difference;
+}
+
+.hud__brand {
+  font-family: 'Anton', sans-serif;
+  font-size: 22px;
+  letter-spacing: 0.04em;
+  color: #fff;
+}
+
+.hud__nav {
+  display: flex;
+  gap: clamp(16px, 2.4vw, 40px);
+  pointer-events: auto;
+}
+
+.hud__nav a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  font-weight: 500;
+  transition: opacity 0.2s ease;
+}
+
+.hud__nav a:hover {
+  opacity: 0.6;
+}
+
+/* Scroll hint at bottom center */
+.hud__hint {
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 5px;
+  font-size: 8px;
+  letter-spacing: 0.28em;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 0 10px rgba(0, 0, 0, 1), 0 0 25px rgba(0, 0, 0, 0.9), 0 0 50px rgba(0, 0, 0, 0.7), 0 0 80px rgba(0, 0, 0, 0.5);
+}
+
+.hud__hint-arrow {
+  font-size: 14px;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 1), 0 0 25px rgba(0, 0, 0, 0.9), 0 0 50px rgba(0, 0, 0, 0.7), 0 0 80px rgba(0, 0, 0, 0.5);
+  animation: hint-bob 1.6s ease-in-out infinite;
+}
+
+@keyframes hint-bob {
+  0%,
+  100% {
+    transform: translateY(-3px);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translateY(4px);
+    opacity: 1;
+  }
+}
+
+/* Progress bar at bottom */
+.hud__progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.hud__progress-fill {
+  height: 100%;
+  background: #080404;
+  transform-origin: left center;
+  will-change: transform;
+}
+
+/* ---- floating event cards (drei <Html transform>) ----------------------- */
+.ecard {
+  position: relative;
+  pointer-events: auto;
+  overflow: hidden;
+  background: #f6f4ef;
+  border: 1px solid #0a0a0a;
+  box-shadow: 6px 8px 0 rgba(8, 4, 4, 0.12);
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  color: #0a0a0a;
+  cursor: pointer;
+  user-select: none;
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.ecard:hover,
+.ecard.is-hover {
+  box-shadow: 10px 14px 0 rgba(8, 4, 4, 0.2);
+}
+
+/* Image frame — covers the whole card at rest, shrinks to a left column on hover.
+   Hover sequence: (1) card scales up in 3D → (2) frame shrinks left →
+   (3) text fades in → (4) button rises. Exit reverses instantly (no delays). */
+.ecard__frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 2;
+  /* exit: expand back immediately */
+  transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0s;
+}
+
+.ecard:hover .ecard__frame,
+.ecard.is-hover .ecard__frame {
+  top: 5%;
+  left: 3.5%;
+  width: 33.3%;
+  height: 90%;
+  /* enter: slow, even glide — right edge sweeps toward the centre while the
+     image pans, so both edges appear to converge on the centre third */
+  transition-delay: 0.1s;
+  transition-duration: 0.7s;
+  transition-timing-function: cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.ecard__img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  /* pan back to full view immediately on exit */
+  transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0s;
+}
+
+/* The shrunken frame is a window onto the CENTER third of the image:
+   image stays card-sized (300% × 111% of the frame) and pans so its
+   middle section shows through — no squish, no distortion. */
+/* Perfectly synced with the frame shrink (same delay/duration/ease):
+   mid-animation the left third slides out through the frame's left edge
+   while the right edge closes in — converging on the centre third. */
+.ecard:hover .ecard__img,
+.ecard.is-hover .ecard__img {
+  width: 300%;
+  height: 111.2%;
+  left: -100%;
+  top: -5.6%;
+  transition-delay: 0.1s;
+  transition-duration: 0.7s;
+  transition-timing-function: cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+/* Event-name ribbon — a small solid band that hugs the text, sitting at the
+   bottom-left of the image (both at rest and inside the shrunken frame). */
+.ecard__imglabel {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  max-width: calc(100% - 20px);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: #f6f4ef;
+  background: #0a0a0a;
+  padding: 4px 9px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 1;
+  /* return: fade the name back in once the card settles at rest */
+  transition: opacity 0.3s ease 0.15s;
+}
+
+/* Hide the name ribbon the instant a card is hovered */
+.ecard:hover .ecard__imglabel,
+.ecard.is-hover .ecard__imglabel {
+  opacity: 0;
+  transition: opacity 0.12s ease 0s;
+}
+
+/* Text column — hidden at rest, revealed in the right 2/3 on hover */
+.ecard__text {
+  position: absolute;
+  top: 6%;
+  right: 4%;
+  bottom: 6%;
+  left: 41%;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  z-index: 1;
+  opacity: 0;
+  transform: translateX(10px);
+  pointer-events: none;
+  /* exit: fade out immediately */
+  transition: opacity 0.18s ease-out 0s, transform 0.18s ease-out 0s;
+}
+
+.ecard:hover .ecard__text,
+.ecard.is-hover .ecard__text {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+  /* enter: after the frame glide has mostly settled */
+  transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.6s,
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.6s;
+}
+
+.ecard__tag {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  color: #7a0f0f;
+}
+
+.ecard__title {
+  font-family: 'Anton', sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  margin: 0;
+}
+
+.ecard__meta {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: #555;
+  margin: 0;
+}
+
+.ecard__desc {
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: #333;
+  margin: 0;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hud__hint-arrow {
+    animation: none;
+  }
+  /* .ecard transitions intentionally left active: the whole page is a
+     scroll-driven animation (Lenis/GSAP don't pause for reduced motion),
+     and the card hover shift is core to the interaction. */
+}

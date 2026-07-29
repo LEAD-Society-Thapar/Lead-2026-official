@@ -26,26 +26,6 @@ function Home() {
       <About />
 
       <Domains />
-
-      <section id="initiative" style={{ minHeight: "100vh", padding: "120px 8%" }}>
-        <h2>Initiative Section</h2>
-      </section>
-
-      <section id="leadership" style={{ minHeight: "100vh", padding: "120px 8%" }}>
-        <h2>Leadership Section</h2>
-      </section>
-
-      <section id="network" style={{ minHeight: "100vh", padding: "120px 8%" }}>
-        <h2>Network Section</h2>
-      </section>
-
-      <section id="archive" style={{ minHeight: "100vh", padding: "120px 8%" }}>
-        <h2>Archive Section</h2>
-      </section>
-
-      <section id="contact" style={{ minHeight: "100vh", padding: "120px 8%" }}>
-        <h2>Let's Connect Section</h2>
-      </section>
     </>
   );
 }

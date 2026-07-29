@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Users, Lightbulb } from 'lucide-react';
+import { Users, Handshake } from 'lucide-react';
 import useMouseParallax from '../hooks/useMouseParallax';
 import './FeatureCards.css';
 
@@ -39,15 +39,15 @@ export default function FeatureCards() {
       <div className="feature-cards-stack">
         <FeatureCard
           icon={Users}
-          title="Collaborate"
-          description="Build innovative projects with LEAD."
+          title="Join Us"
+          description="Recruitments open every semester across eight domains."
           delayClass="float-medium"
         />
-        
+
         <FeatureCard
-          icon={Lightbulb}
-          title="Innovate"
-          description="Turn ideas into impactful solutions."
+          icon={Handshake}
+          title="Partner With Us"
+          description="Sponsor an event and reach students across the campus."
           delayClass="float-fast"
         />
       </div>

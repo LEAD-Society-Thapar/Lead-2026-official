@@ -81,6 +81,8 @@ const ArcReactor = ({ sponsors = [] }) => {
 
     // Master scaling group
     const masterGroup = new THREE.Group();
+    const initialScale = window.innerWidth < 768 ? 0.55 : 1.0;
+    masterGroup.scale.set(initialScale, initialScale, initialScale);
     scene.add(masterGroup);
     reactorGroupRef.current = masterGroup;
 
@@ -296,11 +298,11 @@ const ArcReactor = ({ sponsors = [] }) => {
 
     // Cache material transitions
     materialsRef.current = [
-      { mat: material, baseOpacity: 0.85 },
+      { mat: material, baseOpacity: 0.45 },
       { mat: tetherMat, baseOpacity: 0.25 },
-      { mat: clampMat, baseOpacity: 0.5 },
-      { mat: ringMat, baseOpacity: 0.5 },
-      { mat: casingMat, baseOpacity: 0.5 }
+      { mat: clampMat, baseOpacity: 0.3 },
+      { mat: ringMat, baseOpacity: 0.3 },
+      { mat: casingMat, baseOpacity: 0.3 }
     ];
 
     // Reset UI opacities
@@ -315,7 +317,7 @@ const ArcReactor = ({ sponsors = [] }) => {
     }
 
     // Animate particle assembly
-    gsap.to(material, { opacity: 0.85, duration: 2.0, delay: 3.0, ease: "power2.inOut" });
+    gsap.to(material, { opacity: 0.45, duration: 2.0, delay: 3.0, ease: "power2.inOut" });
     
     particlesData.forEach((p, i) => {
       gsap.to(p, {
@@ -333,7 +335,7 @@ const ArcReactor = ({ sponsors = [] }) => {
 
     // Fade in subsystems
     borderMatsArray.forEach(mat => {
-        gsap.to(mat, { opacity: 0.5, duration: 2.0, delay: 5.0, ease: "power2.inOut" });
+        gsap.to(mat, { opacity: 0.3, duration: 2.0, delay: 5.0, ease: "power2.inOut" });
     });
 
     // Show bot on load
@@ -419,6 +421,11 @@ const ArcReactor = ({ sponsors = [] }) => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
+      
+      if (!isFocusedRef.current && reactorGroupRef.current) {
+        const targetScale = window.innerWidth < 768 ? 0.55 : 1.0;
+        reactorGroupRef.current.scale.set(targetScale, targetScale, targetScale);
+      }
     };
     window.addEventListener('resize', handleResize);
 
@@ -492,7 +499,8 @@ const ArcReactor = ({ sponsors = [] }) => {
       }
 
       // Restore 3D elements
-      gsap.to(reactorGroupRef.current.scale, { x: 1, y: 1, z: 1, duration: 1.2, delay: 0.2, ease: "power3.inOut" });
+      const targetScale = window.innerWidth < 768 ? 0.55 : 1.0;
+      gsap.to(reactorGroupRef.current.scale, { x: targetScale, y: targetScale, z: targetScale, duration: 1.2, delay: 0.2, ease: "power3.inOut" });
       materialsRef.current.forEach(({ mat, baseOpacity }) => {
           gsap.to(mat, { opacity: baseOpacity, duration: 1.0, delay: 0.2, ease: "power2.inOut" });
       });

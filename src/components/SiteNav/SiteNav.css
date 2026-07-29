@@ -1,0 +1,13 @@
+/* The SourcePage navbar styles target <button> elements. This route-driven
+   version renders <a> (NavLink), so strip the default anchor decoration.
+   Everything else is inherited from ../Navbar/Navbar.css untouched. */
+
+.floating-navbar .nav-item,
+.floating-navbar .nav-logo-link,
+.mobile-menu .mobile-nav-item {
+  text-decoration: none;
+}
+
+.mobile-menu .mobile-nav-item {
+  display: block;
+}
