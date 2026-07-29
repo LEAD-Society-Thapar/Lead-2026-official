@@ -4,13 +4,8 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  /* Dark gradient base behind everything */
-  background: linear-gradient(
-    180deg,
-    #020305 0%,
-    #04060B 45%,
-    #020305 100%
-  );
+  /* Dark base behind everything */
+  background: #000000;
   /* Use z-index: 0 — the contact-section-root has no z-index so this sits
      behind all content naturally. We don't use negative z-index because
      position:relative on the parent creates a stacking context that traps

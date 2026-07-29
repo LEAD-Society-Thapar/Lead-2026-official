@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'
 import emailjs from '@emailjs/browser'
 import { ArrowRight, Check, AlertCircle } from 'lucide-react'
+import Background from './components/Background'
 import './ContactPage.css'
 
 // LEAD — Contact. A warm, editorial counterpoint to the site's cold 3D pages:
@@ -73,6 +74,7 @@ export default function ContactPage() {
 
   return (
     <main className="contactx">
+      <Background />
       <div className="contactx-glow contactx-glow--cool" aria-hidden="true" />
       <div className="contactx-glow contactx-glow--warm" aria-hidden="true" />
 
