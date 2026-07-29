@@ -5,8 +5,8 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import gsap from 'gsap';
 import './ArcReactor.css'; 
 
-// Import AI command palette
-import CommandPalette from '../../components/CommandPalette/CommandPalette';
+// Use global AI command palette context
+import { useCommandPalette } from '../../context/CommandPaletteContext';
 
 const ArcReactor = ({ sponsors = [] }) => {
   // DOM element refs
@@ -22,8 +22,8 @@ const ArcReactor = ({ sponsors = [] }) => {
   const [sponsorsUI, setSponsorsUI] = useState([]);
   const [selectedSponsor, setSelectedSponsor] = useState(null);
   
-  // Command palette visibility state
-  const [isBotVisible, setIsBotVisible] = useState(false);
+  // Command palette visibility state (Global)
+  const { setIsVisible } = useCommandPalette();
   
   // WebGL scene refs
   const cameraRef = useRef(null);
@@ -346,7 +346,7 @@ const ArcReactor = ({ sponsors = [] }) => {
       ease: "power2.inOut", 
       onComplete: () => {
         introCompleteRef.current = true;
-        setIsBotVisible(true); 
+        setIsVisible(true); 
       }
     });
 
@@ -453,7 +453,7 @@ const ArcReactor = ({ sponsors = [] }) => {
       wasModalOpenRef.current = true; 
       
       // Hide bot on focus
-      setIsBotVisible(false);
+      setIsVisible(false);
 
       // Animate 3D and UI
       gsap.to(globalUIRef.current, { opacity: 0, duration: 0.4 });
@@ -512,7 +512,7 @@ const ArcReactor = ({ sponsors = [] }) => {
       }
       
       // Show bot on close
-      setIsBotVisible(true);
+      setIsVisible(true);
 
       setTimeout(() => { isFocusedRef.current = false; }, 800);
   };
@@ -583,9 +583,7 @@ const ArcReactor = ({ sponsors = [] }) => {
         )}
       </div>
 
-      {/* Render command palette */}
-      <CommandPalette visible={isBotVisible} />
-
+      {/* Render command palette moved to global App layer */}
     </div>
   );
 };
