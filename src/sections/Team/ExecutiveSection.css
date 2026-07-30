@@ -56,50 +56,48 @@
   position: relative;
   z-index: 2;
 
-  width: min(1180px, 96vw);
-  height: 88vh;
+  width: min(1260px, 95vw);
 
-  display: grid;
-  grid-template-rows: repeat(4, 1fr);
+  display: flex;
+  flex-direction: column;
+  gap: 64px;
 
-  transform: translateY(140px);
+  transform: translateY(115px);
 
-  align-items: stretch;
-  justify-items: center;
-
-  padding: 20px 20px 40px;
-  row-gap: 135px;
+  padding: 22px 28px 52px;
 }
 
 /* Dim and subtly blur non-hovered cards */
 .exec-formation:has(.exec-card:hover)
   .exec-card-tilt-wrapper:not(:has(.exec-card:hover)) {
   filter: blur(1px);
-  opacity: 0.85;
+  opacity: 0.82;
 }
 
+/*
+  exec-row: shared perspective container for the formation illusion.
+  perspective: 1200px — tighter than 1400px for more readable depth arc
+  at 4-card rows. Each row is one coordinated structure.
+*/
 .exec-row {
   display: flex;
   justify-content: center;
   align-items: center;
-  row-gap: clamp(26px, 3vw, 42px);
-  column-gap: 50px;
-  min-height: 250px;
+  column-gap: clamp(17px, 2.3vw, 34px);
+  min-height: 260px;
   width: 100%;
-  height: 100%;
+
+  /* Breathing room for edge cards */
+  padding-inline: 16px;
+
+  /* Shared vanishing point for all 4 cards */
+  perspective: 1200px;
+  perspective-origin: center center;
 }
 
-.exec-row-2 {
-  transform: translateX(3%);
-}
-
-.exec-row-3 {
-  transform: translateX(-3%);
-}
-
-.exec-row-4 {
-  transform: translateY(-8px);
-}
+/* Row rhythm: rows 2 and 3 are optically aligned to center.
+   No horizontal offset — 4-card rows at full formation width
+   leave insufficient margin for a translateX shift. */
 
 /* ─── Tilt wrapper — carries the 3D perspective transform ─────────────── */
 /* This is a transparent layout wrapper. The motion.button inside it        */
@@ -107,35 +105,93 @@
 /* tilt on a parent div means the two transform chains never collide.        */
 
 .exec-card-tilt-wrapper {
-  /* CSS variable defaults — hook overwrites these on mousemove */
-  --card-rx: 0deg;
-  --card-ry: 0deg;
-  --portrait-tx: 0px;
-  --portrait-ty: 0px;
-  --body-tx: 0px;
-  --body-ty: 0px;
-  --divider-tx: 0px;
-  --socials-tx: 0px;
-  --socials-ty: 0px;
-  --light-x: 50%;
-  --light-y: 50%;
+  /* CSS variable defaults — hook overwrites these on each RAF frame */
+  --card-rx:       0deg;
+  --card-ry:       0deg;
+  --form-scale:    1;
+  --formation-tx:  0px;
+  --shadow-x:      0px;
+  --shadow-y:      0px;
+  --portrait-tx:   0px;
+  --portrait-ty:   0px;
+  --body-tx:       0px;
+  --body-ty:       0px;
+  --divider-tx:    0px;
+  --socials-tx:    0px;
+  --socials-ty:    0px;
+  --light-x:       50%;
+  --light-y:       50%;
   --light-opacity: 0;
-  --shadow-y: 0px;
 
-  /* perspective() as a transform function creates per-element 3D context
-     without affecting sibling cards in the same flex row.                  */
-  transform: perspective(1200px) rotateX(var(--card-rx)) rotateY(var(--card-ry));
+  /*
+    Transform order:
+      1. translateX   — formation slide (edge cards step inward on hover)
+      2. scale        — depth gradient (edge 0.974 → inner 1.0)
+      3. perspective  — per-card depth context layered on top of shared row perspective
+      4. rotateX/Y    — mouse tilt + idle arc + formation response
 
-  /* Pass-through layout: wrapper takes exactly the size of its child       */
-  display: contents-equivalent;
+    transform-origin is overridden per edge class below.
+  */
+  transform:
+    translateX(var(--formation-tx, 0px))
+    scale(var(--form-scale, 1))
+    perspective(1400px)
+    rotateX(var(--card-rx))
+    rotateY(var(--card-ry));
+
+  /* Edge cards pivot from their outer boundary — not their center.
+     This is the most effective single depth cue:
+     the left card appears to recede from the left, right from the right. */
+  transform-origin: center center;
+
   display: inline-flex;
   align-items: stretch;
   justify-content: stretch;
 
-  /* Smoothly animate sibling dimming on hover */
   transition:
-    filter 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    filter 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Left-edge card: pivot from outer boundary, subtle extra left margin */
+.exec-card-tilt-wrapper.is-left-edge {
+  transform-origin: left center;
+  margin-left: 4px;
+}
+
+/* Right-edge card: pivot from outer boundary, subtle extra right margin */
+.exec-card-tilt-wrapper.is-right-edge {
+  transform-origin: right center;
+  margin-right: 4px;
+}
+
+/* ─── Edge card optical dominance ───────────────────────────────────────── */
+/*
+  Edge cards define the formation's perspective boundaries.
+  They receive 2-3% deeper glass, slightly richer border, stronger shadow
+  and 2% more portrait contrast to establish visual hierarchy without
+  explicitly drawing the eye away from content.
+
+  This is the still-frame test: even without motion, edge cards should
+  read as the anchors of the composition.
+*/
+.exec-card-tilt-wrapper.is-left-edge .exec-card,
+.exec-card-tilt-wrapper.is-right-edge .exec-card {
+  background: linear-gradient(
+    160deg,
+    rgba(21, 28, 42, 0.93),
+    rgba(7, 10, 16, 0.97)
+  );
+  border-color: rgba(255, 255, 255, 0.148);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.085),
+    var(--shadow-x, 0px) calc(24px + var(--shadow-y, 0px)) 64px rgba(0, 0, 0, 0.45);
+}
+
+/* Edge portraits: 2% more contrast — subtle optical anchoring */
+.exec-card-tilt-wrapper.is-left-edge .exec-card-portrait img,
+.exec-card-tilt-wrapper.is-right-edge .exec-card-portrait img {
+  filter: saturate(0.93) contrast(1.08) brightness(0.83);
 }
 
 /* ─── Card base ─────────────────────────────────────────────────────────── */
@@ -147,8 +203,8 @@
   justify-content: flex-end;
 
   aspect-ratio: 0.72;
-  width: min(255px, 22vw);
-  min-width: 160px;
+  width: min(295px, 22.5vw);
+  min-width: 188px;
 
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 26px;
@@ -158,12 +214,11 @@
     rgba(18, 24, 35, 0.9),
     rgba(7, 10, 16, 0.96)
   );
-  /* Shadow offset driven by --shadow-y CSS var set by the tilt hook.
-     Mouse near top of card → var is negative → shorter shadow.
-     Mouse near bottom    → var is positive → taller shadow. */
+  /* Shadow: x-offset tracks rotation (confirms 3D lean physically)
+     y-offset from mouse position, both set by hook. */
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 calc(20px + var(--shadow-y, 0px)) 48px rgba(0, 0, 0, 0.35);
+    var(--shadow-x, 0px) calc(22px + var(--shadow-y, 0px)) 54px rgba(0, 0, 0, 0.38);
   overflow: hidden;
   cursor: pointer;
   text-align: left;
@@ -254,7 +309,7 @@
 
 .exec-card:hover .exec-card-portrait img,
 .exec-card.is-hovered .exec-card-portrait img {
-  transform: scale(calc(var(--card-scale, 1) * 1.04))
+  transform: scale(calc(var(--card-scale, 1) * 1.02))
     translate3d(var(--portrait-tx, 0px), calc(var(--portrait-ty, 0px) + var(--card-ty, 0px)), 0);
   filter: saturate(0.96) contrast(1.05) brightness(0.88);
 }
@@ -265,17 +320,17 @@
 .exec-card-body {
   position: relative;
   z-index: 2;
-  padding: 22px 22px 20px;
+  padding: 25px 23px 21px;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 5.5px;
   transform: translate3d(var(--body-tx, 0px), var(--body-ty, 0px), 0);
 }
 
 .exec-card-role {
   margin: 0;
   color: rgba(116, 233, 255, 0.86);
-  font-size: 11px;
+  font-size: 11.2px;
   letter-spacing: 0.24em;
   text-transform: uppercase;
   font-weight: 600;
@@ -284,7 +339,7 @@
 .exec-card-name {
   margin: 0;
   color: rgba(255, 255, 255, 0.95);
-  font-size: clamp(16px, 1.6vw, 22px);
+  font-size: clamp(16px, 1.6vw, 22.5px);
   line-height: 1.2;
   font-weight: 700;
 }
@@ -489,6 +544,8 @@
     flex-wrap: wrap;
     gap: 12px;
     transform: none;
+    /* Reduce shared perspective on smaller screens */
+    perspective: 1200px;
   }
 
   .exec-card {
@@ -555,15 +612,18 @@
 
 @media (max-width: 1199px) and (min-width: 901px) {
   .exec-formation {
-    width: min(100%, 1060px);
+    width: min(100%, 1070px);
+    gap: 52px;
   }
 
   .exec-row {
-    column-gap: clamp(16px, 2vw, 28px);
+    column-gap: clamp(13px, 1.7vw, 22px);
+    padding-inline: 11px;
+    perspective: 1100px;
   }
 
   .exec-card {
-    width: min(220px, 20vw);
+    width: min(245px, 20.8vw);
     min-width: 0;
   }
 }
@@ -600,9 +660,8 @@
 
   .exec-formation {
     width: 100%;
-    max-width: 680px;
-    height: auto;
-    display: grid;
+    max-width: 720px;
+    display: grid;  /* override desktop flex */
     grid-template-columns: repeat(2, minmax(0, 1fr));
     grid-template-rows: repeat(6, auto);
     gap: clamp(18px, 3.5vw, 32px);
@@ -610,14 +669,18 @@
     transform: none;
   }
 
-  /* Rows become transparent to the grid so all 12 cards form six 2-card rows. */
+  /* Rows become transparent to the grid — all 12 cards form six 2-card rows. */
   .exec-row {
     display: contents;
+    padding-inline: 0; /* reset desktop breathing room */
+    perspective: none;
   }
 
   .exec-card-tilt-wrapper {
     display: flex;
     width: 100%;
+    margin: 0; /* reset edge margins */
+    transform: none !important;
   }
 
   .exec-card {
