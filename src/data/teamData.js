@@ -14,6 +14,8 @@ import jasmineImg from '../assets/team/Jasmine.webp';
 import shreyaImg  from '../assets/team/Shreya.webp';
 import aanvyImg   from '../assets/team/Aanvy.webp';
 import rajatImg   from '../assets/team/Rajat.webp';
+import prathamImg from '../assets/team/Pratham.webp';
+import atulyaImg  from '../assets/team/Atulya.webp';
 
 export const executives = [
   {
@@ -80,7 +82,7 @@ export const executives = [
     name: "Pratham Arora",
     role: "Designing Head",
     // ponytail: placeholder until Pratham.webp is provided
-    portrait: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&q=80",
+    portrait: prathamImg,
     statement: "Design is not decoration — it's the language through which ideas become real.",
     github: "pratham-arora",
     linkedin: "pratham-arora",
@@ -112,7 +114,7 @@ export const executives = [
     name: "Atulya Kumar Singh",
     role: "Social Media & PR Head",
     // ponytail: placeholder until Atulya.webp is provided
-    portrait: "https://images.unsplash.com/photo-1463453091185-61582044d556?w=600&q=80",
+    portrait: atulyaImg,
     statement: "Attention is the new currency. I spend it wisely — and never stop earning more.",
     github: "atulya-singh",
     linkedin: "atulya-singh",
