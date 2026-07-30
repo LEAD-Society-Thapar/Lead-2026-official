@@ -71,7 +71,7 @@ export const DOMAIN_DATA = [
     members: [
       { name: "Abhyuday Saksena", linkedin: "https://www.linkedin.com/in/abhyuday-saksena/" },
     ],
-    projects: [{},],
+    projects: [],
   },
   {
     id: "05",
