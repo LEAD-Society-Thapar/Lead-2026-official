@@ -32,7 +32,8 @@
 
 .hero-bottom {
     z-index: 2;
-    margin-bottom: 100px;  /* more space between subtitle and About on desktop */
+    margin-bottom: 100px;
+    /* more space between subtitle and About on desktop */
     padding: 0 20px;
 }
 
@@ -52,8 +53,9 @@
     font-weight: 300;
     color: #a5a5a5;
     line-height: 1.5;
-    max-width: 700px;
+    max-width: 1800px;
     margin: 0 auto;
+    font-family: sans-serif;
     transform: translateY(-30px);
 }
 
@@ -69,7 +71,8 @@
     }
 
     .hero-bottom {
-        margin-bottom: 60px; /* more space before About on tablet */
+        margin-bottom: 60px;
+        /* more space before About on tablet */
     }
 }
 
@@ -77,7 +80,8 @@
 @media (max-width: 480px) {
     .hero {
         justify-content: flex-start;
-        padding-top: 66px;  /* clears taller navbar + breathing room */
+        padding-top: 66px;
+        /* clears taller navbar + breathing room */
         padding-bottom: 0;
         min-height: auto;
         height: auto;
@@ -104,7 +108,8 @@
 /* ---------------- SMALL PHONE (360px) ---------------- */
 @media (max-width: 360px) {
     .hero-middle {
-        height: 200px; /* Even tighter for small displays */
+        height: 200px;
+        /* Even tighter for small displays */
     }
 
     .hero-subtitle {

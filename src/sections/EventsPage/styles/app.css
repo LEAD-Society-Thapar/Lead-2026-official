@@ -383,14 +383,11 @@ body::-webkit-scrollbar {
 }
 
 .ecard__desc {
-  font-size: 11.5px;
-  line-height: 1.55;
+  font-size: 11px;
+  line-height: 1.45;
   color: #333;
   margin: 0;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
+  overflow: visible;
 }
 
 @media (prefers-reduced-motion: reduce) {

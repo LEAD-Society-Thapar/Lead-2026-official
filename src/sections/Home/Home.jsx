@@ -17,7 +17,7 @@ function Home() {
 
         {/* Bottom: Subtitle */}
         <div className="hero-bottom">
-          <p className="hero-subtitle">A society where you explore the world</p>
+          <p className="hero-subtitle">A society where bold ideas become real, curious minds become creators, and leaders emerge.</p>
         </div>
 
       </section>
