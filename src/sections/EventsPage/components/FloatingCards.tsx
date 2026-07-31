@@ -87,7 +87,7 @@ const EVENTS: EventInfo[] = [
     tag: '---',
     title: 'SEAFERNO',
     date: '31-08-2026',
-    venue: 'TBA',
+    venue: 'Tan-105',
     desc: 'A pirate-inspired team experience featuring tactical planning, reasoning, coding, and problem-solving challenges across three distinct phases, where crews compete to earn pirate coins and claim victory.',
     art: 'linear-gradient(135deg, #14181c 0%, #0e3542 100%)',
     code: 'EV-04',
