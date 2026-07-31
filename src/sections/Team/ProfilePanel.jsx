@@ -482,13 +482,26 @@ export default function ProfilePanel({ exec, onClose }) {
 
               {/* About */}
               <motion.p className="epm-about" variants={itemV}>
-                {exec.firstName} is a core member of{" "}
-                <strong className="epm-strong">LEAD</strong>'s executive
-                board, driving{" "}
-                {domains[0]?.toLowerCase() ?? "strategy"} and{" "}
-                {domains[1]?.toLowerCase() ?? "operations"} forward with
-                clarity and conviction. Every initiative they lead reflects a
-                deep commitment to the organization's mission.
+                {exec.about ? (
+                  exec.about.split("LEAD").map((part, index, array) => (
+                    <span key={index}>
+                      {part}
+                      {index < array.length - 1 && (
+                        <strong className="epm-strong">LEAD</strong>
+                      )}
+                    </span>
+                  ))
+                ) : (
+                  <>
+                    {exec.firstName} is a core member of{" "}
+                    <strong className="epm-strong">LEAD</strong>'s executive
+                    board, driving{" "}
+                    {domains[0]?.toLowerCase() ?? "strategy"} and{" "}
+                    {domains[1]?.toLowerCase() ?? "operations"} forward with
+                    clarity and conviction. Every initiative they lead reflects a
+                    deep commitment to the organization's mission.
+                  </>
+                )}
               </motion.p>
 
               {/* Domain chips */}
