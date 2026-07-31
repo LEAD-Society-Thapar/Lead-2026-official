@@ -155,10 +155,91 @@ function BackgroundParticles() {
   );
 }
 
+// Module-level cache & listeners for immediate preloading
+let cachedParticleData = null;
+const listeners = new Set();
+
+function buildParticleDataFromImg(img) {
+  if (cachedParticleData) return cachedParticleData;
+
+  // ── Canvas A: LEAD.png ──────────────────────────────────────────────
+  const cA = document.createElement("canvas");
+  const ctxA = cA.getContext("2d");
+  const wA = 260;
+  const hA = Math.round((img.height / img.width) * wA);
+  cA.width = wA; cA.height = hA;
+  ctxA.drawImage(img, 0, 0, wA, hA);
+
+  const scaleXY = 0.065; // 260px → ~16.9 world units
+  const depth = 2.5;
+
+  const rawA = sampleCanvasPositions(ctxA.getImageData(0, 0, wA, hA).data, wA, hA, scaleXY, depth);
+
+  // ── Canvas B: "Learn | Emerge | Aspire | Discover" ─────────────────
+  const cB = document.createElement("canvas");
+  const ctxB = cB.getContext("2d");
+  const wB = 340;   // matches ~same world width as LEAD logo
+  const hB = 90;
+  cB.width = wB; cB.height = hB;
+  ctxB.clearRect(0, 0, wB, hB);
+  ctxB.fillStyle = "white";
+
+  // Scale so this canvas maps to the same world width as the LEAD form
+  const scaleB = (wA * scaleXY) / wB; // ≈ 0.0497
+
+  // Render two rows of text, vertically centred
+  const fontPx = 30;
+  ctxB.font = `800 ${fontPx}px 'Arial Black', Arial, sans-serif`;
+  ctxB.textBaseline = "middle";
+  ctxB.textAlign = "center";
+  ctxB.fillText("Learn  |  Emerge", wB / 2, hB * 0.28);
+  ctxB.fillText("Aspire  |  Discover", wB / 2, hB * 0.72);
+
+  // Passed depth / 4 (0.8) to make the text thickness exactly 1/4th 
+  const rawB = sampleCanvasPositions(ctxB.getImageData(0, 0, wB, hB).data, wB, hB, scaleB, depth / 12);
+
+  // ── Equalise lengths ────────────────────────────────────────────────
+  const total = equaliseArrays(rawA, rawB) / 3; // total particle count
+
+  // ── Build colour array ──────────────────────────────────────────────
+  const colors = new Float32Array(total * 3);
+  for (let i = 0; i < total; i++) {
+    const r = Math.random();
+    let b;
+    if (r < 0.05) b = 1.0;
+    else if (r < 0.20) b = 0.45;
+    else b = 0.78;
+    colors[i * 3] = colors[i * 3 + 1] = colors[i * 3 + 2] = b;
+  }
+
+  // ── Working buffer (what Three.js renders from) ─────────────────────
+  const posA = new Float32Array(rawA);
+  const posB = new Float32Array(rawB);
+  const work = new Float32Array(posA); // initially in LEAD form
+
+  const data = { posA, posB, work, colors };
+  cachedParticleData = data;
+  listeners.forEach(fn => fn(data));
+  listeners.clear();
+  return data;
+}
+
+// Embedded Base64 Data URI for LEAD.png for instant 0ms memory decoding (no network request wait)
+const LEAD_LOGO_DATA_URI = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZQAAAByCAYAAAB0ryeLAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAlrSURBVHhe7d3NqyVHGcfx6q6KwZmgmIATA4pCkEBQQRzEjSDufAmoRDAhK0HEnaBg/ghBxI3RheALohExLkQEN64MQdCFIiiIoHEkEjXjy5iq53Exuco8c/rec6qfOl3d5/tZhd9h0n36qaqnq8+594YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADWbbDBGVVVm9UYhmHyGKiXc74eY7xsc8y39jFbSnlqHMf327zW2q+H11q2Zqp6dRzHZ2zubXKgeBVh7YOxVzSUdtY+Zr3m7hmux/aUUq6llO61+VyjDQCsl6pestlcLMjbE2O8oi8RkUfs67VoKMC2/MMGwHmGYfi6qmop5bP2tUNNbmW97krWvl3uFY+82lnzmPWat1Yp5XcppTfYfA1aXZOtmjP+2aEAG9Fy4Ywxvt5m2CZV1Zzz0zbfBw0FwF5E5LU2wzbFGK/W3KDQUIANyDlfs5m3YRh+bzNs26FNhYYCbECM8dU2Azwc0lRoKMDKici7bNbKIYsLtkNVH7bZLpOf5nsNnDnfGMA0vuXVztrGrNdc3RfX5zTtU3d2KAAOknP+j82wffs0ZhoKsGL7THJvMcY7bAYEGgqAGiLyuM2wfRfdwEw+E7voH+5rn+duOByfobSzljGbc34hxniXzY9lLdfJay3DTefVnR0KsFJLNhOcrvMaNA0FWCERedRmx3bevAFLm05w0F2L7FjR2e9ZrbZfG83/g5F/N5p0/6659fC+xQAh+L1l9f6O1d8n47mN6p63Prmc4x+r5xzmz218gL/0hL9n67P9bB37s/3aP9aX24V889/54/6a+/x/n+v091218bz+31+l5s5+D/Vj2u32t/m8f0/mff4d7/u8v95n8834/62/s0+V5n7f7e279y+eF4f+/79x+m8e3v977v96/2bf7/2f5t922+x7/393+Vn5d+l5b43xP2l/f+/t9m/6b3/+d0/f5v1s37sP9f2v+/1357f89y/r/2d7aX0b+n/+9+/f5n+u1/55r9v34X60/0d+d3/n7v8v9x2262/tzf/1b+1/r/9e3b+v7/4397j32x/+r7f+/e8/93v7b3t5/n+/h/+j/5+937v/+/f9n9z/f0/+u3f3//325/+b/X1/x5r833/l3u6z08Hwz/+yv7a31b/7r32t3d+7t/p3/3vv/+l9z/X0/+z7/+j39v+/r335+/7+31d+p9f+/d/d7z7f+h5f4d/+3/2n+t/p3/3/r/358y/f49791/f31+936/9+/36P9y12/2633l/70/4eX//j7+/b395/36P923/6n/2v3/e63b34X2+p//55P4x3f2212d1b+n633b4T/a67r+/8s33+l//8z/9v6P8e39/f/+/71/b2e1b6f00pPefz22o3+e22/9d20+15975t55r/+7/+z6P+n1/n6n/2312d5z+/15//f/+2v9y1+t+3/+i7v597/+1j3/u/r1/76P9u/+3/7f/v2a3b0/434f3780AAAAASUVORK5CYII=";
+
+// Immediately build particle positions synchronously in memory on module evaluation
+const preloadImg = new Image();
+preloadImg.src = LEAD_LOGO_DATA_URI;
+if (preloadImg.complete) {
+  buildParticleDataFromImg(preloadImg);
+} else {
+  preloadImg.onload = () => buildParticleDataFromImg(preloadImg);
+}
+
 // ─── Logo Particles (with click-to-morph) ────────────────────────────────────
 function LogoParticles({ controlsRef, isDragging }) {
   const pointsRef = useRef();
-  const [particleData, setParticleData] = useState(null);
+  const [particleData, setParticleData] = useState(cachedParticleData);
   const { camera } = useThree();
 
   // Morph state
@@ -174,69 +255,15 @@ function LogoParticles({ controlsRef, isDragging }) {
   const glowTexture = useMemo(() => createGlowTexture(), []);
 
   useEffect(() => {
-    const img = new Image();
-    img.src = leadLogo;
-    img.crossOrigin = "anonymous";
-    img.onload = () => {
-
-      // ── Canvas A: LEAD.png ──────────────────────────────────────────────
-      const cA = document.createElement("canvas");
-      const ctxA = cA.getContext("2d");
-      const wA = 260;
-      const hA = Math.round((img.height / img.width) * wA);
-      cA.width = wA; cA.height = hA;
-      ctxA.drawImage(img, 0, 0, wA, hA);
-
-      const scaleXY = 0.065; // 260px → ~16.9 world units
-      const depth = 2.5;
-
-      const rawA = sampleCanvasPositions(ctxA.getImageData(0, 0, wA, hA).data, wA, hA, scaleXY, depth);
-
-      // ── Canvas B: "Learn | Emerge | Aspire | Discover" ─────────────────
-      const cB = document.createElement("canvas");
-      const ctxB = cB.getContext("2d");
-      const wB = 340;   // matches ~same world width as LEAD logo
-      const hB = 90;
-      cB.width = wB; cB.height = hB;
-      ctxB.clearRect(0, 0, wB, hB);
-      ctxB.fillStyle = "white";
-
-      // Scale so this canvas maps to the same world width as the LEAD form
-      const scaleB = (wA * scaleXY) / wB; // ≈ 0.0497
-
-      // Render two rows of text, vertically centred
-      const fontPx = 30;
-      ctxB.font = `800 ${fontPx}px 'Arial Black', Arial, sans-serif`;
-      ctxB.textBaseline = "middle";
-      ctxB.textAlign = "center";
-      ctxB.fillText("Learn  |  Emerge", wB / 2, hB * 0.28);
-      ctxB.fillText("Aspire  |  Discover", wB / 2, hB * 0.72);
-
-      // Passed depth / 4 (0.8) to make the text thickness exactly 1/4th 
-      const rawB = sampleCanvasPositions(ctxB.getImageData(0, 0, wB, hB).data, wB, hB, scaleB, depth / 12);
-
-      // ── Equalise lengths ────────────────────────────────────────────────
-      const total = equaliseArrays(rawA, rawB) / 3; // total particle count
-
-      // ── Build colour array ──────────────────────────────────────────────
-      const colors = new Float32Array(total * 3);
-      for (let i = 0; i < total; i++) {
-        const r = Math.random();
-        let b;
-        if (r < 0.05) b = 1.0;
-        else if (r < 0.20) b = 0.45;
-        else b = 0.78;
-        colors[i * 3] = colors[i * 3 + 1] = colors[i * 3 + 2] = b;
-      }
-
-      // ── Working buffer (what Three.js renders from) ─────────────────────
-      const posA = new Float32Array(rawA);
-      const posB = new Float32Array(rawB);
-      const work = new Float32Array(posA); // initially in LEAD form
-
-      setParticleData({ posA, posB, work, colors });
-    };
-  }, []);
+    if (particleData) return;
+    if (cachedParticleData) {
+      setParticleData(cachedParticleData);
+      return;
+    }
+    const handler = (data) => setParticleData(data);
+    listeners.add(handler);
+    return () => listeners.delete(handler);
+  }, [particleData]);
 
   // ── Click to toggle morph ─────────────────────────────────────────────────
   const handlePointerDown = (e) => {

@@ -1,16 +1,16 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, lazy, Suspense } from 'react'
 
-// ===== Pages imported from the SourcePage project (untouched) =====
+// ===== Core Home page (loaded immediately) =====
 import Home from './sections/Home/Home'
-import Team from './sections/Team'
-import ArcReactor from './sections/Sponsors/ArcReactor'
-import Contact from './sections/Contact/ContactPage'
 import { SPONSORS_DATA } from './data/sponsorsData'
 
-// ===== Pages imported from the SourcePage Events / PhotoGallery projects =====
-import Events from './sections/EventsPage/App'
-import GalleryTunnel from './sections/GalleryPage/components/TunnelSection'
+// ===== Lazy-loaded secondary pages (reduces initial JS bundle size) =====
+const Team = lazy(() => import('./sections/Team'))
+const ArcReactor = lazy(() => import('./sections/Sponsors/ArcReactor'))
+const Contact = lazy(() => import('./sections/Contact/ContactPage'))
+const Events = lazy(() => import('./sections/EventsPage/App'))
+const GalleryTunnel = lazy(() => import('./sections/GalleryPage/components/TunnelSection'))
 import './sections/GalleryPage/styles/global.css'
 
 // ===== Standalone shell =====
@@ -31,21 +31,38 @@ function GlobalCommandPalette() {
   return <CommandPalette visible={isVisible} />;
 }
 
+function AppContent() {
+  const location = useLocation()
+  const isHome = location.pathname === '/'
+
+  return (
+    <>
+      <ScrollToTop />
+      <SiteNav />
+      <GlobalCommandPalette />
+      <div style={{ display: isHome ? 'block' : 'none' }}>
+        <Home />
+      </div>
+      {!isHome && (
+        <Suspense fallback={null}>
+          <Routes>
+            <Route path="/events" element={<Events />} />
+            <Route path="/team" element={<Team />} />
+            <Route path="/sponsors" element={<ArcReactor sponsors={SPONSORS_DATA} />} />
+            <Route path="/gallery" element={<GalleryTunnel />} />
+            <Route path="/contact" element={<Contact />} />
+          </Routes>
+        </Suspense>
+      )}
+    </>
+  )
+}
+
 function App() {
   return (
     <CommandPaletteProvider>
       <BrowserRouter>
-        <ScrollToTop />
-        <SiteNav />
-        <GlobalCommandPalette />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/events" element={<Events />} />
-          <Route path="/team" element={<Team />} />
-          <Route path="/sponsors" element={<ArcReactor sponsors={SPONSORS_DATA} />} />
-          <Route path="/gallery" element={<GalleryTunnel />} />
-          <Route path="/contact" element={<Contact />} />
-        </Routes>
+        <AppContent />
       </BrowserRouter>
     </CommandPaletteProvider>
   )
