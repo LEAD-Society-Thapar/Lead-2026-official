@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 // ===== Pages imported from the SourcePage project (untouched) =====
 import Home from './sections/Home/Home'
@@ -16,7 +16,6 @@ import './sections/GalleryPage/styles/global.css'
 // ===== Standalone shell =====
 import SiteNav from './components/SiteNav/SiteNav'
 import CommandPalette from './components/CommandPalette/CommandPalette'
-import Preloader from './components/Preloader/Preloader'
 import { CommandPaletteProvider, useCommandPalette } from './context/CommandPaletteContext'
 
 function ScrollToTop() {
@@ -33,11 +32,8 @@ function GlobalCommandPalette() {
 }
 
 function App() {
-  const [booting, setBooting] = useState(true)
-
   return (
     <CommandPaletteProvider>
-      {booting && <Preloader onComplete={() => setBooting(false)} />}
       <BrowserRouter>
         <ScrollToTop />
         <SiteNav />
