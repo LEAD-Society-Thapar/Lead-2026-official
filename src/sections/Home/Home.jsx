@@ -3,7 +3,7 @@ import ParticleCube from "./Cube/ParticleCube";
 import About from "./About";
 import Domains from "../Domains/Domains";
 
-function Home() {
+function Home({ isHome = true }) {
   return (
     <>
       {/* ================= HERO ================= */}
@@ -12,7 +12,7 @@ function Home() {
 
         {/* Middle: 3D Interactive Text Particles */}
         <div className="hero-middle">
-          <ParticleCube />
+          <ParticleCube isHome={isHome} />
         </div>
 
         {/* Bottom: Subtitle */}

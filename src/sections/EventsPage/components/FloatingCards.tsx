@@ -48,47 +48,48 @@ type EventInfo = {
   tag: string;
   title: string;
   date: string;
-  venue: string;
   desc: string;
+  /** Fallback gradient, used when no `img` is set (e.g. AMA). */
   art: string;
+  /** Card photo from /public/event-images; falls back to `art` when absent. */
+  img?: string;
   code: string;
 };
 
-// Details (date / venue / desc) are placeholders until finalised.
+// Details (date / desc) are placeholders until finalised.
 const EVENTS: EventInfo[] = [
   {
     tag: 'FLAGSHIP',
     title: 'STEALTH SELL',
     date: 'TBA',
-    venue: 'TBA',
     desc: 'An immersive heist adventure where crew of masterminds completed missions, gathered resources, and made strategic auction decisions to outsmart rivals and secure the perfect escape.',
     art: 'linear-gradient(135deg, #1a1a1a 0%, #3d0a0a 100%)',
+    img: '/event-images/stealth-sell.jpg',
     code: 'EV-01',
   },
   {
     tag: 'FLAGSHIP',
     title: 'CODE RED',
     date: 'TBA',
-    venue: 'TBA',
     desc: 'A fast-paced quest driven by curiosity, strategy, and the excitement of uncovering what comes next. ',
     art: 'linear-gradient(135deg, #241010 0%, #7a0f0f 100%)',
+    img: '/event-images/code-red.jpg',
     code: 'EV-02',
   },
   {
     tag: 'FLAGSHIP',
     title: 'PHANTOM',
     date: 'TBA',
-    venue: 'TBA',
     desc: 'Phantom is a high-stakes detective adventure where every clue tells a story. Uncover hidden secrets, reconstruct the crime, and identify the culprit behind a daring museum heist.',
     art: 'linear-gradient(135deg, #101014 0%, #2a0a33 100%)',
+    img: '/event-images/phantom.jpg',
     code: 'EV-03',
   },
   {
     tag: '---',
     title: 'AMA SESSION WITH MICROSOFT',
     date: 'TBA',
-    venue: 'TBA',
-    desc: '',
+    desc: 'An open Ask-Me-Anything with Microsoft engineers and leaders — candid career advice, real stories from building at scale, and straight answers to whatever you have always wanted to ask.',
     art: 'linear-gradient(135deg, #14181c 0%, #0e3542 100%)',
     code: 'EV-04',
   },
@@ -96,8 +97,7 @@ const EVENTS: EventInfo[] = [
     tag: '---',
     title: 'SEAFERNO',
     date: 'TBA',
-    venue: 'TBA',
-    desc: '',
+    desc: 'A high-energy, one-day semi-tech showdown that sets the stage — the precursor hype machine that builds momentum straight into Matrix.',
     art: 'linear-gradient(135deg, #0d1614 0%, #0e4436 100%)',
     code: 'EV-05',
   },
@@ -105,27 +105,27 @@ const EVENTS: EventInfo[] = [
     tag: '---',
     title: 'CHARCHA-AE-CELEBAL',
     date: 'TBA',
-    venue: 'TBA',
-    desc: '',
+    desc: 'Great ideas start over chai. No speeches, no awkward intros — just good chai, good people, and great conversations, games, and new friends. Sip. Talk. Connect. Repeat.',
     art: 'linear-gradient(135deg, #1b1712 0%, #5c400c 100%)',
+    img: '/event-images/charcha.jpg',
     code: 'EV-06',
   },
   {
     tag: '---',
     title: 'WEBINAR-IOT',
     date: 'TBA',
-    venue: 'TBA',
-    desc: '',
+    desc: 'Everyday objects, meet brainpower. Lights that switch on before you enter. Plants that text you when thirsty. Come learn how sensors, devices, and code combine to build smart solutions. Build. Connect. Automate. Innovate.',
     art: 'linear-gradient(135deg, #131a15 0%, #0e4426 100%)',
+    img: '/event-images/webinar.jpg',
     code: 'EV-07',
   },
   {
     tag: 'FLAGSHIP',
     title: 'MATRIX 3.0',
     date: 'TBA',
-    venue: 'TBA',
-    desc: '',
+    desc: 'Our flagship three-day fest — a sprawling arena of Tech, Non-Tech and Semi-Tech tracks where builders, strategists and creators go head to head.',
     art: 'linear-gradient(135deg, #1a1a1a 0%, #7a0f0f 100%)',
+    img: '/event-images/matrix.jpg',
     code: 'EV-08',
   },
 ];
@@ -222,11 +222,16 @@ export function FloatingCards({ progressRef }: Props) {
                     <h3 className="ecard__title" style={{ fontSize: Math.round(pw * 0.058) }}>
                       {ev.title}
                     </h3>
-                    <p className="ecard__meta">{ev.date} · {ev.venue}</p>
+                    <p className="ecard__meta">{ev.date}</p>
                     <p className="ecard__desc">{ev.desc}</p>
                   </div>
                   <div className="ecard__frame">
-                    <div className="ecard__img" style={{ background: ev.art }} />
+                    <div
+                      className="ecard__img"
+                      style={ev.img
+                        ? { backgroundImage: `url(${ev.img})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+                        : { background: ev.art }}
+                    />
                     <span className="ecard__imglabel">{ev.title}</span>
                   </div>
                 </div>
