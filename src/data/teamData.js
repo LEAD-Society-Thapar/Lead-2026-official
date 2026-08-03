@@ -4,18 +4,18 @@
 // The 4 missing portraits (Aanvy, Rajat, Pratham, Atulya) still use Unsplash
 // as placeholders — replace the import + portrait field when images are ready.
 
-import yuvrajImg  from '../assets/team/Yuvraj.webp';
-import manyaImg   from '../assets/team/Manya.webp';
-import ishitaImg  from '../assets/team/Ishita.webp';
-import saanviImg  from '../assets/team/Saanvi.webp';
-import akshatImg  from '../assets/team/Akshat.jpg';
+import yuvrajImg from '../assets/team/Yuvraj.webp';
+import manyaImg from '../assets/team/Manya.webp';
+import ishitaImg from '../assets/team/Ishita.webp';
+import saanviImg from '../assets/team/Saanvi.webp';
+import akshatImg from '../assets/team/Akshat.jpg';
 import abhinavImg from '../assets/team/Abhinav.webp';
 import jasmineImg from '../assets/team/Jasmine.webp';
-import shreyaImg  from '../assets/team/Shreya.webp';
-import aanvyImg   from '../assets/team/Aanvy.webp';
-import rajatImg   from '../assets/team/Rajat.webp';
+import shreyaImg from '../assets/team/Shreya.webp';
+import aanvyImg from '../assets/team/Aanvy.webp';
+import rajatImg from '../assets/team/Rajat.webp';
 import prathamImg from '../assets/team/Pratham.webp';
-import atulyaImg  from '../assets/team/Atulya.webp';
+import atulyaImg from '../assets/team/Atulya.webp';
 
 export const executives = [
   {
@@ -41,8 +41,8 @@ export const executives = [
     cardPortraitPosition: "center 0%",   // card thumbnail — unchanged
     statement: "Coordination is an art form. I make sure every moving part knows its role and hits its mark.",
     about: "Believing that every challenge is an opportunity to innovate, Manya Kedia serves as the Joint Secretary of LEAD Society with dedication and purpose. Through thoughtful leadership, effective collaboration, and a passion for turning ideas into reality, she strives to build an environment where creativity flourishes, teamwork thrives, and every member is empowered to contribute their best.",
-    github: "manya-kedia",
-    linkedin: "https://www.linkedin.com/in/manya-kedia-157b08272/",
+    github: "manyaa08",
+    linkedin: "https://www.linkedin.com/in/manya-kedia-157b08272",
   },
   {
     id: 3,
@@ -53,7 +53,7 @@ export const executives = [
     portraitPosition: "center 5%",
     statement: "Building bridges between vision and execution — every initiative is a chance to move the needle.",
     about: "As General Secretary of LEAD Society, Ishita Sachdeva believes true leadership is about ensuring every voice is heard. Dedicated to the critical work behind the scenes, she focuses on turning ideas into action and cultivating a collaborative environment where all members are empowered to learn, lead, and build experiences they will value forever.",
-    github: "ishita-sachdeva",
+    github: "IshitaSachdeva",
     linkedin: "https://www.linkedin.com/in/ishita-6a8674330/",
   },
   {
@@ -65,7 +65,7 @@ export const executives = [
     portraitPosition: "center 75%",
     statement: "Numbers tell stories. I translate financial data into strategic decisions that matter.",
     about: "As Finance Secretary of LEAD Society, Aanvy Singh brings a unique blend of analytical expertise and resilient problem-solving to the team. A passionate robotics enthusiast, she moves beyond traditional number-crunching to manage budgets, secure funding, and drive resource allocation, ensuring a well-funded and impactful year ahead.",
-    github: "aanvy-singh",
+    github: "aanvysingh",
     linkedin: "https://www.linkedin.com/in/aanvy-singh/",
   },
   {
@@ -79,7 +79,7 @@ export const executives = [
     statement: "Every pixel has a purpose. Every line of code is a promise to the user.",
     about: "Rajat Verma steps into the role of Technical Head, bringing a unique blend of technical mastery and dynamic storytelling to the team. As our primary digital architect, he seamlessly manages complex back-end operations, system logistics, and digital infrastructure with exceptional logic and ease.Beyond keeping our technical systems running without a hitch, he doubles as the team’s resident vlogger, effortlessly capturing the culture and behind-the-scenes energy of the society. His ability to combine sharp problem-solving skills with a creative, hands-on approach ensures our digital presence remains innovative, reliable, and engaging.",
     github: "rajat-verma",
-    linkedin: "https://www.linkedin.com/in/rajatverma1090/",
+    linkedin: "https://www.linkedin.com/in/rajatverma1090",
   },
   {
     id: 6,
@@ -92,7 +92,7 @@ export const executives = [
     statement: "Design is not decoration — it's the language through which ideas become real.",
     about: "For Pratham, design is an expression of perspective, purpose, and storytelling. As LEAD’s Designing Head, he translates ideas into distinctive visual experiences through creativity, precision, and thoughtful execution. Beyond design, he finds inspiration in music, the ukulele, and conversations that challenge perspectives and spark creativity.",
     github: "pratham-arora",
-    linkedin: "pratham-arora",
+    linkedin: "https://www.linkedin.com/in/pratham-arora-a24106322",
   },
   {
     id: 7,

@@ -111,6 +111,7 @@ const ExecCard = memo(function ExecCard({
     <div
       ref={tiltRef}
       className={`exec-card-tilt-wrapper${positionIndex === 0 ? " is-left-edge" : ""}${positionIndex === rowSize - 1 ? " is-right-edge" : ""}`}
+      data-exec-id={exec.id}
     >
       <motion.button
         key={exec.id}

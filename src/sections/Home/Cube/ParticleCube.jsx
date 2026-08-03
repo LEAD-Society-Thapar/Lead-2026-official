@@ -6,20 +6,9 @@ import leadLogo from "../../../assets/LEAD.png";
 import "./ParticleCube.css";
 
 // ─── Responsive Camera ──────────────────────────────────────────────────────────
-// Dynamically adjusts field-of-view so the particle logo fits any screen size.
 function ResponsiveCamera() {
   const { camera, size } = useThree();
   useEffect(() => {
-    /*
-     * Wider FOV = camera sees more of the world = logo appears smaller.
-     * Paired with reduced .hero-middle canvas height on mobile, this makes
-     * the particle LEAD logo fit neatly without black borders or overflow.
-     *
-     * Desktop  (≥768px)  → 70vh canvas  → FOV 35  (cinematic, tight)
-     * Tablet   (480–767) → 60vh canvas  → FOV 50
-     * Phone    (<480px)  → 42vh canvas  → FOV 85  (wide — logo fits & looks smaller)
-     * Sm Phone (<360px)  → 38vh canvas  → FOV 95  (widest)
-     */
     if (size.width >= 768) {
       camera.fov = 35;
     } else if (size.width >= 480) {
@@ -34,8 +23,10 @@ function ResponsiveCamera() {
   return null;
 }
 
-// ─── Glow Sprite Texture ──────────────────────────────────────────────────────
+// ─── Glow Sprite Texture (Cached) ─────────────────────────────────────────────
+let cachedGlowTexture = null;
 function createGlowTexture() {
+  if (cachedGlowTexture) return cachedGlowTexture;
   const size = 128;
   const c = document.createElement("canvas");
   c.width = c.height = size;
@@ -50,26 +41,18 @@ function createGlowTexture() {
   g.addColorStop(1.0, "rgba(0,0,0,0)");
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, size, size);
-  return new THREE.CanvasTexture(c);
+  cachedGlowTexture = new THREE.CanvasTexture(c);
+  return cachedGlowTexture;
 }
 
-// ─── Helper: sample canvas pixels into [x,y,z, x,y,z, ...] positions ─────────
+// ─── Fast Canvas Sampling ──────────────────────────────────────────────────────
 function sampleCanvasPositions(data, width, height, scaleXY, depth) {
   const positions = [];
 
-  const isEdgePx = (x, y) => {
-    const n = [
-      x > 0 ? data[(y * width + (x - 1)) * 4 + 3] : 0,
-      x < width - 1 ? data[(y * width + (x + 1)) * 4 + 3] : 0,
-      y > 0 ? data[((y - 1) * width + x) * 4 + 3] : 0,
-      y < height - 1 ? data[((y + 1) * width + x) * 4 + 3] : 0,
-    ];
-    return n.some(a => a < 140);
-  };
-
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
-      const alpha = data[(y * width + x) * 4 + 3];
+      const idx = (y * width + x) * 4;
+      const alpha = data[idx + 3];
       if (alpha < 140) continue;
 
       const posX = (x - width / 2) * scaleXY;
@@ -79,8 +62,14 @@ function sampleCanvasPositions(data, width, height, scaleXY, depth) {
       positions.push(posX, posY, depth / 2 + THREE.MathUtils.randFloat(-0.04, 0.04));
       // Back face shell
       positions.push(posX, posY, -depth / 2 + THREE.MathUtils.randFloat(-0.04, 0.04));
-      // Side-wall edge column
-      if (isEdgePx(x, y)) {
+
+      // Side-wall edge column check inline (avoid array & function allocation overhead)
+      const left  = x > 0 ? data[(y * width + (x - 1)) * 4 + 3] : 0;
+      const right = x < width - 1 ? data[(y * width + (x + 1)) * 4 + 3] : 0;
+      const top   = y > 0 ? data[((y - 1) * width + x) * 4 + 3] : 0;
+      const bot   = y < height - 1 ? data[((y + 1) * width + x) * 4 + 3] : 0;
+
+      if (left < 140 || right < 140 || top < 140 || bot < 140) {
         for (let i = 0; i < 8; i++) {
           positions.push(posX, posY, THREE.MathUtils.randFloat(-depth / 2, depth / 2));
         }
@@ -90,12 +79,11 @@ function sampleCanvasPositions(data, width, height, scaleXY, depth) {
   return positions;
 }
 
-// ─── Match two position arrays to the same length ─────────────────────────────
+// ─── Equalise Array Lengths ───────────────────────────────────────────────────
 function equaliseArrays(a, b) {
   const na = a.length, nb = b.length;
   const maxLen = Math.max(na, nb);
 
-  // Pad shorter array by scattering extra particles randomly among existing ones
   while (a.length < maxLen) {
     const i = Math.floor(Math.random() * (na / 3)) * 3;
     a.push(a[i], a[i + 1], a[i + 2]);
@@ -105,6 +93,85 @@ function equaliseArrays(a, b) {
     b.push(b[i], b[i + 1], b[i + 2]);
   }
   return maxLen;
+}
+
+// ─── Module-Level Cache & Instant Preloader ───────────────────────────────────
+let cachedParticleData = null;
+let preloadPromise = null;
+
+function loadParticleData() {
+  if (cachedParticleData) return Promise.resolve(cachedParticleData);
+  if (preloadPromise) return preloadPromise;
+
+  preloadPromise = new Promise((resolve) => {
+    const img = new Image();
+    img.src = leadLogo;
+    img.crossOrigin = "anonymous";
+
+    const process = () => {
+      const cA = document.createElement("canvas");
+      const ctxA = cA.getContext("2d");
+      const wA = 220; // Crisp sampling resolution
+      const hA = Math.round((img.height / img.width) * wA);
+      cA.width = wA; cA.height = hA;
+      ctxA.drawImage(img, 0, 0, wA, hA);
+
+      const scaleXY = (260 * 0.065) / wA; // Preserve exact world space scale (~16.9 units)
+      const depth = 2.5;
+
+      const rawA = sampleCanvasPositions(ctxA.getImageData(0, 0, wA, hA).data, wA, hA, scaleXY, depth);
+
+      const cB = document.createElement("canvas");
+      const ctxB = cB.getContext("2d");
+      const wB = 280;
+      const hB = 80;
+      cB.width = wB; cB.height = hB;
+      ctxB.clearRect(0, 0, wB, hB);
+      ctxB.fillStyle = "white";
+
+      const scaleB = (wA * scaleXY) / wB;
+
+      const fontPx = 26;
+      ctxB.font = `800 ${fontPx}px 'Arial Black', Arial, sans-serif`;
+      ctxB.textBaseline = "middle";
+      ctxB.textAlign = "center";
+      ctxB.fillText("Learn  |  Emerge", wB / 2, hB * 0.28);
+      ctxB.fillText("Aspire  |  Discover", wB / 2, hB * 0.72);
+
+      const rawB = sampleCanvasPositions(ctxB.getImageData(0, 0, wB, hB).data, wB, hB, scaleB, depth / 12);
+
+      const total = equaliseArrays(rawA, rawB) / 3;
+
+      const colors = new Float32Array(total * 3);
+      for (let i = 0; i < total; i++) {
+        const r = Math.random();
+        let b;
+        if (r < 0.05) b = 1.0;
+        else if (r < 0.20) b = 0.45;
+        else b = 0.78;
+        colors[i * 3] = colors[i * 3 + 1] = colors[i * 3 + 2] = b;
+      }
+
+      const posA = new Float32Array(rawA);
+      const posB = new Float32Array(rawB);
+
+      cachedParticleData = { posA, posB, colors };
+      resolve(cachedParticleData);
+    };
+
+    if (img.complete) {
+      process();
+    } else {
+      img.onload = process;
+    }
+  });
+
+  return preloadPromise;
+}
+
+// Start preloading immediately when module loads
+if (typeof window !== "undefined") {
+  loadParticleData();
 }
 
 // ─── Background Star Field ────────────────────────────────────────────────────
@@ -158,15 +225,24 @@ function BackgroundParticles() {
 // ─── Logo Particles (with click-to-morph) ────────────────────────────────────
 function LogoParticles({ controlsRef, isDragging }) {
   const pointsRef = useRef();
-  const [particleData, setParticleData] = useState(null);
+  const [particleData, setParticleData] = useState(() => {
+    if (cachedParticleData) {
+      return {
+        ...cachedParticleData,
+        work: new Float32Array(cachedParticleData.posA),
+      };
+    }
+    return null;
+  });
+
   const { camera } = useThree();
 
   // Morph state
   const morphT = useRef(0);   // 0 = LEAD form, 1 = acronym form
-  const morphTarget = useRef(0);   // where we are animating to
+  const morphTarget = useRef(0);
   const isMorphing = useRef(false);
 
-  // Click tracking — distinguish drag from click
+  // Click tracking
   const pointerDownPos = useRef({ x: 0, y: 0 });
 
   const targetCameraPos = useMemo(() => new THREE.Vector3(0, 0, 12), []);
@@ -174,71 +250,16 @@ function LogoParticles({ controlsRef, isDragging }) {
   const glowTexture = useMemo(() => createGlowTexture(), []);
 
   useEffect(() => {
-    const img = new Image();
-    img.src = leadLogo;
-    img.crossOrigin = "anonymous";
-    img.onload = () => {
+    if (!particleData) {
+      loadParticleData().then((data) => {
+        setParticleData({
+          ...data,
+          work: new Float32Array(data.posA),
+        });
+      });
+    }
+  }, [particleData]);
 
-      // ── Canvas A: LEAD.png ──────────────────────────────────────────────
-      const cA = document.createElement("canvas");
-      const ctxA = cA.getContext("2d");
-      const wA = 260;
-      const hA = Math.round((img.height / img.width) * wA);
-      cA.width = wA; cA.height = hA;
-      ctxA.drawImage(img, 0, 0, wA, hA);
-
-      const scaleXY = 0.065; // 260px → ~16.9 world units
-      const depth = 2.5;
-
-      const rawA = sampleCanvasPositions(ctxA.getImageData(0, 0, wA, hA).data, wA, hA, scaleXY, depth);
-
-      // ── Canvas B: "Learn | Emerge | Aspire | Discover" ─────────────────
-      const cB = document.createElement("canvas");
-      const ctxB = cB.getContext("2d");
-      const wB = 340;   // matches ~same world width as LEAD logo
-      const hB = 90;
-      cB.width = wB; cB.height = hB;
-      ctxB.clearRect(0, 0, wB, hB);
-      ctxB.fillStyle = "white";
-
-      // Scale so this canvas maps to the same world width as the LEAD form
-      const scaleB = (wA * scaleXY) / wB; // ≈ 0.0497
-
-      // Render two rows of text, vertically centred
-      const fontPx = 30;
-      ctxB.font = `800 ${fontPx}px 'Arial Black', Arial, sans-serif`;
-      ctxB.textBaseline = "middle";
-      ctxB.textAlign = "center";
-      ctxB.fillText("Learn  |  Emerge", wB / 2, hB * 0.28);
-      ctxB.fillText("Aspire  |  Discover", wB / 2, hB * 0.72);
-
-      // Passed depth / 4 (0.8) to make the text thickness exactly 1/4th 
-      const rawB = sampleCanvasPositions(ctxB.getImageData(0, 0, wB, hB).data, wB, hB, scaleB, depth / 12);
-
-      // ── Equalise lengths ────────────────────────────────────────────────
-      const total = equaliseArrays(rawA, rawB) / 3; // total particle count
-
-      // ── Build colour array ──────────────────────────────────────────────
-      const colors = new Float32Array(total * 3);
-      for (let i = 0; i < total; i++) {
-        const r = Math.random();
-        let b;
-        if (r < 0.05) b = 1.0;
-        else if (r < 0.20) b = 0.45;
-        else b = 0.78;
-        colors[i * 3] = colors[i * 3 + 1] = colors[i * 3 + 2] = b;
-      }
-
-      // ── Working buffer (what Three.js renders from) ─────────────────────
-      const posA = new Float32Array(rawA);
-      const posB = new Float32Array(rawB);
-      const work = new Float32Array(posA); // initially in LEAD form
-
-      setParticleData({ posA, posB, work, colors });
-    };
-  }, []);
-
-  // ── Click to toggle morph ─────────────────────────────────────────────────
   const handlePointerDown = (e) => {
     pointerDownPos.current = { x: e.clientX, y: e.clientY };
   };
@@ -246,7 +267,6 @@ function LogoParticles({ controlsRef, isDragging }) {
   const handlePointerUp = (e) => {
     const dx = e.clientX - pointerDownPos.current.x;
     const dy = e.clientY - pointerDownPos.current.y;
-    // Only trigger if pointer barely moved (genuine click, not drag)
     if (Math.sqrt(dx * dx + dy * dy) < 6) {
       morphTarget.current = morphTarget.current === 0 ? 1 : 0;
       isMorphing.current = true;
@@ -257,7 +277,6 @@ function LogoParticles({ controlsRef, isDragging }) {
     if (!pointsRef.current || !particleData) return;
     const t = state.clock.getElapsedTime();
 
-    // Camera spring-back and auto-rocking (when not dragging)
     if (!isDragging.current) {
       camera.position.lerp(targetCameraPos, 0.06);
       controlsRef.current?.target.lerp(targetLookAt, 0.06);
@@ -268,13 +287,11 @@ function LogoParticles({ controlsRef, isDragging }) {
       pointsRef.current.position.y = Math.sin(t * 0.65) * 0.14;
     }
 
-    // ── Morph animation ────────────────────────────────────────────────────
     if (isMorphing.current) {
-      const speed = 1.2; // full transition in 1.2 seconds
+      const speed = 1.2;
       const dir = morphTarget.current === 1 ? 1 : -1;
       morphT.current = Math.max(0, Math.min(1, morphT.current + dir * delta * speed));
 
-      // Ease in-out cubic
       const tEased = morphT.current < 0.5
         ? 4 * morphT.current ** 3
         : 1 - (-2 * morphT.current + 2) ** 3 / 2;
@@ -288,7 +305,6 @@ function LogoParticles({ controlsRef, isDragging }) {
       }
       posAttr.needsUpdate = true;
 
-      // Stop when we've reached the target
       if ((dir === 1 && morphT.current >= 1) || (dir === -1 && morphT.current <= 0)) {
         isMorphing.current = false;
       }
@@ -332,7 +348,7 @@ function LogoParticles({ controlsRef, isDragging }) {
 }
 
 // ─── Scene Root ───────────────────────────────────────────────────────────────
-export default function ParticleCube() {
+export default function ParticleCube({ isHome = true }) {
   const controlsRef = useRef();
   const isDragging = useRef(false);
 
@@ -344,6 +360,7 @@ export default function ParticleCube() {
       onPointerLeave={() => { isDragging.current = false; }}
     >
       <Canvas
+        frameloop={isHome ? "always" : "never"}
         dpr={[1, 2]}
         camera={{ fov: 35, near: 0.01, far: 1000, position: [0, 0, 12] }}
       >
@@ -351,7 +368,6 @@ export default function ParticleCube() {
         <ambientLight intensity={1.5} />
         <directionalLight position={[5, 5, 5]} intensity={2} />
 
-        {/* Adjusts FOV based on screen width so logo fits all screen sizes */}
         <ResponsiveCamera />
 
         <BackgroundParticles />
