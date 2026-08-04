@@ -13,6 +13,7 @@ import refectionsLogo from '../assets/sponsors/refections.png';
 import tezosLogo from '../assets/sponsors/tezos.png';
 import passionLogo from '../assets/sponsors/passion-invesco.png'
 import mojaveLogo from '../assets/sponsors/mojave.png'
+import noorDentalLogo from '../assets/sponsors/noor-dental-clinic.png'
 
 // Export sponsors data
 export const SPONSORS_DATA = [
@@ -138,6 +139,16 @@ export const SPONSORS_DATA = [
     url: 'https://www.instagram.com/mojave.india/?hl=en',
     urlText: 'VISIT INSTAGRAM',
     contact: 'https://www.google.com/maps/place/MOJAVE+-+Artisanal+Kitchen+%26+Bar/@30.346781,76.3765045,17z/data=!3m1!4b1!4m6!3m5!1s0x391029555092c5ab:0xc233269f3ba91e96!8m2!3d30.346781!4d76.3765045!16s%2Fg%2F11txm1wjlj?hl=en-GB&entry=ttu&g_ep=EgoyMDI2MDcwOC4wIKXMDSoASAFQAw%3D%3D',
+    contactText: 'VIEW LOCATION'
+  },
+  { 
+    id: '15', 
+    name: 'Noor Dental Clinic', 
+    logo: noorDentalLogo,
+    description: 'Noor Dental Clinic (NDC) has been enhancing smiles in Patiala for over 25 years. The clinic offers premium dental care, specializing in implants, braces, veneers, and comprehensive dentistry with a focus on delivering state-of-the-art treatments.',
+    url: 'https://www.instagram.com/ndc_patiala/',
+    urlText: 'VISIT INSTAGRAM',
+    contact: 'https://www.google.com/maps/place/JJ+House,+140A,+Punjabi+Bagh,+Patiala,+Punjab+147004/@30.3450351,76.3779933,17z/data=!3m1!4b1!4m6!3m5!1s0x391028bbfc60a6cf:0xf85dedec192d7138!8m2!3d30.3450351!4d76.3805682!16s%2Fg%2F11jtd3gf72?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D',
     contactText: 'VIEW LOCATION'
   }
 ];
