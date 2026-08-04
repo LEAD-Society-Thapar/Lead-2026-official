@@ -3,7 +3,13 @@
 // Photos can be snatched with the pointer; releasing one dissolves it into
 // pixel blocks. Plain Canvas 2D, no dependencies.
 
-import { makePhotoSet, type PhotoTex } from './textures'
+import { loadPhotoSet, type PhotoTex } from './textures'
+
+// 50 real gallery photos served from /public/gallery-photos.
+const GALLERY_PHOTOS = Array.from(
+  { length: 50 },
+  (_, i) => `/gallery-photos/gal-${String(i + 1).padStart(2, '0')}.jpg`,
+)
 
 const BG = '#0e0e0e'
 const INK = '#f5f3ee'
@@ -165,7 +171,7 @@ export class TunnelEngine {
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas
     this.ctx = canvas.getContext('2d')!
-    this.photos = makePhotoSet(50)
+    this.photos = loadPhotoSet(GALLERY_PHOTOS)
 
     this.mascot.onload = () => {
       this.mascotBox = contentBox(this.mascot)
