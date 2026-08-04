@@ -32,6 +32,16 @@ function GlobalCommandPalette() {
   return <CommandPalette visible={isVisible} />;
 }
 
+function PersistentHome() {
+  const { pathname } = useLocation()
+  const isHome = pathname === '/'
+  return (
+    <div style={{ display: isHome ? 'block' : 'none' }}>
+      <Home isHome={isHome} />
+    </div>
+  )
+}
+
 function App() {
   const [booting, setBooting] = useState(true)
 
@@ -42,8 +52,8 @@ function App() {
         <ScrollToTop />
         <SiteNav />
         <GlobalCommandPalette />
+        <PersistentHome />
         <Routes>
-          <Route path="/" element={<Home />} />
           <Route path="/events" element={<Events />} />
           <Route path="/team" element={<Team />} />
           <Route path="/sponsors" element={<ArcReactor sponsors={SPONSORS_DATA} />} />
