@@ -30,7 +30,7 @@ export const DOMAIN_DATA = [
     desc: "LEAD's AI/ML domain explores computational intelligence through hands-on development and research projects. Students build deep learning, generative AI, and automation solutions, bridging theory with real-world applications to create impactful intelligent systems.",
     members: [
       { name: "Aryan Goyal", linkedin: "https://www.linkedin.com/in/aryan-goyal17/" },
-      { name: "ARNAV GUPTA", linkedin: "https://www.linkedin.com/in/arnav-gupta-47032b390?utm_source=share_via&utm_content=profile&utm_medium=member_android" },
+      { name: "Arnav Gupta", linkedin: "https://www.linkedin.com/in/arnav-gupta-47032b390?utm_source=share_via&utm_content=profile&utm_medium=member_android" },
       { name: "Krishna Garg", linkedin: "https://www.linkedin.com/in/krishna-garg-a8b44937a?utm_source=share_via&utm_content=profile&utm_medium=member_android" },
       { name: "Vaibhav Manchanda", linkedin: "https://www.linkedin.com/in/vaibhav-manchanda-569330248?utm_source=share_via&utm_content=profile&utm_medium=member_android" },
       { name: "Nitisha Garg", linkedin: "https://www.linkedin.com/in/nitisha-g-24b475289?utm_source=share_via&utm_content=profile&utm_medium=member_android" },

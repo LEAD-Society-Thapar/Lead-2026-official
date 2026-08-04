@@ -267,6 +267,8 @@ function LogoParticles({ controlsRef, isDragging }) {
       // Force compile the shader immediately after the mesh is created 
       // so it's ready backstage while the preloader is still showing.
       gl.compile(scene, camera);
+      // Force a synchronous render to defeat any browser occlusion culling
+      gl.render(scene, camera);
     }
   }, [particleData, gl, scene, camera]);
 
@@ -375,6 +377,7 @@ export default function ParticleCube({ isHome = true }) {
         camera={{ fov: 35, near: 0.01, far: 1000, position: [0, 0, 12] }}
         onCreated={({ gl, scene, camera }) => {
           gl.compile(scene, camera);
+          gl.render(scene, camera);
         }}
       >
         <color attach="background" args={["#0d0d0d"]} />
