@@ -1,0 +1,189 @@
+/* ===== Full-screen intro preloader ===== */
+.preloader {
+  --pl-bar-bottom: clamp(40px, 9vh, 96px); /* bar's resting gap from the bottom */
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647; /* above the chat widget / everything */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #05060a;
+  opacity: 1;
+  transition: opacity 0.8s ease;
+  overflow: hidden;
+  /* keep it above everything, block interaction with the app behind */
+  touch-action: none;
+}
+
+.preloader--leaving {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---- full-screen video, edge to edge ---- */
+.preloader__stage {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+/*
+ * Framing rule: fill the screen as much as possible, but never crop away more
+ * than half the frame — at least the center 50% is always visible.
+ *
+ * The clip is 16:9 (A = 16/9). With object-fit: cover the zoom needed is A/R
+ * on narrow screens and R/A on ultra-wide ones (R = viewport aspect), so the
+ * crop stays within 50% exactly while R is between A/2 = 8/9 and 2A = 32/9.
+ * Inside that band we use cover and the video fills the screen edge to edge.
+ * Outside it (portrait phones, ultra-wide) cover would crop far past half, so
+ * we switch to contain + a 2x zoom: that shows precisely the center 50% and
+ * letterboxes the remainder.
+ */
+.preloader__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* fills the screen; crop stays under 50% in this range */
+  transform-origin: center center;
+  display: block;
+  /* hidden through the pre-roll and while the bar lowers; fades in on play */
+  opacity: 0;
+  transition: opacity 0.55s ease;
+}
+
+.preloader--playing .preloader__video {
+  opacity: 1;
+}
+
+/* Narrow (portrait phones/tablets): clamp the crop to the center 50%. */
+@media (max-aspect-ratio: 8/9) {
+  .preloader__video {
+    object-fit: contain;
+    transform: scale(2);
+  }
+}
+
+/* Ultra-wide: same clamp at the other extreme. */
+@media (min-aspect-ratio: 32/9) {
+  .preloader__video {
+    object-fit: contain;
+    transform: scale(2);
+  }
+}
+
+/*
+ * Phones are served a file that has already been cropped to the centre 50%,
+ * so it must NOT be zoomed again — contain shows exactly that region, with the
+ * remaining space letterboxed. Higher specificity so it beats the rule above.
+ */
+.preloader__video.is-precropped {
+  object-fit: contain;
+  transform: none;
+}
+
+/* readability scrim so the bar/percentage stay legible over bright frames */
+.preloader__stage::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 42vh;
+  background: linear-gradient(to top, rgba(5, 6, 10, 0.85), rgba(5, 6, 10, 0));
+  pointer-events: none;
+}
+
+/* ---- load bar: centred while buffering, then glides to the bottom ---- */
+.preloader__bar-wrap {
+  position: absolute;
+  left: 50%;
+  bottom: var(--pl-bar-bottom);
+  transform: translateX(-50%);
+  width: min(560px, 82vw);
+  z-index: 1;
+  /* the move-down is a transform, so it stays on the compositor at 60fps */
+  transition: transform 0.75s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/*
+ * Buffering: lift the bar to the vertical centre. The offset is
+ * (half the viewport) minus (its resting gap) minus (half its own height) —
+ * the 50% resolves against the bar's own height.
+ */
+.preloader--buffering .preloader__bar-wrap {
+  transform: translateX(-50%) translateY(calc(-50vh + var(--pl-bar-bottom) + 50%));
+}
+
+@supports (height: 100svh) {
+  .preloader--buffering .preloader__bar-wrap {
+    transform: translateX(-50%) translateY(calc(-50svh + var(--pl-bar-bottom) + 50%));
+  }
+}
+
+/* the recessed track */
+.preloader__bar {
+  position: relative;
+  height: 22px;
+  padding: 3px;
+  background:
+    /* faint noise dots on the empty track */
+    radial-gradient(rgba(255, 255, 255, 0.05) 0.5px, transparent 0.6px) 0 0 / 3px 3px,
+    linear-gradient(#1b1c20, #242529);
+  border: 1px solid #050506;
+  border-radius: 2px;
+  /* beveled inset: dark top-left, faint light bottom-right */
+  box-shadow:
+    inset 2px 2px 3px rgba(0, 0, 0, 0.85),
+    inset -1px -1px 0 rgba(255, 255, 255, 0.06),
+    0 1px 0 rgba(255, 255, 255, 0.04);
+  overflow: hidden;
+}
+
+/* the hatched grey fill */
+.preloader__fill {
+  height: 100%;
+  width: 0;
+  border-radius: 1px;
+  background:
+    /* fine vertical hatching / segments */
+    repeating-linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.32) 0px,
+      rgba(0, 0, 0, 0.32) 1px,
+      rgba(255, 255, 255, 0.04) 1px,
+      rgba(255, 255, 255, 0.04) 3px
+    ),
+    linear-gradient(180deg, #b7b8bd 0%, #86878c 55%, #6f7075 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.35),
+    0 0 6px rgba(255, 255, 255, 0.06);
+  transition: width 0.12s linear;
+}
+
+/* the "13%"-style label that trails the fill edge */
+.preloader__pct {
+  position: absolute;
+  top: calc(100% + 10px);
+  transform: translateX(-50%);
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: #a9aab0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+  white-space: nowrap;
+  transition: left 0.12s linear;
+  user-select: none;
+}
+
+@media (max-width: 520px) {
+  .preloader__bar { height: 18px; }
+  .preloader__pct { font-size: 11px; letter-spacing: 1.5px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .preloader__fill,
+  .preloader__pct,
+  .preloader__bar-wrap,
+  .preloader__video { transition: none; }
+}
