@@ -42,6 +42,77 @@ function drawPlaceholder(ctx: CanvasRenderingContext2D, w: number, h: number, la
   ctx.fillText(label2, w / 2, h / 2 + h * 0.008)
 }
 
+const FRAME_H = 440
+
+/** (Re)draw a framed "paper print" into tex.canvas, sizing it to the interior
+ *  dimensions and letting the caller paint the clipped interior. Updates aspect. */
+function drawFramedCard(
+  tex: PhotoTex,
+  interiorW: number,
+  interiorH: number,
+  paintInterior: (ctx: CanvasRenderingContext2D, w: number, h: number) => void,
+) {
+  const border = Math.round(Math.min(interiorW, interiorH) * 0.055)
+  const canvas = tex.canvas
+  canvas.width = Math.round(interiorW) + border * 2
+  canvas.height = Math.round(interiorH) + border * 2
+  const ctx = canvas.getContext('2d')!
+
+  // paper frame
+  ctx.fillStyle = '#f6f2ea'
+  ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+  // interior (clipped)
+  ctx.save()
+  ctx.translate(border, border)
+  ctx.beginPath()
+  ctx.rect(0, 0, interiorW, interiorH)
+  ctx.clip()
+  paintInterior(ctx, interiorW, interiorH)
+  ctx.restore()
+
+  // hairline edges
+  ctx.strokeStyle = 'rgba(0,0,0,0.22)'
+  ctx.lineWidth = 2
+  ctx.strokeRect(1, 1, canvas.width - 2, canvas.height - 2)
+  ctx.strokeStyle = 'rgba(0,0,0,0.14)'
+  ctx.strokeRect(border - 1, border - 1, interiorW + 2, interiorH + 2)
+
+  tex.aspect = canvas.width / canvas.height
+}
+
+/**
+ * Real photo prints. Each returns a PhotoTex immediately with a plain dark
+ * "loading" frame; when the image decodes, the same canvas is redrawn at the
+ * photo's own aspect (no crop) and tex.aspect updated. Because the engine draws
+ * tex.canvas every frame, the photo simply appears once ready — no reload.
+ */
+export function loadPhotoSet(urls: string[]): PhotoTex[] {
+  return urls.map((url, i) => {
+    const tex: PhotoTex = { canvas: document.createElement('canvas'), aspect: 1 }
+
+    // placeholder shape so the card exists before its photo lands
+    const aspect0 = ASPECTS[i % ASPECTS.length]
+    drawFramedCard(tex, Math.round(FRAME_H * aspect0), FRAME_H, (ctx, w, h) => {
+      ctx.fillStyle = '#1c1c1c'
+      ctx.fillRect(0, 0, w, h)
+    })
+
+    const img = new Image()
+    img.decoding = 'async'
+    img.onload = () => {
+      const ar = img.naturalWidth / img.naturalHeight || 1
+      // fixed height, width follows the photo's aspect -> full photo, no crop
+      const ih = FRAME_H
+      const iw = Math.round(FRAME_H * ar)
+      drawFramedCard(tex, iw, ih, (ctx, w, h) => ctx.drawImage(img, 0, 0, w, h))
+    }
+    // on error keep the placeholder frame
+    img.src = url
+    return tex
+  })
+}
+
 export function makePhotoSet(count: number): PhotoTex[] {
   const out: PhotoTex[] = []
   for (let i = 0; i < count; i++) {
