@@ -249,6 +249,8 @@ function LogoParticles({ controlsRef, isDragging }) {
   const targetLookAt = useMemo(() => new THREE.Vector3(0, 0, 0), []);
   const glowTexture = useMemo(() => createGlowTexture(), []);
 
+  const { gl, scene } = useThree();
+
   useEffect(() => {
     if (!particleData) {
       loadParticleData().then((data) => {
@@ -259,6 +261,14 @@ function LogoParticles({ controlsRef, isDragging }) {
       });
     }
   }, [particleData]);
+
+  useEffect(() => {
+    if (particleData && pointsRef.current) {
+      // Force compile the shader immediately after the mesh is created 
+      // so it's ready backstage while the preloader is still showing.
+      gl.compile(scene, camera);
+    }
+  }, [particleData, gl, scene, camera]);
 
   const handlePointerDown = (e) => {
     pointerDownPos.current = { x: e.clientX, y: e.clientY };
@@ -363,6 +373,9 @@ export default function ParticleCube({ isHome = true }) {
         frameloop={isHome ? "always" : "never"}
         dpr={[1, 2]}
         camera={{ fov: 35, near: 0.01, far: 1000, position: [0, 0, 12] }}
+        onCreated={({ gl, scene, camera }) => {
+          gl.compile(scene, camera);
+        }}
       >
         <color attach="background" args={["#0d0d0d"]} />
         <ambientLight intensity={1.5} />
