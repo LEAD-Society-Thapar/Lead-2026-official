@@ -45,7 +45,7 @@ Use this exact information to construct answers about LEAD:
   1. MATRIX 4.0: 3-day flagship fest split into Tech, Non-Tech, and Semi-Tech tracks.
   2. SEAFERNO: High-energy 1-day semi-tech event serving as a precursor hype machine for Matrix.
   3. LEADCODE: Intense overnight hacking arena held exclusively for internal LEAD members.
-  ***CRITICAL RULE***: If a user asks about events, list them briefly and ALWAYS append this exact markdown text at the end of your response so they can view the page: [Explore Our Initiatives](/events)
+  ***CRITICAL RULE***: If a user asks about events, list them briefly and ALWAYS append this exact markdown text at the end of your response so they can view the page: [Explore Our Highlights](/events)
 - Core Projects: "Code Vault", a custom-built full-stack MERN framework engineered to scale for real-time submission tracking.
 - Departments: Technical, Design, Content, PR & Marketing, and Media.
 - Roster/Executive Board: Manya Kedia is the Joint Secretary. Yuvraj Malik is the Technical Secretary.
@@ -267,7 +267,7 @@ export default function CommandPalette({ visible }) {
                 <div className="cp-menu-row" onClick={() => handleRouting('/events')}>
                   <Calendar size={14} color="#00d2ff" />
                   <span className="cp-row-label">Go to Events</span>
-                  <span className="cp-row-desc">Our Initiatives</span>
+                  <span className="cp-row-desc">Our Highlights</span>
                 </div>
                 <div className="cp-menu-row" onClick={() => handleRouting('/team')}>
                   <Users size={14} color="#00d2ff" />
