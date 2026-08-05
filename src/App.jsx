@@ -12,6 +12,7 @@ import { SPONSORS_DATA } from './data/sponsorsData'
 import Events from './sections/EventsPage/App'
 import GalleryTunnel from './sections/GalleryPage/components/TunnelSection'
 import './sections/GalleryPage/styles/global.css'
+import NotFound from './sections/NotFound/NotFound'
 
 // ===== Standalone shell =====
 import SiteNav from './components/SiteNav/SiteNav'
@@ -43,11 +44,18 @@ function PersistentHome() {
 }
 
 function App() {
-  const [booting, setBooting] = useState(true)
+  const [booting, setBooting] = useState(() => {
+    return !sessionStorage.getItem('preloader_shown')
+  })
+
+  const handlePreloaderComplete = () => {
+    sessionStorage.setItem('preloader_shown', 'true')
+    setBooting(false)
+  }
 
   return (
     <CommandPaletteProvider>
-      {booting && <Preloader onComplete={() => setBooting(false)} />}
+      {booting && <Preloader onComplete={handlePreloaderComplete} />}
       <BrowserRouter>
         <ScrollToTop />
         <SiteNav />
@@ -59,6 +67,7 @@ function App() {
           <Route path="/sponsors" element={<ArcReactor sponsors={SPONSORS_DATA} />} />
           <Route path="/gallery" element={<GalleryTunnel />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </CommandPaletteProvider>
