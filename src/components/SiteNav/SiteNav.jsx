@@ -7,7 +7,7 @@ import leadLogo from '../../assets/LEAD.png'
 // Route-driven version of the SourcePage Home navbar — same markup and styles,
 // with the scroll-spy swapped for router links.
 const centerItems = [
-  { to: '/events', label: 'Initiatives' },
+  { to: '/events', label: 'Highlights' },
   { to: '/team', label: 'Leadership' },
   { to: '/sponsors', label: 'Network' },
   { to: '/gallery', label: 'Archive' },
@@ -52,7 +52,7 @@ const SiteNav = () => {
             </NavLink>
           </div>
 
-          {/* Desktop Centre Links: Initiatives → Archive */}
+          {/* Desktop Centre Links: Highlights → Archive */}
           <div className="nav-links-section">
             {centerItems.map((item) => (
               <NavLink
