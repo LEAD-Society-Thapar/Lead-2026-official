@@ -62,6 +62,7 @@ function App() {
         <GlobalCommandPalette />
         <PersistentHome />
         <Routes>
+          <Route path="/" element={null} />
           <Route path="/events" element={<Events />} />
           <Route path="/team" element={<Team />} />
           <Route path="/sponsors" element={<ArcReactor sponsors={SPONSORS_DATA} />} />
