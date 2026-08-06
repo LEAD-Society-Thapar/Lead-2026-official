@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import "./Home.css";
 import ParticleCube from "./Cube/ParticleCube";
 import About from "./About";
@@ -12,7 +13,9 @@ function Home() {
 
         {/* Middle: 3D Interactive Text Particles */}
         <div className="hero-middle">
-          <ParticleCube />
+          <Suspense fallback={null}>
+            <ParticleCube />
+          </Suspense>
         </div>
 
         {/* Bottom: Subtitle */}

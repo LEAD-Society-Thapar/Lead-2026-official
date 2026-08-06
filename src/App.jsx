@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
+import { Preloader } from './components/Preloader'
 
 // ===== Pages imported from the SourcePage project (untouched) =====
 import Home from './sections/Home/Home'
@@ -32,12 +33,26 @@ function GlobalCommandPalette() {
 }
 
 function App() {
+  // Show preloader only once per tab session — skip on refresh
+  const [preloaderDone, setPreloaderDone] = useState(
+    () => sessionStorage.getItem('pl_shown') === '1'
+  );
+
   return (
     <CommandPaletteProvider>
       <BrowserRouter>
         <ScrollToTop />
         <SiteNav />
         <GlobalCommandPalette />
+        {!preloaderDone && (
+          <Preloader
+            videoSrc="/preloader-bg.mp4"
+            onComplete={() => {
+              sessionStorage.setItem('pl_shown', '1');
+              setPreloaderDone(true);
+            }}
+          />
+        )}
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/events" element={<Events />} />
