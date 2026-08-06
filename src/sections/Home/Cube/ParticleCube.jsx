@@ -5,6 +5,61 @@ import * as THREE from "three";
 import leadLogo from "../../../assets/LEAD.png";
 import "./ParticleCube.css";
 
+// ─── Module-level precomputation ──────────────────────────────────────────────
+// This promise starts the moment this file is first imported (at app boot,
+// while the preloader video is playing). By the time the preloader exits the
+// heavy pixel-sampling is already done and the component renders instantly.
+const particleDataPromise = new Promise((resolve) => {
+  const img = new Image();
+  img.src = leadLogo;
+  img.crossOrigin = "anonymous";
+  img.onload = () => {
+    // Canvas A: LEAD.png
+    const cA = document.createElement("canvas");
+    const ctxA = cA.getContext("2d");
+    const wA = 260;
+    const hA = Math.round((img.height / img.width) * wA);
+    cA.width = wA; cA.height = hA;
+    ctxA.drawImage(img, 0, 0, wA, hA);
+    const scaleXY = 0.065;
+    const depth = 2.5;
+    const rawA = sampleCanvasPositions(ctxA.getImageData(0, 0, wA, hA).data, wA, hA, scaleXY, depth);
+
+    // Canvas B: acronym text
+    const cB = document.createElement("canvas");
+    const ctxB = cB.getContext("2d");
+    const wB = 340; const hB = 90;
+    cB.width = wB; cB.height = hB;
+    ctxB.clearRect(0, 0, wB, hB);
+    ctxB.fillStyle = "white";
+    const scaleB = (wA * scaleXY) / wB;
+    const fontPx = 30;
+    ctxB.font = `800 ${fontPx}px 'Arial Black', Arial, sans-serif`;
+    ctxB.textBaseline = "middle";
+    ctxB.textAlign = "center";
+    ctxB.fillText("Learn  |  Emerge", wB / 2, hB * 0.28);
+    ctxB.fillText("Aspire  |  Discover", wB / 2, hB * 0.72);
+    const rawB = sampleCanvasPositions(ctxB.getImageData(0, 0, wB, hB).data, wB, hB, scaleB, depth / 12);
+
+    // Equalise + colour
+    const total = equaliseArrays(rawA, rawB) / 3;
+    const colors = new Float32Array(total * 3);
+    for (let i = 0; i < total; i++) {
+      const r = Math.random();
+      let b;
+      if (r < 0.05) b = 1.0;
+      else if (r < 0.20) b = 0.45;
+      else b = 0.78;
+      colors[i * 3] = colors[i * 3 + 1] = colors[i * 3 + 2] = b;
+    }
+    const posA = new Float32Array(rawA);
+    const posB = new Float32Array(rawB);
+    const work = new Float32Array(posA);
+    resolve({ posA, posB, work, colors });
+  };
+  img.onerror = () => resolve(null); // graceful fallback
+});
+
 // ─── Responsive Camera ──────────────────────────────────────────────────────────
 // Dynamically adjusts field-of-view so the particle logo fits any screen size.
 function ResponsiveCamera() {
@@ -173,69 +228,13 @@ function LogoParticles({ controlsRef, isDragging }) {
   const targetLookAt = useMemo(() => new THREE.Vector3(0, 0, 0), []);
   const glowTexture = useMemo(() => createGlowTexture(), []);
 
+  // Attach to the module-level promise — already running since app boot
   useEffect(() => {
-    const img = new Image();
-    img.src = leadLogo;
-    img.crossOrigin = "anonymous";
-    img.onload = () => {
-
-      // ── Canvas A: LEAD.png ──────────────────────────────────────────────
-      const cA = document.createElement("canvas");
-      const ctxA = cA.getContext("2d");
-      const wA = 260;
-      const hA = Math.round((img.height / img.width) * wA);
-      cA.width = wA; cA.height = hA;
-      ctxA.drawImage(img, 0, 0, wA, hA);
-
-      const scaleXY = 0.065; // 260px → ~16.9 world units
-      const depth = 2.5;
-
-      const rawA = sampleCanvasPositions(ctxA.getImageData(0, 0, wA, hA).data, wA, hA, scaleXY, depth);
-
-      // ── Canvas B: "Learn | Emerge | Aspire | Discover" ─────────────────
-      const cB = document.createElement("canvas");
-      const ctxB = cB.getContext("2d");
-      const wB = 340;   // matches ~same world width as LEAD logo
-      const hB = 90;
-      cB.width = wB; cB.height = hB;
-      ctxB.clearRect(0, 0, wB, hB);
-      ctxB.fillStyle = "white";
-
-      // Scale so this canvas maps to the same world width as the LEAD form
-      const scaleB = (wA * scaleXY) / wB; // ≈ 0.0497
-
-      // Render two rows of text, vertically centred
-      const fontPx = 30;
-      ctxB.font = `800 ${fontPx}px 'Arial Black', Arial, sans-serif`;
-      ctxB.textBaseline = "middle";
-      ctxB.textAlign = "center";
-      ctxB.fillText("Learn  |  Emerge", wB / 2, hB * 0.28);
-      ctxB.fillText("Aspire  |  Discover", wB / 2, hB * 0.72);
-
-      // Passed depth / 4 (0.8) to make the text thickness exactly 1/4th 
-      const rawB = sampleCanvasPositions(ctxB.getImageData(0, 0, wB, hB).data, wB, hB, scaleB, depth / 12);
-
-      // ── Equalise lengths ────────────────────────────────────────────────
-      const total = equaliseArrays(rawA, rawB) / 3; // total particle count
-
-      // ── Build colour array ──────────────────────────────────────────────
-      const colors = new Float32Array(total * 3);
-      for (let i = 0; i < total; i++) {
-        const r = Math.random();
-        let b;
-        if (r < 0.05) b = 1.0;
-        else if (r < 0.20) b = 0.45;
-        else b = 0.78;
-        colors[i * 3] = colors[i * 3 + 1] = colors[i * 3 + 2] = b;
-      }
-
-      // ── Working buffer (what Three.js renders from) ─────────────────────
-      const posA = new Float32Array(rawA);
-      const posB = new Float32Array(rawB);
-      const work = new Float32Array(posA); // initially in LEAD form
-
-      setParticleData({ posA, posB, work, colors });
-    };
+    let cancelled = false;
+    particleDataPromise.then((data) => {
+      if (!cancelled) setParticleData(data);
+    });
+    return () => { cancelled = true; };
   }, []);
 
   // ── Click to toggle morph ─────────────────────────────────────────────────

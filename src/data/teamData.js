@@ -1,6 +1,6 @@
 // teamData.js — Executive roster
 //
-// Images in src/assets/ must be imported so Vite fingerprints and bundles them.
+// Images in src/assets/team/ must be imported so Vite fingerprints and bundles them.
 // The 4 missing portraits (Aanvy, Rajat, Pratham, Atulya) still use Unsplash
 // as placeholders — replace the import + portrait field when images are ready.
 
