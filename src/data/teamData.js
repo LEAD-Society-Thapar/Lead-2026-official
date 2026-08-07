@@ -78,7 +78,7 @@ export const executives = [
     cardPortraitY: "-35px",
     statement: "Every pixel has a purpose. Every line of code is a promise to the user.",
     about: "Rajat Verma steps into the role of Technical Head, bringing a unique blend of technical mastery and dynamic storytelling to the team. As our primary digital architect, he seamlessly manages complex back-end operations, system logistics, and digital infrastructure with exceptional logic and ease.Beyond keeping our technical systems running without a hitch, he doubles as the team’s resident vlogger, effortlessly capturing the culture and behind-the-scenes energy of the society. His ability to combine sharp problem-solving skills with a creative, hands-on approach ensures our digital presence remains innovative, reliable, and engaging.",
-    github: "rajat-verma",
+    github: "QuantumWizardz",
     linkedin: "https://www.linkedin.com/in/rajatverma1090",
   },
   {
@@ -91,7 +91,7 @@ export const executives = [
     cardPortraitPosition: "center 20%",
     statement: "Design is not decoration — it's the language through which ideas become real.",
     about: "For Pratham, design is an expression of perspective, purpose, and storytelling. As LEAD’s Designing Head, he translates ideas into distinctive visual experiences through creativity, precision, and thoughtful execution. Beyond design, he finds inspiration in music, the ukulele, and conversations that challenge perspectives and spark creativity.",
-    github: "pratham-arora",
+    github: "Pratham-90",
     linkedin: "https://www.linkedin.com/in/pratham-arora-a24106322",
   },
   {
@@ -102,7 +102,7 @@ export const executives = [
     portrait: akshatImg,
     statement: "Marketing is empathy at scale. Understand one person deeply enough, and you reach millions.",
     about: "Akshat Gupta serves as the Marketing Head of LEAD, combining creativity with a people-first approach. Known for his strong communication skills and innovative ideas, he enjoys building meaningful collaborations, leading impactful campaigns, and ensuring every initiative reflects the vision and spirit of LEAD.",
-    github: "akshat-gupta",
+    github: "akshat09105",
     linkedin: "https://www.linkedin.com/in/akshat-gupta-6a27a331a/",
   },
   {
@@ -114,7 +114,7 @@ export const executives = [
     portraitPosition: "center 0%",
     statement: "Words are the architecture of ideas. I build narratives that resonate long after the scroll.",
     about: "Abhinav directs the narrative and editorial strategy at LEAD, crafting compelling stories that capture the essence of the community. His words inspire, inform, and unite members around a shared purpose.",
-    github: "abhinav-gupta",
+    github: "Abhinav-techcode",
     linkedin: "https://www.linkedin.com/in/abhinav-gupta-a60083275/",
   },
   {
@@ -127,7 +127,7 @@ export const executives = [
     cardPortraitPosition: "center 20%",
     statement: "Attention is the new currency. I spend it wisely — and never stop earning more.",
     about: "Atulya manages LEAD's public relations and digital presence, building strong media connections and active online channels. He ensures the organization's achievements resonate across all social platforms.",
-    github: "atulya-singh",
+    github: "Atulyaks",
     linkedin: "https://www.linkedin.com/in/atulya-kumar-singh-9508b5306/",
   },
   {
@@ -151,7 +151,7 @@ export const executives = [
     portraitScale: 0.9,
     statement: "Flawless execution isn't luck — it's a system I've built and rebuilt until nothing breaks.",
     about: "Jasmine commands the operational backbone of LEAD, managing supply chains, venue logistics, and real-time execution. Her systematic approach ensures every event and initiative runs without a hitch.",
-    github: "jasmine-kaur",
+    github: "jasminekaur7",
     linkedin: "https://www.linkedin.com/in/jasmine-kaur-463a3a324/",
   },
   {
