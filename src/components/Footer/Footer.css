@@ -1,0 +1,261 @@
+@font-face {
+  font-family: 'Anton';
+  src: url('/fonts/Anton-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+}
+
+.lead-footer {
+  --fog: #8a8ca0;
+  --line: rgba(255, 255, 255, 0.08);
+  --paper: #e8e9f0;
+  --accent: var(--lead-accent, #aa3bff);
+  --mono: ui-monospace, 'SFMono-Regular', 'Cascadia Code', Menlo, Consolas, monospace;
+
+  position: relative;
+  z-index: 1;
+  border-top: 1px solid var(--line);
+  background: #000; /* pure black so the mascot art's backdrop blends seamlessly */
+  overflow: hidden; /* clip the mascot art sinking past the corner */
+}
+
+/* ===== Ribbon ===== */
+.lead-footer__ribbon {
+  border-top: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+  background: #000000;
+  padding: 0.6rem 0;
+  overflow: hidden;
+}
+
+.lead-footer__marquee {
+  display: flex;
+  width: max-content;
+  animation: lead-footer-scroll 140s linear infinite;
+}
+
+.lead-footer__marquee-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin: 0 1.25rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+.lead-footer__marquee-star {
+  opacity: 0.55;
+}
+
+@keyframes lead-footer-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lead-footer__marquee { animation: none; }
+}
+
+/* ===== Body ===== */
+.lead-footer__inner {
+  position: relative;
+  max-width: 80rem;
+  margin: 0 auto;
+  /* extra bottom room so the corner mascot never overlaps the content */
+  padding: 2.5rem 1.5rem 15rem;
+}
+
+@media (min-width: 1024px) {
+  .lead-footer__inner { padding-top: 2.5rem; padding-bottom: 2.5rem; }
+}
+
+/* ===== Mascot — small, pinned to the bottom-left corner on every screen ===== */
+/* The source art has a black background that blends into the pure-black footer,
+   so the empty base can sink past the corner and only the character shows. */
+/* Big LEAD wordmark anchored to the left (mobile-safe defaults; exact
+   placement below at the desktop breakpoint). Starts dull, lights up on scroll. */
+.lead-footer__biglogo {
+  position: absolute;
+  left: -1.5rem;
+  bottom: 11rem;
+  width: min(90vw, 35rem);
+  height: auto;
+  z-index: 1;
+  pointer-events: none;
+  user-select: none;
+  filter: brightness(0.32) saturate(0.7);
+  opacity: 0.8;
+  transition: filter 0.9s ease 0.15s, opacity 0.9s ease 0.15s;
+}
+
+.lead-footer.is-inview .lead-footer__biglogo {
+  filter: brightness(1.05) saturate(1) drop-shadow(0 0 22px rgba(255, 255, 255, 0.28));
+  opacity: 1;
+}
+
+/* Mascot (transparent art) emerging from the bottom-left corner, tilted right.
+   Sits above the logo so it overlaps it. Pops up from the bottom on scroll. */
+.lead-footer__mascot {
+  position: absolute;
+  left: -8vw;                  /* bleed off the left edge — emerging from the corner */
+  bottom: -1.8rem;             /* bleed off the bottom edge */
+  width: min(82vw, 17rem);
+  height: auto;
+  transform: translateY(118%) rotate(15deg);  /* start below the fold */
+  transform-origin: bottom left;
+  z-index: 2;
+  pointer-events: auto;        /* clickable — links to registration */
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.95s cubic-bezier(0.22, 1, 0.36, 1), filter 0.3s ease;
+}
+
+/* Wrapper link keeps no box of its own so the img positions against the footer */
+.lead-footer__mascot-link {
+  display: contents;
+}
+
+.lead-footer__mascot-link:hover .lead-footer__mascot {
+  filter: drop-shadow(0 0 26px rgba(170, 59, 255, 0.5));
+}
+
+.lead-footer.is-inview .lead-footer__mascot {
+  transform: translateY(0) rotate(15deg);      /* pop up into place */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lead-footer__mascot { transform: translateY(0) rotate(15deg); transition: none; }
+  .lead-footer__biglogo { filter: none; opacity: 1; transition: none; }
+}
+
+/* Exact placement tuned on desktop */
+@media (min-width: 1024px) {
+  .lead-footer__biglogo {
+    left: -3.8rem;
+    bottom: 15.25rem;
+    width: 35rem;
+  }
+  .lead-footer__mascot {
+    left: -10.7rem;
+    bottom: -1.8rem;
+    width: 17rem;
+  }
+}
+
+.lead-footer__body {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  align-items: flex-start;
+}
+
+@media (min-width: 1024px) {
+  .lead-footer__body {
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    padding-left: 33rem;   /* clear the big logo + corner mascot on the left */
+  }
+}
+
+.lead-footer__grid {
+  display: grid;
+  gap: 2.5rem;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .lead-footer__grid {
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(9rem, 1fr));
+    gap: 2.5rem 3.5rem;
+    text-align: right;
+  }
+  .lead-footer__links { align-items: flex-end; }
+}
+
+.lead-footer__label {
+  margin: 0 0 0.85rem;
+  font-family: var(--mono);
+  font-size: 0.69rem;
+  color: var(--fog);
+  letter-spacing: 0.05em;
+}
+
+.lead-footer__links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.lead-footer__link {
+  position: relative;
+  display: inline-block;
+  font-size: 0.95rem;
+  color: rgba(232, 233, 240, 0.8);
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.lead-footer__link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.lead-footer__link:hover {
+  color: var(--accent);
+}
+
+.lead-footer__link:hover::after {
+  transform: scaleX(1);
+}
+
+.lead-footer__note {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: rgba(232, 233, 240, 0.8);
+}
+
+/* ===== Terminal baseline / copyright ===== */
+.lead-footer__copy {
+  margin: 2.5rem 0 0;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  color: var(--fog);
+}
+
+.lead-footer__copy-mark {
+  color: var(--accent);
+}
+
+.lead-footer__cursor {
+  display: inline-block;
+  margin-left: 0.4rem;
+  color: var(--accent);
+  animation: lead-footer-blink 1.1s step-end infinite;
+}
+
+@keyframes lead-footer-blink {
+  50% { opacity: 0; }
+}
