@@ -52,7 +52,7 @@ Use this exact information to construct answers about LEAD:
 - Recruitment Cycles: Conducted twice per batch. Phase 1 (Sept-Oct) for incoming freshers. Phase 2 (May-June) as they transition into their second year.
 - Communications: Official mail is lead_sc@thapar.edu.
 
-Rules: Keep responses strictly limited to 2-3 short sentences. Format text cleanly. Use Markdown for bolding (**text**). Never mention unrelated individuals. If you lack info, redirect users to talk to us at lead_sc@thapar.edu.
+Rules: Keep responses strictly limited to 2-3 short sentences. Format text cleanly. Use Markdown for bolding (**text**). Stay focused on LEAD Society, TIET, its people, events, recruitment, projects, and contact details. Do not answer unrelated topics or drift into generic random content. If the user asks something outside LEAD, reply briefly with: "I’m tuned for LEAD-related queries. Ask me about events, team, recruitment, projects, or contact details." If you lack info, redirect users to talk to us at lead_sc@thapar.edu.
 `;
 
 export default function CommandPalette({ visible }) {
@@ -108,24 +108,80 @@ export default function CommandPalette({ visible }) {
     setOpen(false);
     window.open(url, '_blank', 'noopener,noreferrer');
   };
-
-  // Process local quick queries
+  // Process local quick queries — word-level keyword matching
   const processLocalQuery = (lowerInput) => {
-    if (/\b(full form|stand for|stands for|acronym|meaning)\b/.test(lowerInput) && lowerInput.includes('lead')) {
-      return "LEAD stands for **Learn, Emerge, Aspire, Discover**.";
+
+    // ── What is LEAD? ──
+    if (/\b(what|about|who)\b/.test(lowerInput) && /\b(lead|society)\b/.test(lowerInput) && !/\b(join|recruit|apply)\b/.test(lowerInput)) {
+      return `<strong>LEAD</strong> stands for <strong>Learn, Emerge, Aspire, Discover</strong>. We are the premier student-run organization at Thapar Institute of Engineering and Technology (TIET), Patiala — bridging technical engineering, holistic development, and industry collaboration. We foster peer-to-peer learning, open-source culture, and real-world project experience across multiple domains.`;
     }
-    if (/\b(joint|manya|js)\b/.test(lowerInput)) {
+
+    // ── Full form / acronym ──
+    if (/\b(full form|stand for|stands for|acronym|meaning)\b/.test(lowerInput) && lowerInput.includes('lead')) {
+      return `LEAD stands for <strong>Learn, Emerge, Aspire, Discover</strong>.`;
+    }
+
+    // ── Is it a tech society? ──
+    if (/\b(tech|technical)\b/.test(lowerInput) && /\b(society|only|just|purely)\b/.test(lowerInput)) {
+      return `Yes, LEAD is a <strong>technical society</strong> at its core — our tech wing spans <strong>Full-Stack Development, AI/ML, Ethical Hacking, IoT, Competitive Programming, and Open-Source contributions</strong>. That said, we also have dedicated non-tech departments like <strong>Design, Content, PR &amp; Marketing, and Media</strong> that power our branding, outreach, and creative initiatives. So whether you code or create — there's a place for you.`;
+    }
+
+    // ── Events ──
+    if (/\b(events?|matrix|seaferno|leadcode|fest|flagship|hackathon)\b/.test(lowerInput)) {
+      return `We organize three flagship initiatives:<br/><br/><strong>1. MATRIX 4.0</strong> — Our marquee 3-day fest split into Tech, Non-Tech, and Semi-Tech tracks with participation from colleges across the region.<br/><strong>2. SEAFERNO</strong> — A high-energy 1-day semi-tech event that serves as the precursor hype machine for Matrix.<br/><strong>3. LEADCODE</strong> — An intense overnight hacking arena held exclusively for internal LEAD members.<br/><br/><a href="/events">Explore Our Highlights →</a>`;
+    }
+
+    // ── Domains / Departments ──
+    if (/\b(domain|department|team|wing|vertical|division)\b/.test(lowerInput) && !/\b(join|recruit|apply)\b/.test(lowerInput)) {
+      return `LEAD operates across <strong>five core departments</strong>:<br/><br/><strong>1. Technical</strong> — Dev projects, hackathons, competitive programming, and open-source contributions.<br/><strong>2. Design</strong> — UI/UX, branding, visual identity, and creative assets.<br/><strong>3. Content</strong> — Copywriting, documentation, blogs, and social media content.<br/><strong>4. PR & Marketing</strong> — Outreach, sponsorships, partnerships, and public relations.<br/><strong>5. Media</strong> — Photography, videography, and event coverage.<br/><br/><a href="/team">Meet the Team →</a>`;
+    }
+
+    // ── How to join / Recruitment ──
+    if (/\b(join|recruit|apply|registration|register|sign up|signup|how to get in|induction|selection|member)\b/.test(lowerInput)) {
+      return `LEAD runs <strong>two recruitment phases</strong> per batch:<br/><br/><strong>Phase 1 (Sept–Oct)</strong> — Open for incoming freshers right after they join TIET.<br/><strong>Phase 2 (May–June)</strong> — A second window as freshers transition into their sophomore year.<br/><br/>The process typically involves filling out a recruitment form followed by a personal interaction round. Keep an eye on our <a href="https://www.instagram.com/lead_tiet/" target="_blank" rel="noopener noreferrer">Instagram</a> for announcements!`;
+    }
+
+    // ── DSA ──
+    if (/\b(dsa|data structures?|algorithms?)\b/.test(lowerInput)) {
+      return `<strong>DSA</strong> is the core of problem-solving in coding. It's about choosing the right data structure and algorithm so programs run faster and scale better.`;
+    }
+
+    // ── Executive Board — Joint Secretary ──
+    if (/\b(joint|manya)\b/.test(lowerInput)) {
       return `Our Joint Secretary is <strong>Manya Kedia</strong>. Check out her work or reach out here: <a href="${EB_ROSTER.joint_secretary.url}" target="_blank" rel="noopener noreferrer">LinkedIn Profile</a>.`;
     }
-    if (/\b(technical|yuvraj|ts)\b/.test(lowerInput)) {
+
+    // ── Executive Board — Technical Secretary ──
+    if (/\b(yuvraj)\b/.test(lowerInput) || (/\b(technical)\b/.test(lowerInput) && /\b(secretary|head|lead)\b/.test(lowerInput))) {
       return `Our Technical Secretary is <strong>Yuvraj Malik</strong>. Check out his work or reach out here: <a href="${EB_ROSTER.technical_secretary.url}" target="_blank" rel="noopener noreferrer">LinkedIn Profile</a>.`;
     }
-    if (/\b(join|recruit|member)\b/.test(lowerInput)) {
-      return "LEAD runs two recruitment phases per batch: <strong>Phase 1 (Sept-Oct)</strong> for incoming freshers and <strong>Phase 2 (May-June)</strong> as they transition into their sophomore year.";
+
+    // ── Projects / Code Vault ──
+    if (/\b(project|code vault|built|build|portfolio)\b/.test(lowerInput)) {
+      return `We build the tech that runs our ecosystem, like <strong>Code Vault</strong> — our custom-engineered, full-stack MERN platform built to handle massive traffic during live hackathons and real-time submission tracking.`;
     }
-    if (/\b(project|code vault)\b/.test(lowerInput)) {
-      return "We build the tech that runs our ecosystem, like <strong>Code Vault</strong>—our custom-engineered, full-stack MERN platform built to handle massive traffic loops during live hackathons.";
+
+    // ── Contact ──
+    if (/\b(contact|email|mail|reach)\b/.test(lowerInput)) {
+      return `You can reach us at <a href="mailto:lead_sc@thapar.edu">lead_sc@thapar.edu</a> or drop us a message through our <a href="/contact">Contact Page</a>. You can also connect with us on <a href="https://www.instagram.com/lead_tiet/" target="_blank" rel="noopener noreferrer">Instagram</a> and <a href="https://www.linkedin.com/company/lead-tiet/" target="_blank" rel="noopener noreferrer">LinkedIn</a>.`;
     }
+
+    // ── Sponsors ──
+    if (/\b(sponsor|partner|collab|collaboration)\b/.test(lowerInput)) {
+      return `LEAD collaborates with industry partners and sponsors to bring real-world exposure to our members. Check out our partners on the <a href="/sponsors">Sponsors Page</a>.`;
+    }
+
+    // ── Gallery ──
+    if (/\b(gallery|photos?|pictures?|images?)\b/.test(lowerInput)) {
+      return `Relive our best moments in the <a href="/gallery">Gallery</a> — an immersive WebGL tunnel showcasing snapshots from our events and initiatives.`;
+    }
+
+    // ── Fallback for unrelated queries ──
+    if (!/\b(lead|society|tiet|thapar)\b/.test(lowerInput)) {
+      return `I'm tuned for <strong>LEAD-related queries</strong>. Ask me about events, team, recruitment, domains, projects, or contact details.`;
+    }
+
+    // Fall through to LLM for anything else LEAD-related but not covered above
     return null;
   };
 
@@ -151,27 +207,124 @@ export default function CommandPalette({ visible }) {
         return;
       }
 
-      const connection = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${apiKey}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          model: "llama-3.1-8b-instant",
-          messages: [
-            { role: "system", content: SYSTEM_CONTEXT },
-            { role: "user", content: stringVal }
-          ],
-          max_tokens: 150,
-          temperature: 0.4 
-        })
-      });
+      const models = [
+        "openai/gpt-oss-20b",
+        "openai/gpt-oss-120b",
+        "qwen/qwen3.6-27b",
+      ];
 
-      if (!connection.ok) throw new Error(`Inference returned status code: ${connection.status}`);
+      let data = null;
+      let lastError = null;
 
-      const data = await connection.json();
-      let outcomeText = data?.choices?.[0]?.message?.content || "No connection payload generated.";
+      // Try each model in order until one succeeds
+      for (const model of models) {
+        try {
+          const connection = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${apiKey}`,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              model,
+              messages: [
+                { role: "system", content: SYSTEM_CONTEXT },
+                { role: "user", content: stringVal }
+              ],
+              max_tokens: 250,
+              temperature: 0.4
+            })
+          });
+
+          const responseData = await connection.json().catch(() => ({}));
+
+          if (connection.ok) {
+            data = responseData;
+            break;
+          }
+          lastError = responseData?.error?.message || `Status ${connection.status}`;
+        } catch (fetchErr) {
+          lastError = fetchErr.message;
+        }
+      }
+
+      if (!data) {
+        throw new Error(lastError || "All models failed.");
+      }
+
+      const flattenContentParts = (value) => {
+        if (typeof value === "string") return value;
+        if (Array.isArray(value)) {
+          return value
+            .map((part) => flattenContentParts(part))
+            .filter((part) => typeof part === "string" && part.trim())
+            .join("");
+        }
+        if (value && typeof value === "object") {
+          if (typeof value.text === "string" && value.text.trim()) return value.text;
+          if (typeof value.content === "string" && value.content.trim()) return value.content;
+          if (Array.isArray(value.content)) {
+            return value.content
+              .map((part) => flattenContentParts(part))
+              .filter((part) => typeof part === "string" && part.trim())
+              .join("");
+          }
+        }
+        return "";
+      };
+
+      const extractFromChoices = (payload) => {
+        const choices = payload?.choices;
+        if (!Array.isArray(choices)) return "";
+
+        for (const choice of choices) {
+          const contentCandidates = [
+            choice?.message?.content,
+            choice?.message?.reasoning_content,
+            choice?.delta?.content,
+            choice?.text,
+            choice?.content,
+          ];
+
+          for (const candidate of contentCandidates) {
+            const text = flattenContentParts(candidate);
+            if (text && text.trim()) return text;
+          }
+        }
+
+        return "";
+      };
+
+      const extractMessageContent = (payload) => {
+        const outputText = payload?.output_text || payload?.content || payload?.message?.content || payload?.message?.reasoning_content;
+        const fromOutput = flattenContentParts(outputText);
+        if (fromOutput && fromOutput.trim()) return fromOutput;
+
+        const fromChoices = extractFromChoices(payload);
+        if (fromChoices && fromChoices.trim()) return fromChoices;
+
+        const outputArray = payload?.output;
+        if (Array.isArray(outputArray)) {
+          for (const entry of outputArray) {
+            const text = flattenContentParts(entry?.content || entry?.text || entry?.message?.content);
+            if (text && text.trim()) return text;
+          }
+        }
+
+        return "";
+      };
+
+      const messageContent = extractMessageContent(data);
+
+      if (!messageContent || !String(messageContent).trim()) {
+        const payloadSummary = JSON.stringify(data || {}).slice(0, 500);
+        throw new Error(`Groq returned empty content. Raw payload: ${payloadSummary}`);
+      }
+
+      let outcomeText = String(messageContent);
+
+      // Strip <think>...</think> reasoning tags (from qwen models)
+      outcomeText = outcomeText.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
       
       // Parse bold text
       outcomeText = outcomeText.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
@@ -189,7 +342,8 @@ export default function CommandPalette({ visible }) {
       setAiResponse(outcomeText);
     } catch (err) {
       console.error(err);
-      setAiResponse("Inference link timed out. Reach out via email structure directly: <a href='mailto:lead_sc@thapar.edu'>lead_sc@thapar.edu</a>.");
+      const reason = err instanceof Error ? err.message : "Inference link timed out.";
+      setAiResponse(`Inference request failed: ${reason}. Reach out via email structure directly: <a href='mailto:lead_sc@thapar.edu'>lead_sc@thapar.edu</a>.`);
     } finally {
       setLoading(false);
     }
